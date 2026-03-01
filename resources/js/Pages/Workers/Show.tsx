@@ -1,0 +1,626 @@
+import { Head, Link, usePage } from '@inertiajs/react';
+import { motion } from 'framer-motion';
+import { useState } from 'react';
+import AppLayout from '@/Layouts/AppLayout';
+import { WorkerProfile } from '@/types';
+import { useTranslation } from '@/hooks/useTranslation';
+
+interface Props {
+    worker: WorkerProfile;
+}
+
+const expColors: Record<string, string> = {
+    entry: 'bg-blue-50 text-blue-700 ring-blue-600/20',
+    intermediate: 'bg-amber-50 text-amber-700 ring-amber-600/20',
+    experienced: 'bg-emerald-50 text-emerald-700 ring-emerald-600/20',
+    expert: 'bg-purple-50 text-purple-700 ring-purple-600/20',
+};
+
+export default function WorkerShow({ worker }: Props) {
+    const { auth } = usePage().props as any;
+    const [lightboxPhoto, setLightboxPhoto] = useState<string | null>(null);
+    const { t } = useTranslation();
+
+    const expLabels: Record<string, string> = {
+        entry: t('levels.entry'),
+        intermediate: t('levels.intermediate'),
+        experienced: t('levels.experienced'),
+        expert: t('levels.expert'),
+    };
+
+    function timeAgo(dateStr: string) {
+        const diff = Date.now() - new Date(dateStr).getTime();
+        const days = Math.floor(diff / 86400000);
+        if (days === 0) return t('common.today');
+        if (days === 1) return t('common.yesterday');
+        if (days < 7) return t('common.daysAgo', { n: days });
+        if (days < 30) return t('common.weeksAgo', { n: Math.floor(days / 7) });
+        if (days < 365) return t('common.monthsAgo', { n: Math.floor(days / 30) });
+        return t('common.yearsAgo', { n: Math.floor(days / 365) });
+    }
+
+    const averageRating = worker.user?.reviews_received?.length
+        ? (worker.user.reviews_received.reduce((sum: number, r: any) => sum + r.rating, 0) / worker.user.reviews_received.length).toFixed(1)
+        : null;
+
+    const totalReviews = worker.user?.reviews_received?.length || 0;
+
+    return (
+        <AppLayout>
+            <Head title={`${worker.user?.name} - CivilHire`} />
+
+            {/* ═══════ Hero Section ═══════ */}
+            <div className="relative overflow-hidden bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900">
+                {/* Decorative background */}
+                <div className="absolute inset-0">
+                    <div className="absolute -top-40 -right-40 w-96 h-96 bg-amber-500/8 rounded-full blur-3xl" />
+                    <div className="absolute -bottom-20 -left-20 w-72 h-72 bg-amber-600/5 rounded-full blur-3xl" />
+                    <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-amber-500/20 to-transparent" />
+                    <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGRlZnM+PHBhdHRlcm4gaWQ9ImdyaWQiIHdpZHRoPSI2MCIgaGVpZ2h0PSI2MCIgcGF0dGVyblVuaXRzPSJ1c2VyU3BhY2VPblVzZSI+PHBhdGggZD0iTSA2MCAwIEwgMCAwIDAgNjAiIGZpbGw9Im5vbmUiIHN0cm9rZT0icmdiYSgyNTUsMjU1LDI1NSwwLjAyKSIgc3Ryb2tlLXdpZHRoPSIxIi8+PC9wYXR0ZXJuPjwvZGVmcz48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSJ1cmwoI2dyaWQpIi8+PC9zdmc+')] opacity-40" />
+                </div>
+
+                <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-8 pb-14">
+                    {/* Breadcrumb */}
+                    <nav className="flex items-center space-x-2 text-sm mb-10">
+                        <Link href="/" className="text-gray-400 hover:text-white transition-colors">{t('workerShow.home')}</Link>
+                        <svg className="w-3.5 h-3.5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" /></svg>
+                        <Link href="/workers" className="text-gray-400 hover:text-white transition-colors">{t('workerShow.workers')}</Link>
+                        <svg className="w-3.5 h-3.5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" /></svg>
+                        <span className="text-gray-300 truncate max-w-[200px]">{worker.user?.name}</span>
+                    </nav>
+
+                    <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4 }}>
+                        <div className="flex flex-col sm:flex-row items-start gap-6">
+                            {/* Avatar */}
+                            <div className="relative group">
+                                <div className="w-28 h-28 rounded-2xl overflow-hidden ring-4 ring-white/10 shadow-2xl shadow-black/20">
+                                    {worker.user?.avatar ? (
+                                        <img src={`/storage/${worker.user.avatar}`} alt={worker.user.name} className="w-full h-full object-cover" />
+                                    ) : (
+                                        <div className="w-full h-full bg-gradient-to-br from-amber-400 to-amber-600 flex items-center justify-center">
+                                            <span className="text-white font-bold text-4xl">{worker.user?.name?.charAt(0)}</span>
+                                        </div>
+                                    )}
+                                </div>
+                                {/* Availability dot */}
+                                <div className={`absolute -bottom-1 -right-1 w-6 h-6 rounded-full border-[3px] border-gray-900 ${worker.is_available ? 'bg-emerald-400' : 'bg-gray-400'}`} />
+                            </div>
+
+                            {/* Info */}
+                            <div className="flex-1 min-w-0">
+                                <div className="flex flex-wrap items-center gap-3 mb-2">
+                                    <span className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold ring-1 ring-inset ${expColors[worker.experience_level] || 'bg-gray-50 text-gray-700 ring-gray-600/20'}`}>
+                                        {expLabels[worker.experience_level] || worker.experience_level}
+                                    </span>
+                                    {worker.is_available ? (
+                                        <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-emerald-500/15 text-emerald-300 ring-1 ring-inset ring-emerald-500/25">
+                                            <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+                                            {t('availability.availableForWork')}
+                                        </span>
+                                    ) : (
+                                        <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-gray-500/15 text-gray-300 ring-1 ring-inset ring-gray-500/25">
+                                            <span className="w-1.5 h-1.5 rounded-full bg-gray-400" />
+                                            {t('availability.currentlyBusy')}
+                                        </span>
+                                    )}
+                                    {worker.is_featured && (
+                                        <span className="inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-semibold bg-amber-500/20 text-amber-300 ring-1 ring-inset ring-amber-500/30">
+                                            <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" /></svg>
+                                            {t('common.featured')}
+                                        </span>
+                                    )}
+                                    {worker.willing_to_relocate && (
+                                        <span className="inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-semibold bg-cyan-500/15 text-cyan-300 ring-1 ring-inset ring-cyan-500/25">
+                                            <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                                            {t('workerShow.openToRelocate')}
+                                        </span>
+                                    )}
+                                </div>
+
+                                <h1 className="text-3xl sm:text-4xl font-bold text-white tracking-tight mb-1">{worker.user?.name}</h1>
+                                <p className="text-lg text-amber-400 font-medium mb-4">{worker.professional_title || worker.title || t('workerShow.constructionPro')}</p>
+
+                                {/* Meta row */}
+                                <div className="flex flex-wrap items-center gap-x-5 gap-y-2">
+                                    {(worker.city || worker.state) && (
+                                        <span className="flex items-center gap-1.5 text-sm text-gray-300">
+                                            <svg className="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M15 10.5a3 3 0 11-6 0 3 3 0 016 0z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1115 0z" /></svg>
+                                            {[worker.city, worker.state].filter(Boolean).join(', ')}
+                                        </span>
+                                    )}
+                                    {averageRating && (
+                                        <span className="flex items-center gap-1.5 text-sm text-gray-300">
+                                            <svg className="w-4 h-4 text-amber-400" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" /></svg>
+                                            <span className="font-semibold text-white">{averageRating}</span>
+                                            <span className="text-gray-400">({totalReviews} {totalReviews === 1 ? t('common.review') : t('common.reviews')})</span>
+                                        </span>
+                                    )}
+                                    {(worker.years_of_experience || worker.years_experience > 0) && (
+                                        <span className="flex items-center gap-1.5 text-sm text-gray-300">
+                                            <svg className="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M20.25 14.15v4.25c0 1.094-.787 2.036-1.872 2.18-2.087.277-4.216.42-6.378.42s-4.291-.143-6.378-.42c-1.085-.144-1.872-1.086-1.872-2.18v-4.25m16.5 0a2.18 2.18 0 00.75-1.661V8.706c0-1.081-.768-2.015-1.837-2.175a48.114 48.114 0 00-3.413-.387m4.5 8.006c-.194.165-.42.295-.673.38A23.978 23.978 0 0112 15.75c-2.648 0-5.195-.429-7.577-1.22a2.016 2.016 0 01-.673-.38m0 0A2.18 2.18 0 013 12.489V8.706c0-1.081.768-2.015 1.837-2.175a48.111 48.111 0 013.413-.387m7.5 0V5.25A2.25 2.25 0 0013.5 3h-3a2.25 2.25 0 00-2.25 2.25v.894m7.5 0a48.667 48.667 0 00-7.5 0M12 12.75h.008v.008H12v-.008z" /></svg>
+                                            {t('workerShow.yearsExperience', { count: worker.years_of_experience || worker.years_experience })}
+                                        </span>
+                                    )}
+                                    {(worker.views_count || worker.profile_views) > 0 && (
+                                        <span className="flex items-center gap-1.5 text-sm text-gray-400">
+                                            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M2.036 12.322a1.012 1.012 0 010-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
+                                            {t('workerShow.profileViews', { count: (worker.views_count || worker.profile_views || 0).toLocaleString() })}
+                                        </span>
+                                    )}
+                                </div>
+
+                                {/* Rate highlights */}
+                                {(worker.hourly_rate || worker.daily_rate) && (
+                                    <div className="flex items-center gap-3 mt-5">
+                                        {worker.hourly_rate && (
+                                            <div className="inline-flex items-center gap-2 bg-white/5 backdrop-blur-sm border border-white/10 rounded-xl px-4 py-2.5">
+                                                <svg className="w-4 h-4 text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 6v12m-3-2.818l.879.659c1.171.879 3.07.879 4.242 0 1.172-.879 1.172-2.303 0-3.182C13.536 12.219 12.768 12 12 12c-.725 0-1.45-.22-2.003-.659-1.106-.879-1.106-2.303 0-3.182s2.9-.879 4.006 0l.415.33M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                                                <span className="text-lg font-bold text-white">{Number(worker.hourly_rate).toLocaleString()} FCFA</span>
+                                                <span className="text-xs text-gray-400">{t('common.perHour')}</span>
+                                            </div>
+                                        )}
+                                        {worker.daily_rate && (
+                                            <div className="inline-flex items-center gap-2 bg-white/5 backdrop-blur-sm border border-white/10 rounded-xl px-4 py-2.5">
+                                                <svg className="w-4 h-4 text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 6v12m-3-2.818l.879.659c1.171.879 3.07.879 4.242 0 1.172-.879 1.172-2.303 0-3.182C13.536 12.219 12.768 12 12 12c-.725 0-1.45-.22-2.003-.659-1.106-.879-1.106-2.303 0-3.182s2.9-.879 4.006 0l.415.33M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                                                <span className="text-lg font-bold text-white">{Number(worker.daily_rate).toLocaleString()} FCFA</span>
+                                                <span className="text-xs text-gray-400">{t('common.perDay')}</span>
+                                            </div>
+                                        )}
+                                    </div>
+                                )}
+                            </div>
+
+                            {/* Action buttons */}
+                            <div className="flex items-center gap-3 sm:mt-4">
+                                {auth?.user && auth.user.id !== worker.user_id && auth.user.role === 'employer' && (
+                                    <Link href={`/workers/${worker.id}/save`} method="post" as="button"
+                                        className="inline-flex items-center gap-2 px-5 py-3 rounded-xl border border-white/20 text-white text-sm font-medium hover:bg-white/10 hover:border-white/30 transition-all duration-200">
+                                        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z" /></svg>
+                                        Save
+                                    </Link>
+                                )}
+                                <button
+                                    onClick={() => navigator.share?.({ title: worker.user?.name || '', url: window.location.href }) || navigator.clipboard.writeText(window.location.href)}
+                                    className="inline-flex items-center gap-2 px-5 py-3 rounded-xl border border-white/20 text-white text-sm font-medium hover:bg-white/10 hover:border-white/30 transition-all duration-200"
+                                >
+                                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M7.217 10.907a2.25 2.25 0 100 2.186m0-2.186c.18.324.283.696.283 1.093s-.103.77-.283 1.093m0-2.186l9.566-5.314m-9.566 7.5l9.566 5.314m0 0a2.25 2.25 0 103.935 2.186 2.25 2.25 0 00-3.935-2.186zm0-12.814a2.25 2.25 0 103.933-2.185 2.25 2.25 0 00-3.933 2.185z" /></svg>
+                                    {t('common.share')}
+                                </button>
+                            </div>
+                        </div>
+                    </motion.div>
+                </div>
+            </div>
+
+            {/* ═══════ Main Content ═══════ */}
+            <div className="bg-gray-50 min-h-screen">
+                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+                    <div className="flex flex-col lg:flex-row gap-8">
+
+                        {/* ─── Left Column ─── */}
+                        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4, delay: 0.1 }} className="flex-1 min-w-0 space-y-6">
+
+                            {/* Stats Cards */}
+                            <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+                                <div className="bg-white rounded-2xl border border-gray-100 p-5 shadow-sm hover:shadow-md transition-shadow">
+                                    <div className="w-10 h-10 rounded-xl bg-blue-50 flex items-center justify-center mb-3">
+                                        <svg className="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M20.25 14.15v4.25c0 1.094-.787 2.036-1.872 2.18-2.087.277-4.216.42-6.378.42s-4.291-.143-6.378-.42c-1.085-.144-1.872-1.086-1.872-2.18v-4.25m16.5 0a2.18 2.18 0 00.75-1.661V8.706c0-1.081-.768-2.015-1.837-2.175a48.114 48.114 0 00-3.413-.387m4.5 8.006c-.194.165-.42.295-.673.38A23.978 23.978 0 0112 15.75c-2.648 0-5.195-.429-7.577-1.22a2.016 2.016 0 01-.673-.38m0 0A2.18 2.18 0 013 12.489V8.706c0-1.081.768-2.015 1.837-2.175a48.111 48.111 0 013.413-.387m7.5 0V5.25A2.25 2.25 0 0013.5 3h-3a2.25 2.25 0 00-2.25 2.25v.894m7.5 0a48.667 48.667 0 00-7.5 0M12 12.75h.008v.008H12v-.008z" /></svg>
+                                    </div>
+                                    <p className="text-xs font-medium text-gray-400 uppercase tracking-wider mb-1">{t('workerShow.experienceStat')}</p>
+                                    <p className="font-bold text-gray-900">{t('workerShow.yearsValue', { count: worker.years_of_experience || worker.years_experience || 0 })}</p>
+                                </div>
+                                <div className="bg-white rounded-2xl border border-gray-100 p-5 shadow-sm hover:shadow-md transition-shadow">
+                                    <div className="w-10 h-10 rounded-xl bg-amber-50 flex items-center justify-center mb-3">
+                                        <svg className="w-5 h-5 text-amber-600" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" /></svg>
+                                    </div>
+                                    <p className="text-xs font-medium text-gray-400 uppercase tracking-wider mb-1">{t('workerShow.ratingStat')}</p>
+                                    <p className="font-bold text-gray-900">{averageRating || t('common.na')} <span className="text-gray-400 font-normal text-xs">/ 5</span></p>
+                                </div>
+                                <div className="bg-white rounded-2xl border border-gray-100 p-5 shadow-sm hover:shadow-md transition-shadow">
+                                    <div className="w-10 h-10 rounded-xl bg-emerald-50 flex items-center justify-center mb-3">
+                                        <svg className="w-5 h-5 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" /></svg>
+                                    </div>
+                                    <p className="text-xs font-medium text-gray-400 uppercase tracking-wider mb-1">{t('workerShow.skillsStat')}</p>
+                                    <p className="font-bold text-gray-900">{worker.skills?.length || 0}</p>
+                                </div>
+                                <div className="bg-white rounded-2xl border border-gray-100 p-5 shadow-sm hover:shadow-md transition-shadow">
+                                    <div className="w-10 h-10 rounded-xl bg-violet-50 flex items-center justify-center mb-3">
+                                        <svg className="w-5 h-5 text-violet-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M11.48 3.499a.562.562 0 011.04 0l2.125 5.111a.563.563 0 00.475.345l5.518.442c.499.04.701.663.321.988l-4.204 3.602a.563.563 0 00-.182.557l1.285 5.385a.562.562 0 01-.84.61l-4.725-2.885a.563.563 0 00-.586 0L6.982 20.54a.562.562 0 01-.84-.61l1.285-5.386a.562.562 0 00-.182-.557l-4.204-3.602a.563.563 0 01.321-.988l5.518-.442a.563.563 0 00.475-.345L11.48 3.5z" /></svg>
+                                    </div>
+                                    <p className="text-xs font-medium text-gray-400 uppercase tracking-wider mb-1">{t('workerShow.reviewsStat')}</p>
+                                    <p className="font-bold text-gray-900">{totalReviews}</p>
+                                </div>
+                            </div>
+
+                            {/* About */}
+                            {worker.bio && (
+                                <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
+                                    <div className="px-8 py-6 border-b border-gray-100">
+                                        <div className="flex items-center gap-3">
+                                            <div className="w-8 h-8 rounded-lg bg-gray-900 flex items-center justify-center">
+                                                <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z" /></svg>
+                                            </div>
+                                            <h2 className="text-lg font-bold text-gray-900">{t('workerShow.about')}</h2>
+                                        </div>
+                                    </div>
+                                    <div className="px-8 py-6">
+                                        <p className="text-gray-600 leading-relaxed whitespace-pre-line">{worker.bio}</p>
+                                    </div>
+                                </div>
+                            )}
+
+                            {/* Skills */}
+                            {worker.skills && worker.skills.length > 0 && (
+                                <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
+                                    <div className="px-8 py-6 border-b border-gray-100">
+                                        <div className="flex items-center gap-3">
+                                            <div className="w-8 h-8 rounded-lg bg-violet-600 flex items-center justify-center">
+                                                <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" /></svg>
+                                            </div>
+                                            <h2 className="text-lg font-bold text-gray-900">{t('workerShow.skillsExpertise')}</h2>
+                                        </div>
+                                    </div>
+                                    <div className="px-8 py-6">
+                                        <div className="flex flex-wrap gap-2">
+                                            {worker.skills.map((skill) => (
+                                                <span key={skill.id} className="inline-flex items-center px-4 py-2 rounded-xl text-sm font-medium bg-gray-50 text-gray-700 border border-gray-200 hover:bg-amber-50 hover:text-amber-700 hover:border-amber-200 transition-colors cursor-default">
+                                                    {skill.name}
+                                                    {skill.pivot?.proficiency && (
+                                                        <span className="ml-2 text-xs text-gray-400 capitalize">· {skill.pivot.proficiency}</span>
+                                                    )}
+                                                </span>
+                                            ))}
+                                        </div>
+                                    </div>
+                                </div>
+                            )}
+
+                            {/* Specializations */}
+                            {((worker.categories && worker.categories.length > 0) || (worker.job_categories && worker.job_categories.length > 0)) && (
+                                <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
+                                    <div className="px-8 py-6 border-b border-gray-100">
+                                        <div className="flex items-center gap-3">
+                                            <div className="w-8 h-8 rounded-lg bg-amber-500 flex items-center justify-center">
+                                                <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.568 3H5.25A2.25 2.25 0 003 5.25v4.318c0 .597.237 1.17.659 1.591l9.581 9.581c.699.699 1.78.872 2.607.33a18.095 18.095 0 005.223-5.223c.542-.827.369-1.908-.33-2.607L11.16 3.66A2.25 2.25 0 009.568 3z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 6h.008v.008H6V6z" /></svg>
+                                            </div>
+                                            <h2 className="text-lg font-bold text-gray-900">{t('workerShow.specializations')}</h2>
+                                        </div>
+                                    </div>
+                                    <div className="px-8 py-6">
+                                        <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+                                            {(worker.categories || worker.job_categories || []).map((cat) => (
+                                                <div key={cat.id} className="flex items-center gap-3 p-3 rounded-xl bg-gray-50 border border-gray-100 hover:border-amber-200 hover:bg-amber-50/50 transition-colors">
+                                                    <div className="w-8 h-8 rounded-lg bg-white shadow-sm flex items-center justify-center flex-shrink-0">
+                                                        <svg className="w-4 h-4 text-amber-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M11.42 15.17l-5.648-3.014a.75.75 0 01-.1-1.25l.813-.7a.75.75 0 011.028.048l3.95 4.224a.75.75 0 001.028.048l9.217-7.932a.75.75 0 011.192.592v7.264a2.25 2.25 0 01-2.25 2.25H3.75a2.25 2.25 0 01-2.25-2.25V7.5a2.25 2.25 0 012.25-2.25h13.5" /></svg>
+                                                    </div>
+                                                    <span className="text-sm font-medium text-gray-700">{cat.name}</span>
+                                                </div>
+                                            ))}
+                                        </div>
+                                    </div>
+                                </div>
+                            )}
+
+                            {/* Work Experience */}
+                            {worker.work_experiences && worker.work_experiences.length > 0 && (
+                                <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
+                                    <div className="px-8 py-6 border-b border-gray-100">
+                                        <div className="flex items-center gap-3">
+                                            <div className="w-8 h-8 rounded-lg bg-blue-600 flex items-center justify-center">
+                                                <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20.25 14.15v4.25c0 1.094-.787 2.036-1.872 2.18-2.087.277-4.216.42-6.378.42s-4.291-.143-6.378-.42c-1.085-.144-1.872-1.086-1.872-2.18v-4.25m16.5 0a2.18 2.18 0 00.75-1.661V8.706c0-1.081-.768-2.015-1.837-2.175a48.114 48.114 0 00-3.413-.387m4.5 8.006c-.194.165-.42.295-.673.38A23.978 23.978 0 0112 15.75c-2.648 0-5.195-.429-7.577-1.22a2.016 2.016 0 01-.673-.38m0 0A2.18 2.18 0 013 12.489V8.706c0-1.081.768-2.015 1.837-2.175a48.111 48.111 0 013.413-.387m7.5 0V5.25A2.25 2.25 0 0013.5 3h-3a2.25 2.25 0 00-2.25 2.25v.894m7.5 0a48.667 48.667 0 00-7.5 0M12 12.75h.008v.008H12v-.008z" /></svg>
+                                            </div>
+                                            <h2 className="text-lg font-bold text-gray-900">{t('workerShow.workExperience')}</h2>
+                                        </div>
+                                    </div>
+                                    <div className="px-8 py-6">
+                                        <div className="relative">
+                                            {/* Timeline line */}
+                                            <div className="absolute left-[17px] top-3 bottom-3 w-px bg-gradient-to-b from-amber-300 via-amber-200 to-transparent" />
+
+                                            <div className="space-y-8">
+                                                {worker.work_experiences.map((exp, index) => (
+                                                    <div key={exp.id} className="relative flex gap-5">
+                                                        {/* Timeline dot */}
+                                                        <div className={`relative z-10 w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0 ${exp.is_current ? 'bg-amber-500 shadow-lg shadow-amber-500/25' : 'bg-white border-2 border-amber-300'}`}>
+                                                            {exp.is_current ? (
+                                                                <div className="w-2.5 h-2.5 bg-white rounded-full" />
+                                                            ) : (
+                                                                <div className="w-2.5 h-2.5 bg-amber-300 rounded-full" />
+                                                            )}
+                                                        </div>
+
+                                                        <div className="flex-1 pb-1">
+                                                            <div className="flex items-start justify-between flex-wrap gap-2">
+                                                                <div>
+                                                                    <h3 className="font-semibold text-gray-900">{exp.job_title}</h3>
+                                                                    <p className="text-amber-600 font-medium text-sm mt-0.5">{exp.company_name}</p>
+                                                                </div>
+                                                                {exp.is_current && (
+                                                                    <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-700 ring-1 ring-inset ring-emerald-600/20">{t('workerShow.current')}</span>
+                                                                )}
+                                                            </div>
+                                                            <div className="flex items-center gap-3 mt-2 text-xs text-gray-400">
+                                                                <span className="flex items-center gap-1">
+                                                                    <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 012.25-2.25h13.5A2.25 2.25 0 0121 7.5v11.25m-18 0A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75m-18 0v-7.5A2.25 2.25 0 015.25 9h13.5A2.25 2.25 0 0121 11.25v7.5" /></svg>
+                                                                    {new Date(exp.start_date).toLocaleDateString('en-US', { month: 'short', year: 'numeric' })}
+                                                                    {' — '}
+                                                                    {exp.is_current ? t('workerShow.present') : exp.end_date ? new Date(exp.end_date).toLocaleDateString('en-US', { month: 'short', year: 'numeric' }) : ''}
+                                                                </span>
+                                                                {exp.location && (
+                                                                    <span className="flex items-center gap-1">
+                                                                        <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 10.5a3 3 0 11-6 0 3 3 0 016 0z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1115 0z" /></svg>
+                                                                        {exp.location}
+                                                                    </span>
+                                                                )}
+                                                            </div>
+                                                            {exp.project_name && (
+                                                                <p className="text-xs text-gray-400 mt-1.5 flex items-center gap-1">
+                                                                    <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.25 12.75V12A2.25 2.25 0 014.5 9.75h15A2.25 2.25 0 0121.75 12v.75m-8.69-6.44l-2.12-2.12a1.5 1.5 0 00-1.061-.44H4.5A2.25 2.25 0 002.25 6v12a2.25 2.25 0 002.25 2.25h15A2.25 2.25 0 0021.75 18V9a2.25 2.25 0 00-2.25-2.25h-5.379a1.5 1.5 0 01-1.06-.44z" /></svg>
+                                                                    {t('workerShow.projectName', { name: exp.project_name })}
+                                                                </p>
+                                                            )}
+                                                            {exp.description && (
+                                                                <p className="text-sm text-gray-500 mt-3 leading-relaxed">{exp.description}</p>
+                                                            )}
+                                                        </div>
+                                                    </div>
+                                                ))}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            )}
+
+                            {/* Portfolio */}
+                            {worker.portfolio_photos && worker.portfolio_photos.length > 0 && (
+                                <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
+                                    <div className="px-8 py-6 border-b border-gray-100">
+                                        <div className="flex items-center gap-3">
+                                            <div className="w-8 h-8 rounded-lg bg-rose-500 flex items-center justify-center">
+                                                <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.25 15.75l5.159-5.159a2.25 2.25 0 013.182 0l5.159 5.159m-1.5-1.5l1.409-1.409a2.25 2.25 0 013.182 0l2.909 2.909M3.75 21h16.5A2.25 2.25 0 0022.5 18.75V5.25A2.25 2.25 0 0020.25 3H3.75A2.25 2.25 0 001.5 5.25v13.5A2.25 2.25 0 003.75 21z" /></svg>
+                                            </div>
+                                            <h2 className="text-lg font-bold text-gray-900">{t('workerShow.portfolio')}</h2>
+                                            <span className="text-xs text-gray-400 bg-gray-100 px-2 py-0.5 rounded-full">{t('workerShow.photoCount', { count: worker.portfolio_photos.length })}</span>
+                                        </div>
+                                    </div>
+                                    <div className="px-8 py-6">
+                                        <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
+                                            {worker.portfolio_photos.map((photo) => (
+                                                <button
+                                                    key={photo.id}
+                                                    onClick={() => setLightboxPhoto(`/storage/${photo.path}`)}
+                                                    className="group relative aspect-[4/3] rounded-xl overflow-hidden bg-gray-100 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:ring-offset-2"
+                                                >
+                                                    <img src={`/storage/${photo.path}`} alt={photo.caption || 'Portfolio'} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
+                                                    <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-200" />
+                                                    {photo.caption && (
+                                                        <div className="absolute bottom-0 left-0 right-0 p-3 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+                                                            <p className="text-white text-xs font-medium truncate">{photo.caption}</p>
+                                                        </div>
+                                                    )}
+                                                    <div className="absolute top-2 right-2 w-7 h-7 bg-white/80 backdrop-blur-sm rounded-lg flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+                                                        <svg className="w-3.5 h-3.5 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607zM10.5 7.5v6m3-3h-6" /></svg>
+                                                    </div>
+                                                </button>
+                                            ))}
+                                        </div>
+                                    </div>
+                                </div>
+                            )}
+
+                            {/* Reviews */}
+                            {worker.user?.reviews_received && worker.user.reviews_received.length > 0 && (
+                                <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
+                                    <div className="px-8 py-6 border-b border-gray-100">
+                                        <div className="flex items-center justify-between">
+                                            <div className="flex items-center gap-3">
+                                                <div className="w-8 h-8 rounded-lg bg-amber-500 flex items-center justify-center">
+                                                    <svg className="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" /></svg>
+                                                </div>
+                                                <h2 className="text-lg font-bold text-gray-900">{t('workerShow.reviewsSection')}</h2>
+                                            </div>
+                                            {averageRating && (
+                                                <div className="flex items-center gap-2 bg-amber-50 px-3 py-1.5 rounded-xl">
+                                                    <span className="text-lg font-bold text-amber-700">{averageRating}</span>
+                                                    <div className="flex">
+                                                        {[...Array(5)].map((_, i) => (
+                                                            <svg key={i} className={`w-4 h-4 ${i < Math.round(Number(averageRating)) ? 'text-amber-400 fill-current' : 'text-gray-200 fill-current'}`} viewBox="0 0 20 20">
+                                                                <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                                                            </svg>
+                                                        ))}
+                                                    </div>
+                                                    <span className="text-xs text-amber-600">({totalReviews})</span>
+                                                </div>
+                                            )}
+                                        </div>
+                                    </div>
+                                    <div className="divide-y divide-gray-50">
+                                        {worker.user.reviews_received.map((review: any) => (
+                                            <div key={review.id} className="px-8 py-6">
+                                                <div className="flex items-start gap-4">
+                                                    <div className="w-10 h-10 rounded-xl bg-gray-100 flex items-center justify-center flex-shrink-0">
+                                                        {review.reviewer?.avatar ? (
+                                                            <img src={`/storage/${review.reviewer.avatar}`} alt="" className="w-10 h-10 rounded-xl object-cover" />
+                                                        ) : (
+                                                            <span className="text-sm font-bold text-gray-500">{review.reviewer?.name?.charAt(0) || '?'}</span>
+                                                        )}
+                                                    </div>
+                                                    <div className="flex-1 min-w-0">
+                                                        <div className="flex items-center justify-between flex-wrap gap-2">
+                                                            <div>
+                                                                <p className="font-semibold text-gray-900 text-sm">{review.reviewer?.name}</p>
+                                                                <p className="text-xs text-gray-400 mt-0.5">{timeAgo(review.created_at)}</p>
+                                                            </div>
+                                                            <div className="flex items-center gap-1">
+                                                                {[...Array(5)].map((_, i) => (
+                                                                    <svg key={i} className={`w-4 h-4 ${i < review.rating ? 'text-amber-400 fill-current' : 'text-gray-200 fill-current'}`} viewBox="0 0 20 20">
+                                                                        <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                                                                    </svg>
+                                                                ))}
+                                                            </div>
+                                                        </div>
+                                                        {review.comment && (
+                                                            <p className="text-sm text-gray-600 mt-3 leading-relaxed">{review.comment}</p>
+                                                        )}
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        ))}
+                                    </div>
+                                </div>
+                            )}
+                        </motion.div>
+
+                        {/* ─── Right Sidebar ─── */}
+                        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4, delay: 0.25 }} className="lg:w-[360px] flex-shrink-0 space-y-6">
+
+                            {/* Contact / Hire card */}
+                            <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden sticky top-24">
+                                <div className="p-6">
+                                    {auth?.user && auth.user.id !== worker.user_id ? (
+                                        <div className="space-y-3">
+                                            {auth.user.role === 'employer' && (
+                                                <>
+                                                    <Link href={`/messages?to=${worker.user_id}`}
+                                                        className="w-full bg-amber-600 hover:bg-amber-700 text-white py-3.5 rounded-xl font-semibold transition-all duration-200 shadow-lg shadow-amber-600/25 hover:shadow-xl hover:shadow-amber-600/30 hover:-translate-y-0.5 flex items-center justify-center gap-2">
+                                                        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8.625 12a.375.375 0 11-.75 0 .375.375 0 01.75 0zm0 0H8.25m4.125 0a.375.375 0 11-.75 0 .375.375 0 01.75 0zm0 0H12m4.125 0a.375.375 0 11-.75 0 .375.375 0 01.75 0zm0 0h-.375M21 12c0 4.556-4.03 8.25-9 8.25a9.764 9.764 0 01-2.555-.337A5.972 5.972 0 015.41 20.97a5.969 5.969 0 01-.474-.065 4.48 4.48 0 00.978-2.025c.09-.457-.133-.901-.467-1.226C3.93 16.178 3 14.189 3 12c0-4.556 4.03-8.25 9-8.25s9 3.694 9 8.25z" /></svg>
+                                                        {t('workerShow.contactWorker')}
+                                                    </Link>
+                                                    <Link href={`/workers/${worker.id}/save`} method="post" as="button"
+                                                        className="w-full py-3 border border-gray-200 text-gray-700 hover:bg-gray-50 rounded-xl font-semibold transition-colors text-center flex items-center justify-center gap-2">
+                                                        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z" /></svg>
+                                                        {t('workerShow.saveToShortlist')}
+                                                    </Link>
+                                                </>
+                                            )}
+                                        </div>
+                                    ) : !auth?.user ? (
+                                        <div className="text-center py-2">
+                                            <div className="w-12 h-12 bg-gray-50 rounded-xl flex items-center justify-center mx-auto mb-3">
+                                                <svg className="w-6 h-6 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M16.5 10.5V6.75a4.5 4.5 0 10-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 002.25-2.25v-6.75a2.25 2.25 0 00-2.25-2.25H6.75a2.25 2.25 0 00-2.25 2.25v6.75a2.25 2.25 0 002.25 2.25z" /></svg>
+                                            </div>
+                                            <p className="text-sm text-gray-500 mb-4">{t('workerShow.signInToContact')}</p>
+                                            <Link href="/login" className="block w-full bg-amber-600 hover:bg-amber-700 text-white py-3 rounded-xl font-semibold transition-all duration-200 text-center shadow-lg shadow-amber-600/20">
+                                                {t('workerShow.signIn')}
+                                            </Link>
+                                        </div>
+                                    ) : null}
+                                </div>
+
+                                {/* Quick Info */}
+                                <div className="border-t border-gray-100 p-6">
+                                    <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-4">{t('workerShow.profileDetails')}</p>
+                                    <div className="space-y-4">
+                                        {(worker.years_of_experience || worker.years_experience > 0) && (
+                                            <div className="flex items-center justify-between">
+                                                <span className="text-sm text-gray-500 flex items-center gap-2">
+                                                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M20.25 14.15v4.25c0 1.094-.787 2.036-1.872 2.18-2.087.277-4.216.42-6.378.42s-4.291-.143-6.378-.42c-1.085-.144-1.872-1.086-1.872-2.18v-4.25m16.5 0a2.18 2.18 0 00.75-1.661V8.706c0-1.081-.768-2.015-1.837-2.175a48.114 48.114 0 00-3.413-.387m4.5 8.006c-.194.165-.42.295-.673.38A23.978 23.978 0 0112 15.75c-2.648 0-5.195-.429-7.577-1.22a2.016 2.016 0 01-.673-.38m0 0A2.18 2.18 0 013 12.489V8.706c0-1.081.768-2.015 1.837-2.175a48.111 48.111 0 013.413-.387m7.5 0V5.25A2.25 2.25 0 0013.5 3h-3a2.25 2.25 0 00-2.25 2.25v.894m7.5 0a48.667 48.667 0 00-7.5 0M12 12.75h.008v.008H12v-.008z" /></svg>
+                                                    {t('workerShow.experienceStat')}
+                                                </span>
+                                                <span className="text-sm font-semibold text-gray-900">{t('workerShow.yearsValue', { count: worker.years_of_experience || worker.years_experience })}</span>
+                                            </div>
+                                        )}
+                                        <div className="flex items-center justify-between">
+                                            <span className="text-sm text-gray-500 flex items-center gap-2">
+                                                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M3 13.125C3 12.504 3.504 12 4.125 12h2.25c.621 0 1.125.504 1.125 1.125v6.75C7.5 20.496 6.996 21 6.375 21h-2.25A1.125 1.125 0 013 19.875v-6.75zM9.75 8.625c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125v11.25c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V8.625zM16.5 4.125c0-.621.504-1.125 1.125-1.125h2.25C20.496 3 21 3.504 21 4.125v15.75c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V4.125z" /></svg>
+                                                {t('workerShow.level')}
+                                            </span>
+                                            <span className={`text-xs font-semibold px-2.5 py-1 rounded-full ring-1 ring-inset ${expColors[worker.experience_level] || 'bg-gray-50 text-gray-700 ring-gray-600/20'}`}>
+                                                {expLabels[worker.experience_level] || worker.experience_level}
+                                            </span>
+                                        </div>
+                                        {worker.hourly_rate && (
+                                            <div className="flex items-center justify-between">
+                                                <span className="text-sm text-gray-500 flex items-center gap-2">
+                                                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 6v12m-3-2.818l.879.659c1.171.879 3.07.879 4.242 0 1.172-.879 1.172-2.303 0-3.182C13.536 12.219 12.768 12 12 12c-.725 0-1.45-.22-2.003-.659-1.106-.879-1.106-2.303 0-3.182s2.9-.879 4.006 0l.415.33M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                                                    {t('workerShow.hourlyRate')}
+                                                </span>
+                                                <span className="text-sm font-bold text-amber-600">{Number(worker.hourly_rate).toLocaleString()} FCFA{t('workerCard.hr')}</span>
+                                            </div>
+                                        )}
+                                        {worker.daily_rate && (
+                                            <div className="flex items-center justify-between">
+                                                <span className="text-sm text-gray-500 flex items-center gap-2">
+                                                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 6v12m-3-2.818l.879.659c1.171.879 3.07.879 4.242 0 1.172-.879 1.172-2.303 0-3.182C13.536 12.219 12.768 12 12 12c-.725 0-1.45-.22-2.003-.659-1.106-.879-1.106-2.303 0-3.182s2.9-.879 4.006 0l.415.33M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                                                    {t('workerShow.dailyRate')}
+                                                </span>
+                                                <span className="text-sm font-bold text-amber-600">{Number(worker.daily_rate).toLocaleString()} FCFA{t('workerCard.day')}</span>
+                                            </div>
+                                        )}
+                                        {worker.available_from && (
+                                            <div className="flex items-center justify-between">
+                                                <span className="text-sm text-gray-500 flex items-center gap-2">
+                                                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 012.25-2.25h13.5A2.25 2.25 0 0121 7.5v11.25m-18 0A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75m-18 0v-7.5A2.25 2.25 0 015.25 9h13.5A2.25 2.25 0 0121 11.25v7.5" /></svg>
+                                                    {t('workerShow.availableFrom')}
+                                                </span>
+                                                <span className="text-sm font-medium text-gray-900">{new Date(worker.available_from).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}</span>
+                                            </div>
+                                        )}
+                                        {worker.max_travel_distance && (
+                                            <div className="flex items-center justify-between">
+                                                <span className="text-sm text-gray-500 flex items-center gap-2">
+                                                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M8.25 18.75a1.5 1.5 0 01-3 0m3 0a1.5 1.5 0 00-3 0m3 0h6m-9 0H3.375a1.125 1.125 0 01-1.125-1.125V14.25m17.25 4.5a1.5 1.5 0 01-3 0m3 0a1.5 1.5 0 00-3 0m3 0h1.125c.621 0 1.129-.504 1.09-1.124a17.902 17.902 0 00-3.213-9.193 2.056 2.056 0 00-1.58-.86H14.25M16.5 18.75h-2.25m0-11.177v-.958c0-.568-.422-1.048-.987-1.106a48.554 48.554 0 00-10.026 0 1.106 1.106 0 00-.987 1.106v7.635m12-6.677v6.677m0 4.5v-4.5m0 0h-12" /></svg>
+                                                    {t('workerShow.travelDistance')}
+                                                </span>
+                                                <span className="text-sm font-medium text-gray-900">{t('workerShow.km', { count: worker.max_travel_distance })}</span>
+                                            </div>
+                                        )}
+                                    </div>
+                                </div>
+
+                                {/* Certifications */}
+                                {worker.certifications && (
+                                    <div className="border-t border-gray-100 p-6">
+                                        <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-3">{t('workerShow.certifications')}</p>
+                                        <div className="space-y-2">
+                                            {String(worker.certifications).split('\n').filter(Boolean).map((cert, i) => (
+                                                <div key={i} className="flex items-start gap-2.5">
+                                                    <div className="w-5 h-5 rounded-md bg-emerald-50 flex items-center justify-center flex-shrink-0 mt-0.5">
+                                                        <svg className="w-3 h-3 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M4.5 12.75l6 6 9-13.5" /></svg>
+                                                    </div>
+                                                    <p className="text-sm text-gray-600">{cert.trim()}</p>
+                                                </div>
+                                            ))}
+                                        </div>
+                                    </div>
+                                )}
+
+                                {/* Languages */}
+                                {worker.languages && (
+                                    <div className="border-t border-gray-100 p-6">
+                                        <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-3">{t('workerShow.languages')}</p>
+                                        <div className="flex flex-wrap gap-2">
+                                            {String(worker.languages).split(',').map((lang, i) => (
+                                                <span key={i} className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-gray-50 text-gray-700 rounded-lg text-sm font-medium border border-gray-100">
+                                                    <svg className="w-3.5 h-3.5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M10.5 21l5.25-11.25L21 21m-9-3h7.5M3 5.621a48.474 48.474 0 016-.371m0 0c1.12 0 2.233.038 3.334.114M9 5.25V3m3.334 2.364C11.176 10.658 7.69 15.08 3 17.502m9.334-12.138c.896.061 1.785.147 2.666.257m-4.589 8.495a18.023 18.023 0 01-3.827-5.802" /></svg>
+                                                    {lang.trim()}
+                                                </span>
+                                            ))}
+                                        </div>
+                                    </div>
+                                )}
+                            </div>
+                        </motion.div>
+                    </div>
+                </div>
+            </div>
+
+            {/* ═══════ Lightbox ═══════ */}
+            {lightboxPhoto && (
+                <motion.div
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm p-4"
+                    onClick={() => setLightboxPhoto(null)}
+                >
+                    <motion.div initial={{ scale: 0.9 }} animate={{ scale: 1 }} className="relative max-w-4xl max-h-[85vh] w-full">
+                        <img src={lightboxPhoto} alt="" className="w-full h-full object-contain rounded-xl" />
+                        <button onClick={() => setLightboxPhoto(null)} className="absolute top-4 right-4 w-10 h-10 bg-black/50 hover:bg-black/70 rounded-xl flex items-center justify-center transition-colors">
+                            <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
+                        </button>
+                    </motion.div>
+                </motion.div>
+            )}
+        </AppLayout>
+    );
+}
