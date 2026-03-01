@@ -310,11 +310,10 @@ export default function Login({
                         </div>
 
                         {/* Trust badges */}
-                        <div className="grid grid-cols-3 gap-4 text-center">
+                        <div className="grid grid-cols-2 gap-4 text-center">
                             {[
                                 { value: '2,500+', label: t('login.statWorkers') },
-                                { value: '850+', label: t('login.statCompanies') },
-                                { value: '12K+', label: t('login.statJobsFilled') },
+                                { value: '12K+', label: t('login.statHires') },
                             ].map((stat, i) => (
                                 <div key={i} className="py-3 px-2 rounded-xl bg-white border border-slate-100">
                                     <div className="text-lg font-bold text-slate-800">{stat.value}</div>

@@ -9,10 +9,8 @@ import { useTranslation } from '@/hooks/useTranslation';
 interface Props {
     categories: JobCategory[];
     stats: {
-        total_jobs: number;
         total_workers: number;
         total_categories: number;
-        total_companies: number;
     };
     technicians: PaginatedData<WorkerProfile>;
     techFilters: {
@@ -233,7 +231,7 @@ function TechnicianCard({ worker, index }: { worker: WorkerProfile; index: numbe
                     {/* Footer */}
                     <div className="flex items-center justify-between pt-3.5 border-t border-gray-100">
                         {primaryCategory && (
-                            <span className={`text-[11px] font-semibold px-2.5 py-1 rounded-md ${getCategoryColor(primaryCategory.name)}`}>{primaryCategory.name}</span>
+                            <span className={`text-[11px] font-semibold px-2.5 py-1 rounded-md ${getCategoryColor(primaryCategory.name)}`}>{t(`categories.${primaryCategory.name}`) !== `categories.${primaryCategory.name}` ? t(`categories.${primaryCategory.name}`) : primaryCategory.name}</span>
                         )}
                         {worker.experience_level && (
                             <span className={`text-[11px] font-semibold px-2.5 py-1 rounded-md ${levelColors[worker.experience_level] || 'bg-gray-50 text-gray-600'}`}>
@@ -255,7 +253,7 @@ export default function Welcome({ categories, stats, technicians, techFilters }:
 
     const handleSearch = (e: React.FormEvent) => {
         e.preventDefault();
-        router.get('/jobs', { search: searchQuery, location: searchLocation });
+        router.get('/workers', { search: searchQuery, location: searchLocation });
     };
 
     return (
@@ -283,7 +281,7 @@ export default function Welcome({ categories, stats, technicians, techFilters }:
                                 <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75" />
                                 <span className="relative inline-flex rounded-full h-2 w-2 bg-blue-400" />
                             </span>
-                            {t('home.heroStatPill', { jobs: stats.total_jobs, workers: stats.total_workers })}
+                            {t('home.heroStatPill', { workers: stats.total_workers, categories: stats.total_categories })}
                         </motion.div>
                         <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-extrabold text-white mb-6 leading-[1.1] tracking-tight">
                             {t('home.heroHeading1')}<br />
@@ -309,13 +307,13 @@ export default function Welcome({ categories, stats, technicians, techFilters }:
                                     className="w-full py-3 border-0 focus:ring-0 text-gray-900 placeholder-slate-400 text-sm bg-transparent" />
                             </div>
                             <button type="submit" className="bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-white px-8 py-3 rounded-xl font-semibold transition-all text-sm shadow-lg shadow-amber-500/25 hover:shadow-amber-500/40">
-                                {t('home.searchJobs')}
+                                {t('home.searchWorkers')}
                             </button>
                         </motion.form>
                         <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.5 }} className="mt-8 flex flex-wrap items-center justify-center gap-2 text-sm">
                             <span className="text-slate-500">{t('home.trending')}</span>
                             {(t('home.trendingTerms') as any as string[]).map((term: string) => (
-                                <Link key={term} href={`/jobs?search=${encodeURIComponent(term)}`} className="px-3.5 py-1.5 bg-white/[0.06] hover:bg-white/[0.12] text-slate-300 rounded-full transition-all border border-white/[0.08] hover:border-white/20 text-xs font-medium">{term}</Link>
+                                <Link key={term} href={`/workers?search=${encodeURIComponent(term)}`} className="px-3.5 py-1.5 bg-white/[0.06] hover:bg-white/[0.12] text-slate-300 rounded-full transition-all border border-white/[0.08] hover:border-white/20 text-xs font-medium">{term}</Link>
                             ))}
                         </motion.div>
                     </motion.div>
@@ -328,9 +326,7 @@ export default function Welcome({ categories, stats, technicians, techFilters }:
                         className="hidden lg:flex justify-center gap-8 mt-16"
                     >
                         {[
-                            { icon: '💼', value: stats.total_jobs, label: t('home.activeJobs') },
-                            { icon: '👷', value: stats.total_workers, label: t('home.skilledWorkers') },
-                            { icon: '🏗️', value: stats.total_companies, label: t('home.companies') },
+                            { icon: '�', value: stats.total_workers, label: t('home.skilledWorkers') },
                             { icon: '📋', value: stats.total_categories, label: t('home.tradeCategories') },
                         ].map((s) => (
                             <div key={s.label} className="flex items-center gap-3 bg-white/[0.06] backdrop-blur-sm border border-white/[0.08] rounded-2xl px-5 py-3">
@@ -362,12 +358,10 @@ export default function Welcome({ categories, stats, technicians, techFilters }:
             {/* Stats Counters (mobile-visible version) */}
             <section className="py-12 lg:hidden">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                    <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                    <div className="grid grid-cols-2 md:grid-cols-2 gap-4">
                         {[
-                            { label: t('home.activeJobs'), value: stats.total_jobs, color: 'from-blue-500 to-blue-600', icon: '💼' },
                             { label: t('home.skilledWorkers'), value: stats.total_workers, color: 'from-amber-500 to-orange-500', icon: '👷' },
                             { label: t('home.tradeCategories'), value: stats.total_categories, color: 'from-emerald-500 to-teal-500', icon: '📋' },
-                            { label: t('home.companies'), value: stats.total_companies, color: 'from-purple-500 to-indigo-500', icon: '🏗️' },
                         ].map((stat, i) => (
                             <motion.div key={stat.label} custom={i} variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }}
                                 className="relative overflow-hidden bg-white rounded-2xl p-5 border border-gray-100 shadow-sm">
@@ -427,7 +421,7 @@ export default function Welcome({ categories, stats, technicians, techFilters }:
                             <h2 className="text-3xl md:text-4xl font-extrabold text-slate-900 tracking-tight">{t('home.categoriesHeading')}</h2>
                             <p className="text-slate-500 mt-3 max-w-lg text-base leading-relaxed">{t('home.categoriesDescription')}</p>
                         </div>
-                        <Link href="/jobs" className="inline-flex items-center gap-2 text-sm font-semibold text-blue-600 hover:text-blue-700 transition-colors group">
+                        <Link href="/workers" className="inline-flex items-center gap-2 text-sm font-semibold text-blue-600 hover:text-blue-700 transition-colors group">
                             {t('home.viewAllCategories')}
                             <svg className="w-4 h-4 group-hover:translate-x-0.5 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" /></svg>
                         </Link>
@@ -436,10 +430,10 @@ export default function Welcome({ categories, stats, technicians, techFilters }:
                         {categories.slice(0, 12).map((cat, i) => {
                             const iconPath = getCategoryIcon(cat.name);
                             const accent = getCategoryAccent(cat.name);
-                            const jobCount = cat.job_listings_count || 0;
+                            const workerCount = cat.worker_profiles_count || 0;
                             return (
                                 <motion.div key={cat.id} custom={i} variants={fadeUp}>
-                                    <Link href={`/jobs?category=${cat.id}`}
+                                    <Link href={`/workers?category=${cat.id}`}
                                         className={`flex items-center gap-5 bg-white ${accent.bg} rounded-2xl px-6 py-5 border border-gray-100/80 ${accent.hoverBorder} transition-all duration-300 group hover:shadow-xl hover:shadow-slate-200/50 h-full`}>
                                         {/* Icon */}
                                         <div className={`w-14 h-14 ${accent.iconBg} rounded-xl flex items-center justify-center flex-shrink-0 transition-all duration-300 group-hover:scale-110 group-hover:shadow-lg`}>
@@ -449,12 +443,12 @@ export default function Welcome({ categories, stats, technicians, techFilters }:
                                         </div>
                                         {/* Text */}
                                         <div className="flex-1 min-w-0">
-                                            <h3 className="font-bold text-slate-800 text-[15px] leading-snug group-hover:text-slate-900 transition-colors truncate">{cat.name}</h3>
+                                            <h3 className="font-bold text-slate-800 text-[15px] leading-snug group-hover:text-slate-900 transition-colors truncate">{t(`categories.${cat.name}`) !== `categories.${cat.name}` ? t(`categories.${cat.name}`) : cat.name}</h3>
                                             <div className="flex items-center gap-2 mt-1.5">
                                                 <span className={`inline-flex items-center px-2.5 py-0.5 ${accent.countBg} ${accent.countText} text-xs font-bold rounded-full`}>
-                                                    {jobCount}
+                                                    {workerCount}
                                                 </span>
-                                                <span className="text-xs text-slate-400 font-medium">{jobCount === 1 ? t('home.openPosition') : t('home.openPositions')}</span>
+                                                <span className="text-xs text-slate-400 font-medium">{workerCount === 1 ? t('home.availableWorker') : t('home.availableWorkers')}</span>
                                             </div>
                                         </div>
                                         {/* Arrow */}
@@ -548,69 +542,6 @@ export default function Welcome({ categories, stats, technicians, techFilters }:
                 </div>
             </section>
 
-            {/* Testimonials */}
-            <section className="py-20 bg-white">
-                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                    <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="text-center mb-14">
-                        <p className="text-sm font-bold text-amber-600 uppercase tracking-widest mb-3">{t('home.testimonialsLabel')}</p>
-                        <h2 className="text-3xl md:text-4xl font-extrabold text-slate-900">{t('home.testimonialsHeading')}</h2>
-                    </motion.div>
-
-                    <div className="grid md:grid-cols-3 gap-6">
-                        {[
-                            {
-                                quote: t('home.testimonial1'),
-                                name: t('home.testimonial1Name'),
-                                role: t('home.testimonial1Role'),
-                                initials: 'JN',
-                                gradient: 'from-blue-500 to-blue-600',
-                            },
-                            {
-                                quote: t('home.testimonial2'),
-                                name: t('home.testimonial2Name'),
-                                role: t('home.testimonial2Role'),
-                                initials: 'AB',
-                                gradient: 'from-amber-500 to-orange-500',
-                            },
-                            {
-                                quote: t('home.testimonial3'),
-                                name: t('home.testimonial3Name'),
-                                role: t('home.testimonial3Role'),
-                                initials: 'PF',
-                                gradient: 'from-emerald-500 to-teal-500',
-                            },
-                        ].map((testimonial, i) => (
-                            <motion.div
-                                key={i}
-                                initial={{ opacity: 0, y: 30 }}
-                                whileInView={{ opacity: 1, y: 0 }}
-                                viewport={{ once: true }}
-                                transition={{ delay: i * 0.12 }}
-                                className="bg-gray-50 rounded-2xl p-7 border border-gray-100 hover:border-gray-200 hover:shadow-lg transition-all duration-300 flex flex-col"
-                            >
-                                <div className="flex items-center gap-1 mb-4">
-                                    {[...Array(5)].map((_, si) => (
-                                        <svg key={si} className="w-4 h-4 text-amber-400" fill="currentColor" viewBox="0 0 20 20">
-                                            <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
-                                        </svg>
-                                    ))}
-                                </div>
-                                <p className="text-slate-600 text-sm leading-relaxed flex-1">&ldquo;{testimonial.quote}&rdquo;</p>
-                                <div className="mt-5 pt-5 border-t border-gray-200 flex items-center gap-3">
-                                    <div className={`w-10 h-10 rounded-full bg-gradient-to-br ${testimonial.gradient} flex items-center justify-center text-white text-sm font-bold shadow-sm`}>
-                                        {testimonial.initials}
-                                    </div>
-                                    <div>
-                                        <p className="text-sm font-semibold text-slate-800">{testimonial.name}</p>
-                                        <p className="text-xs text-slate-400">{testimonial.role}</p>
-                                    </div>
-                                </div>
-                            </motion.div>
-                        ))}
-                    </div>
-                </div>
-            </section>
-
             {/* CTA */}
             <section className="py-24 relative overflow-hidden bg-gradient-to-br from-slate-900 via-slate-800 to-blue-950">
                 {/* Decorative */}
@@ -640,8 +571,8 @@ export default function Welcome({ categories, stats, technicians, techFilters }:
                                 {t('home.getStartedFree')}
                                 <svg className="w-4 h-4 group-hover:translate-x-0.5 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" /></svg>
                             </Link>
-                            <Link href="/jobs" className="inline-flex items-center justify-center gap-2 border border-white/20 text-white px-8 py-4 rounded-xl font-semibold hover:bg-white/[0.06] transition-all text-sm backdrop-blur-sm">
-                                {t('home.browseJobs')}
+                            <Link href="/workers" className="inline-flex items-center justify-center gap-2 border border-white/20 text-white px-8 py-4 rounded-xl font-semibold hover:bg-white/[0.06] transition-all text-sm backdrop-blur-sm">
+                                {t('home.browseWorkers')}
                             </Link>
                         </div>
                     </motion.div>

@@ -31,9 +31,6 @@ export default function GuestLayout({ header, children }: Props) {
                             </Link>
 
                             <div className="hidden md:flex items-center ml-10 space-x-8">
-                                <Link href="/jobs" className="text-gray-600 hover:text-blue-600 font-medium transition-colors">
-                                    {t('nav.findJobs')}
-                                </Link>
                                 <Link href="/workers" className="text-gray-600 hover:text-blue-600 font-medium transition-colors">
                                     {t('nav.findWorkers')}
                                 </Link>
@@ -105,7 +102,6 @@ export default function GuestLayout({ header, children }: Props) {
                             className="md:hidden border-t border-gray-100 overflow-hidden"
                         >
                             <div className="px-4 py-3 space-y-2">
-                                <Link href="/jobs" className="block py-2 text-gray-600 hover:text-blue-600 font-medium">{t('nav.findJobs')}</Link>
                                 <Link href="/workers" className="block py-2 text-gray-600 hover:text-blue-600 font-medium">{t('nav.findWorkers')}</Link>
                                 {auth?.user ? (
                                     <>
@@ -136,48 +132,22 @@ export default function GuestLayout({ header, children }: Props) {
             <main>{children}</main>
 
             {/* Footer */}
-            <footer className="bg-slate-900 text-slate-400 mt-20">
-                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-                    <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
-                        <div>
-                            <Link href="/" className="flex items-center space-x-2 mb-4">
-                                <div className="w-8 h-8 bg-slate-700 rounded-lg flex items-center justify-center">
-                                    <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
-                                    </svg>
-                                </div>
-                                <span className="text-lg font-bold text-white">Civil<span className="text-blue-400">Hire</span></span>
-                            </Link>
-                            <p className="text-sm">{t('footer.tagline')}</p>
+            <footer className="bg-slate-900 text-slate-400">
+                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+                    <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
+                        <Link href="/" className="flex items-center space-x-2">
+                            <div className="w-7 h-7 bg-slate-700 rounded-lg flex items-center justify-center">
+                                <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
+                                </svg>
+                            </div>
+                            <span className="text-sm font-bold text-white">Civil<span className="text-blue-400">Hire</span></span>
+                        </Link>
+                        <div className="flex items-center gap-6 text-sm">
+                            <Link href="/workers" className="hover:text-white transition-colors">{t('footer.browseWorkers')}</Link>
+                            <Link href="/register" className="hover:text-white transition-colors">{t('footer.createProfile')}</Link>
                         </div>
-                        <div>
-                            <h3 className="text-white font-semibold mb-4">{t('footer.forWorkers')}</h3>
-                            <ul className="space-y-2 text-sm">
-                                <li><Link href="/jobs" className="hover:text-blue-400 transition-colors">{t('footer.browseJobs')}</Link></li>
-                                <li><Link href="/register" className="hover:text-blue-400 transition-colors">{t('footer.createProfile')}</Link></li>
-                                <li><Link href="/my-applications" className="hover:text-blue-400 transition-colors">{t('footer.myApplications')}</Link></li>
-                            </ul>
-                        </div>
-                        <div>
-                            <h3 className="text-white font-semibold mb-4">{t('footer.forEmployers')}</h3>
-                            <ul className="space-y-2 text-sm">
-                                <li><Link href="/register" className="hover:text-blue-400 transition-colors">{t('footer.postJob')}</Link></li>
-                                <li><Link href="/workers" className="hover:text-blue-400 transition-colors">{t('footer.browseWorkers')}</Link></li>
-                                <li><Link href="/employer/dashboard" className="hover:text-blue-400 transition-colors">{t('footer.employerDashboard')}</Link></li>
-                            </ul>
-                        </div>
-                        <div>
-                            <h3 className="text-white font-semibold mb-4">{t('footer.jobCategories')}</h3>
-                            <ul className="space-y-2 text-sm">
-                                <li><Link href="/jobs?category=1" className="hover:text-blue-400 transition-colors">{t('footer.formworkMaker')}</Link></li>
-                                <li><Link href="/jobs?category=2" className="hover:text-blue-400 transition-colors">{t('footer.ironBender')}</Link></li>
-                                <li><Link href="/jobs?category=3" className="hover:text-blue-400 transition-colors">{t('footer.mason')}</Link></li>
-                                <li><Link href="/jobs?category=4" className="hover:text-blue-400 transition-colors">{t('footer.concreteWorker')}</Link></li>
-                            </ul>
-                        </div>
-                    </div>
-                    <div className="border-t border-slate-800 mt-10 pt-6 text-center text-sm">
-                        <p>{t('common.copyright', { year: new Date().getFullYear() })}</p>
+                        <p className="text-xs text-slate-500">{t('common.copyright', { year: new Date().getFullYear() })}</p>
                     </div>
                 </div>
             </footer>

@@ -12,7 +12,7 @@ class WorkerProfileController extends Controller
 {
     public function index(Request $request)
     {
-        $query = WorkerProfile::with(['user', 'skills', 'jobCategories']);
+        $query = WorkerProfile::with(['user.reviewsReceived', 'skills', 'jobCategories', 'portfolioPhotos']);
 
         if ($request->filled('search')) {
             $search = $request->search;
@@ -45,7 +45,7 @@ class WorkerProfileController extends Controller
             ->paginate(12)
             ->withQueryString();
 
-        $categories = JobCategory::where('is_active', true)->get();
+        $categories = JobCategory::withCount('workerProfiles')->where('is_active', true)->get();
 
         return Inertia::render('Workers/Index', [
             'workers' => $workers,
@@ -77,10 +77,12 @@ class WorkerProfileController extends Controller
         $profile->load(['skills', 'jobCategories', 'workExperiences']);
 
         $categories = JobCategory::with('skills')->where('is_active', true)->get();
+        $allSkills = Skill::orderBy('name')->get();
 
         return Inertia::render('Workers/Edit', [
             'profile' => $profile,
             'categories' => $categories,
+            'allSkills' => $allSkills,
         ]);
     }
 

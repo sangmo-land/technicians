@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Models\JobCategory;
-use App\Models\JobListing;
 use App\Models\WorkerProfile;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
@@ -12,37 +11,13 @@ class HomeController extends Controller
 {
     public function index(Request $request)
     {
-        $featuredJobs = JobListing::with(['company', 'jobCategory', 'skills'])
-            ->active()
-            ->featured()
-            ->latest()
-            ->take(6)
-            ->get();
-
-        $urgentJobs = JobListing::with(['company', 'jobCategory'])
-            ->active()
-            ->urgent()
-            ->latest()
-            ->take(4)
-            ->get();
-
-        $latestJobs = JobListing::with(['company', 'jobCategory'])
-            ->active()
-            ->latest()
-            ->take(8)
-            ->get();
-
-        $categories = JobCategory::withCount(['jobListings' => function ($q) {
-            $q->where('status', 'active');
-        }, 'workerProfiles'])
+        $categories = JobCategory::withCount(['workerProfiles'])
             ->where('is_active', true)
             ->get();
 
         $stats = [
-            'total_jobs' => JobListing::active()->count(),
             'total_workers' => WorkerProfile::count(),
             'total_categories' => JobCategory::where('is_active', true)->count(),
-            'total_companies' => \App\Models\Company::count(),
         ];
 
         // Paginated technicians (available workers)
@@ -69,9 +44,6 @@ class HomeController extends Controller
             ->withQueryString();
 
         return Inertia::render('Welcome', [
-            'featuredJobs' => $featuredJobs,
-            'urgentJobs' => $urgentJobs,
-            'latestJobs' => $latestJobs,
             'categories' => $categories,
             'stats' => $stats,
             'technicians' => $technicians,
