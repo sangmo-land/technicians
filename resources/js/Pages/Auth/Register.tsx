@@ -90,7 +90,7 @@ export default function Register() {
                                     </svg>
                                 </div>
                                 <span className="text-2xl font-bold text-white tracking-tight">
-                                    Civil<span className="text-amber-400">Hire</span>
+                                    Nex<span className="text-amber-400">Jobs</span>
                                 </span>
                             </Link>
                         </motion.div>
@@ -175,7 +175,7 @@ export default function Register() {
                                     </svg>
                                 </div>
                                 <span className="text-xl font-bold text-slate-800 tracking-tight">
-                                    Civil<span className="text-amber-500">Hire</span>
+                                    Nex<span className="text-amber-500">Jobs</span>
                                 </span>
                             </Link>
                         </div>
@@ -519,7 +519,7 @@ export default function Register() {
 
                                         {/* Terms notice */}
                                         <p className="text-xs text-slate-400 leading-relaxed">
-                                            By creating an account, you agree to CivilHire&apos;s{' '}
+                                            By creating an account, you agree to NexJobs&apos;s{' '}
                                             <a href="#" className="text-slate-500 hover:text-amber-600 underline transition-colors">Terms of Service</a>
                                             {' '}and{' '}
                                             <a href="#" className="text-slate-500 hover:text-amber-600 underline transition-colors">Privacy Policy</a>.

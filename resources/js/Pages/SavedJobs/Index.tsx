@@ -14,7 +14,7 @@ const typeLabels: Record<string, string> = {
 export default function SavedJobsIndex({ savedJobs }: Props) {
     return (
         <AppLayout>
-            <Head title="Saved Jobs - CivilHire" />
+            <Head title="Saved Jobs - NexJobs" />
 
             <div className="bg-gradient-to-r from-gray-900 to-gray-800 py-10">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">

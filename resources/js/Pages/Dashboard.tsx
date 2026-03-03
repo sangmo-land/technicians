@@ -8,7 +8,7 @@ export default function Dashboard() {
 
     return (
         <AppLayout>
-            <Head title="Dashboard - CivilHire" />
+            <Head title="Dashboard - NexJobs" />
 
             <div className="bg-gradient-to-r from-gray-900 to-gray-800 py-10">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">

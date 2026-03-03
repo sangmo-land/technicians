@@ -1,7 +1,7 @@
 const en = {
     // ─── Common ──────────────────────────────────────────
     common: {
-        appName: 'CivilHire',
+        appName: 'NexJobs',
         civil: 'Civil',
         hire: 'Hire',
         search: 'Search',
@@ -33,7 +33,7 @@ const en = {
         monthsAgo: '{{n}} months ago',
         yearsAgo: '{{n}} years ago',
         na: 'N/A',
-        copyright: '© {{year}} CivilHire. All rights reserved.',
+        copyright: '© {{year}} NexJobs. All rights reserved.',
     },
 
     // ─── Nav ─────────────────────────────────────────────
@@ -60,7 +60,7 @@ const en = {
 
     // ─── Home / Welcome ──────────────────────────────────
     home: {
-        pageTitle: 'CivilHire - Find Skilled Workers',
+        pageTitle: 'NexJobs - Find Skilled Workers',
         heroStatPill: '{{workers}} Verified Workers · {{categories}} Trade Categories',
         heroHeading1: 'Find Skilled',
         heroHeading2: 'Workers Instantly.',
@@ -126,18 +126,18 @@ const en = {
         // Testimonials
         testimonialsLabel: 'Testimonials',
         testimonialsHeading: 'What our users are saying',
-        testimonial1: "CivilHire connected me with a site engineer role in just 3 days. The platform is clean, fast, and actually understands construction jobs.",
+        testimonial1: "NexJobs connected me with a site engineer role in just 3 days. The platform is clean, fast, and actually understands construction jobs.",
         testimonial1Name: 'Jean-Pierre Nkoulou',
         testimonial1Role: 'Structural Engineer',
-        testimonial2: "As a contractor, finding skilled iron benders and formwork specialists was a nightmare. CivilHire changed that completely for our projects.",
+        testimonial2: "As a contractor, finding skilled iron benders and formwork specialists was a nightmare. NexJobs changed that completely for our projects.",
         testimonial2Name: 'Aminatou Bello',
         testimonial2Role: 'Project Manager, PeakStruct',
-        testimonial3: "The worker profiles are detailed with portfolios and reviews. We hired 12 skilled tradespeople for our Douala project through CivilHire.",
+        testimonial3: "The worker profiles are detailed with portfolios and reviews. We hired 12 skilled tradespeople for our Douala project through NexJobs.",
         testimonial3Name: 'Paul-Henri Fotso',
         testimonial3Role: 'MD, BuildRight Construction',
 
         // CTA
-        ctaBadge: 'Join {{count}}+ professionals already on CivilHire',
+        ctaBadge: 'Join {{count}}+ professionals already on NexJobs',
         ctaHeading1: 'Ready to build your',
         ctaHeading2: 'future?',
         ctaDescription: "Whether you're a skilled tradesperson looking to showcase your work or someone seeking verified talent — we've got you covered.",
@@ -178,7 +178,7 @@ const en = {
 
     // ─── Jobs Index ──────────────────────────────────────
     jobs: {
-        pageTitle: 'Browse Jobs - CivilHire',
+        pageTitle: 'Browse Jobs - NexJobs',
         heroHeading: 'Find Your Next Job',
         heroSub: '{{count}} positions available in civil engineering',
         filtersHeading: 'Filters',
@@ -292,7 +292,7 @@ const en = {
 
     // ─── Auth / Login ────────────────────────────────────
     login: {
-        pageTitle: 'Sign In — CivilHire',
+        pageTitle: 'Sign In — NexJobs',
         welcomeBack: 'Welcome back to the',
         futureOfHiring: 'future of hiring',
         leftDescription: 'Connect with top civil engineering talent and opportunities across the country.',
@@ -302,7 +302,7 @@ const en = {
         feature2Desc: 'Find verified professionals with detailed portfolios',
         feature3Title: 'Verified Reviews',
         feature3Desc: 'Make confident hiring decisions with trusted ratings',
-        testimonial: 'CivilHire helped me find qualified structural engineers within days. The platform is incredibly intuitive.',
+        testimonial: 'NexJobs helped me find qualified structural engineers within days. The platform is incredibly intuitive.',
         testimonialName: 'Emmanuel Tchinda',
         testimonialRole: 'Project Manager, BuildRight Ltd',
         heading: 'Sign in to your account',
@@ -325,7 +325,7 @@ const en = {
 
     // ─── Auth / Register ─────────────────────────────────
     register: {
-        pageTitle: 'Create Account — CivilHire',
+        pageTitle: 'Create Account — NexJobs',
         leftHeading1: 'Start your journey in',
         leftHeading2: 'civil engineering',
         leftDescription: 'Join thousands of professionals building the infrastructure of tomorrow.',
@@ -367,7 +367,7 @@ const en = {
         passwordHint: 'Use 8+ characters with uppercase, numbers & symbols',
         confirmLabel: 'Confirm password',
         confirmPlaceholder: 'Re-enter your password',
-        termsNotice: "By creating an account, you agree to CivilHire's Terms of Service and Privacy Policy.",
+        termsNotice: "By creating an account, you agree to NexJobs's Terms of Service and Privacy Policy.",
         createAccount: 'Create account',
         creatingAccount: 'Creating account...',
         alreadyHaveAccount: 'Already have an account?',
@@ -383,7 +383,7 @@ const en = {
 
     // ─── Workers Index (Search Page) ─────────────────────
     workersIndex: {
-        pageTitle: 'Find Workers - CivilHire',
+        pageTitle: 'Find Workers - NexJobs',
         home: 'Home',
         workers: 'Workers',
         workerCount: '{{count}} professionals available',
@@ -421,7 +421,7 @@ const en = {
 
     // ─── Worker Profile Edit ─────────────────────────────
     workerEdit: {
-        pageTitle: 'Edit Profile - CivilHire',
+        pageTitle: 'Edit Profile - NexJobs',
         heading: 'Edit Your Profile',
         subtitle: 'Showcase your skills and experience to potential clients',
         basicInfo: 'Basic Information',

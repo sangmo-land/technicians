@@ -15,7 +15,7 @@ class DatabaseSeeder extends Seeder
         // Create admin user
         User::factory()->create([
             'name' => 'Admin',
-            'email' => 'admin@civilhire.com',
+            'email' => 'admin@nexjobs.com',
             'role' => 'admin',
             'password' => bcrypt('password'),
         ]);
@@ -23,7 +23,7 @@ class DatabaseSeeder extends Seeder
         // Create test employer
         User::factory()->create([
             'name' => 'Demo Employer',
-            'email' => 'employer@civilhire.com',
+            'email' => 'employer@nexjobs.com',
             'role' => 'employer',
             'password' => bcrypt('password'),
         ]);
@@ -31,7 +31,7 @@ class DatabaseSeeder extends Seeder
         // Create test worker
         User::factory()->create([
             'name' => 'Demo Worker',
-            'email' => 'worker@civilhire.com',
+            'email' => 'worker@nexjobs.com',
             'role' => 'worker',
             'password' => bcrypt('password'),
         ]);

@@ -1,7 +1,7 @@
 const fr = {
     // ─── Common ──────────────────────────────────────────
     common: {
-        appName: 'CivilHire',
+        appName: 'NexJobs',
         civil: 'Civil',
         hire: 'Hire',
         search: 'Rechercher',
@@ -33,7 +33,7 @@ const fr = {
         monthsAgo: 'il y a {{n}} mois',
         yearsAgo: 'il y a {{n}} ans',
         na: 'N/D',
-        copyright: '© {{year}} CivilHire. Tous droits réservés.',
+        copyright: '© {{year}} NexJobs. Tous droits réservés.',
     },
 
     // ─── Nav ─────────────────────────────────────────────
@@ -60,7 +60,7 @@ const fr = {
 
     // ─── Home / Welcome ──────────────────────────────────
     home: {
-        pageTitle: 'CivilHire - Trouvez des ouvriers qualifiés',
+        pageTitle: 'NexJobs - Trouvez des ouvriers qualifiés',
         heroStatPill: '{{workers}} ouvriers vérifiés · {{categories}} catégories de métiers',
         heroHeading1: 'Trouvez des ouvriers',
         heroHeading2: 'qualifiés instantanément.',
@@ -126,18 +126,18 @@ const fr = {
         // Testimonials
         testimonialsLabel: 'Témoignages',
         testimonialsHeading: 'Ce que disent nos utilisateurs',
-        testimonial1: "CivilHire m'a mis en relation avec un poste d'ingénieur de chantier en seulement 3 jours. La plateforme est propre, rapide et comprend vraiment les métiers de la construction.",
+        testimonial1: "NexJobs m'a mis en relation avec un poste d'ingénieur de chantier en seulement 3 jours. La plateforme est propre, rapide et comprend vraiment les métiers de la construction.",
         testimonial1Name: 'Jean-Pierre Nkoulou',
         testimonial1Role: 'Ingénieur en structures',
-        testimonial2: "En tant qu'entrepreneur, trouver des ferrailleurs et des coffreurs qualifiés était un cauchemar. CivilHire a complètement changé la donne pour nos projets.",
+        testimonial2: "En tant qu'entrepreneur, trouver des ferrailleurs et des coffreurs qualifiés était un cauchemar. NexJobs a complètement changé la donne pour nos projets.",
         testimonial2Name: 'Aminatou Bello',
         testimonial2Role: 'Cheffe de projet, PeakStruct',
-        testimonial3: "Les profils des ouvriers sont détaillés avec portfolios et avis. Nous avons embauché 12 artisans qualifiés pour notre projet à Douala via CivilHire.",
+        testimonial3: "Les profils des ouvriers sont détaillés avec portfolios et avis. Nous avons embauché 12 artisans qualifiés pour notre projet à Douala via NexJobs.",
         testimonial3Name: 'Paul-Henri Fotso',
         testimonial3Role: 'DG, BuildRight Construction',
 
         // CTA
-        ctaBadge: 'Rejoignez {{count}}+ professionnels déjà sur CivilHire',
+        ctaBadge: 'Rejoignez {{count}}+ professionnels déjà sur NexJobs',
         ctaHeading1: 'Prêt à construire votre',
         ctaHeading2: 'avenir ?',
         ctaDescription: "Que vous soyez un artisan qualifié souhaitant mettre en valeur votre travail ou quelqu'un à la recherche de talents vérifiés — nous sommes là pour vous.",
@@ -178,7 +178,7 @@ const fr = {
 
     // ─── Jobs Index ──────────────────────────────────────
     jobs: {
-        pageTitle: 'Parcourir les emplois - CivilHire',
+        pageTitle: 'Parcourir les emplois - NexJobs',
         heroHeading: 'Trouvez votre prochain emploi',
         heroSub: '{{count}} postes disponibles en génie civil',
         filtersHeading: 'Filtres',
@@ -292,7 +292,7 @@ const fr = {
 
     // ─── Auth / Login ────────────────────────────────────
     login: {
-        pageTitle: 'Connexion — CivilHire',
+        pageTitle: 'Connexion — NexJobs',
         welcomeBack: 'Bienvenue dans le',
         futureOfHiring: "futur du recrutement",
         leftDescription: "Connectez-vous avec les meilleurs talents et opportunités en génie civil à travers le pays.",
@@ -302,7 +302,7 @@ const fr = {
         feature2Desc: 'Trouvez des professionnels vérifiés avec des portfolios détaillés',
         feature3Title: 'Avis vérifiés',
         feature3Desc: 'Prenez des décisions de recrutement en toute confiance',
-        testimonial: "CivilHire m'a aidé à trouver des ingénieurs en structures qualifiés en quelques jours. La plateforme est incroyablement intuitive.",
+        testimonial: "NexJobs m'a aidé à trouver des ingénieurs en structures qualifiés en quelques jours. La plateforme est incroyablement intuitive.",
         testimonialName: 'Emmanuel Tchinda',
         testimonialRole: 'Chef de projet, BuildRight Ltd',
         heading: 'Connectez-vous à votre compte',
@@ -325,7 +325,7 @@ const fr = {
 
     // ─── Auth / Register ─────────────────────────────────
     register: {
-        pageTitle: 'Créer un compte — CivilHire',
+        pageTitle: 'Créer un compte — NexJobs',
         leftHeading1: 'Commencez votre parcours dans le',
         leftHeading2: 'génie civil',
         leftDescription: "Rejoignez des milliers de professionnels qui construisent l'infrastructure de demain.",
@@ -367,7 +367,7 @@ const fr = {
         passwordHint: 'Utilisez 8+ caractères avec majuscules, chiffres et symboles',
         confirmLabel: 'Confirmer le mot de passe',
         confirmPlaceholder: 'Ressaisissez votre mot de passe',
-        termsNotice: "En créant un compte, vous acceptez les Conditions d'utilisation et la Politique de confidentialité de CivilHire.",
+        termsNotice: "En créant un compte, vous acceptez les Conditions d'utilisation et la Politique de confidentialité de NexJobs.",
         createAccount: 'Créer un compte',
         creatingAccount: 'Création du compte...',
         alreadyHaveAccount: 'Vous avez déjà un compte ?',
@@ -383,7 +383,7 @@ const fr = {
 
     // ─── Workers Index (Page de recherche) ───────────────
     workersIndex: {
-        pageTitle: 'Trouver des ouvriers - CivilHire',
+        pageTitle: 'Trouver des ouvriers - NexJobs',
         home: 'Accueil',
         workers: 'Ouvriers',
         workerCount: '{{count}} professionnels disponibles',
@@ -421,7 +421,7 @@ const fr = {
 
     // ─── Worker Profile Edit ─────────────────────────────
     workerEdit: {
-        pageTitle: 'Modifier le profil - CivilHire',
+        pageTitle: 'Modifier le profil - NexJobs',
         heading: 'Modifier votre profil',
         subtitle: 'Mettez en valeur vos compétences et votre expérience auprès des clients potentiels',
         basicInfo: 'Informations de base',

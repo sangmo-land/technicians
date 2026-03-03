@@ -62,7 +62,7 @@ export default function Login({
                                     </svg>
                                 </div>
                                 <span className="text-2xl font-bold text-white tracking-tight">
-                                    Civil<span className="text-amber-400">Hire</span>
+                                    Nex<span className="text-amber-400">Jobs</span>
                                 </span>
                             </Link>
                         </motion.div>
@@ -147,7 +147,7 @@ export default function Login({
                                     </svg>
                                 </div>
                                 <span className="text-xl font-bold text-slate-800 tracking-tight">
-                                    Civil<span className="text-amber-500">Hire</span>
+                                    Nex<span className="text-amber-500">Jobs</span>
                                 </span>
                             </Link>
                         </div>

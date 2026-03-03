@@ -492,7 +492,7 @@ export default function Welcome({ categories, stats, technicians, techFilters }:
                                                     <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" /></svg>
                                                 </div>
                                                 <div>
-                                                    <p className="text-white font-bold text-sm">CivilHire</p>
+                                                    <p className="text-white font-bold text-sm">NexJobs</p>
                                                     <p className="text-slate-400 text-[11px]">Live Platform Stats</p>
                                                 </div>
                                             </div>

@@ -639,7 +639,7 @@ class JobListingSeeder extends Seeder
         foreach ($companiesData as $companyData) {
             $user = User::create([
                 'name' => $companyData['name'] . ' HR',
-                'email' => Str::slug($companyData['name']) . '@civilhire.com',
+                'email' => Str::slug($companyData['name']) . '@nexjobs.com',
                 'password' => bcrypt('password'),
                 'role' => 'employer',
                 'is_active' => true,
@@ -650,7 +650,7 @@ class JobListingSeeder extends Seeder
                 ...$companyData,
                 'user_id' => $user->id,
                 'slug' => Str::slug($companyData['name']),
-                'email' => Str::slug($companyData['name']) . '@civilhire.com',
+                'email' => Str::slug($companyData['name']) . '@nexjobs.com',
                 'is_featured' => $companyData['is_featured'] ?? false,
             ]);
 

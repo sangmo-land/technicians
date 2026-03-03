@@ -47,7 +47,7 @@ export default function WorkerShow({ worker }: Props) {
 
     return (
         <AppLayout>
-            <Head title={`${worker.user?.name} - CivilHire`} />
+            <Head title={`${worker.user?.name} - NexJobs`} />
 
             {/* ═══════ Hero Section ═══════ */}
             <div className="relative overflow-hidden bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900">

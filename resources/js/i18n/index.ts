@@ -9,7 +9,7 @@ export type NestedKeyOf<T> = T extends object
 
 const translations: Record<string, Translations> = { en, fr };
 
-const STORAGE_KEY = 'civilhire_locale';
+const STORAGE_KEY = 'nexjobs_locale';
 
 export function getLocale(): string {
     if (typeof window === 'undefined') return 'en';

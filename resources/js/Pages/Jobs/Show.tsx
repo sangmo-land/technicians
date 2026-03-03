@@ -79,7 +79,7 @@ export default function JobShow({ job, relatedJobs, isSaved, hasApplied }: Props
 
     return (
         <AppLayout>
-            <Head title={`${job.title} - CivilHire`} />
+            <Head title={`${job.title} - NexJobs`} />
 
             {/* ═══════ Hero Section ═══════ */}
             <div className="relative overflow-hidden bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900">
