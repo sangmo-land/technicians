@@ -1,14 +1,15 @@
-import { Head, useForm, usePage } from '@inertiajs/react';
+import { Head, useForm, usePage, router } from '@inertiajs/react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { useState } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import AppLayout from '@/Layouts/AppLayout';
-import { WorkerProfile, JobCategory, Skill } from '@/types';
+import { WorkerProfile, JobCategory, Skill, WorkExperience, PortfolioPhoto } from '@/types';
 import { useTranslation } from '@/hooks/useTranslation';
 import {
     User, FileText, Briefcase, MapPin, Globe, Award,
     ChevronRight, ChevronLeft, Check, Save, Sparkles,
     Clock, Banknote, Languages, ShieldCheck, Tag,
-    AlertCircle,
+    AlertCircle, HardHat, Plus, Trash2, Calendar,
+    Camera, Upload, X, ImagePlus, Pencil,
 } from 'lucide-react';
 
 interface Props {
@@ -18,13 +19,32 @@ interface Props {
 }
 
 /* ── Step config ─────────────────────────────────── */
+interface WorkExpEntry {
+    id?: number;
+    job_title: string;
+    company_name: string;
+    project_name: string;
+    description: string;
+    location: string;
+    start_date: string;
+    end_date: string;
+    is_current: boolean;
+}
+
+const emptyExp = (): WorkExpEntry => ({
+    job_title: '', company_name: '', project_name: '', description: '',
+    location: '', start_date: '', end_date: '', is_current: false,
+});
+
 const STEPS = [
     { key: 'identity', icon: User },
     { key: 'experience', icon: Briefcase },
+    { key: 'work_history', icon: HardHat },
     { key: 'rates', icon: Banknote },
     { key: 'location', icon: MapPin },
     { key: 'details', icon: Globe },
     { key: 'categories', icon: Tag },
+    { key: 'portfolio', icon: Camera },
 ] as const;
 
 /* ── Fade animation ──────────────────────────────── */
@@ -38,6 +58,12 @@ export default function WorkerEdit({ profile, categories, allSkills }: Props) {
     const { t } = useTranslation();
     const [step, setStep] = useState(0);
     const [touched, setTouched] = useState<Record<string, boolean>>({});
+    const [visitedSteps, setVisitedSteps] = useState<Set<number>>(new Set([0]));
+
+    const goToStep = (i: number) => {
+        setStep(i);
+        setVisitedSteps(prev => new Set(prev).add(i));
+    };
 
     const arrayToString = (arr: unknown): string => {
         if (Array.isArray(arr)) return arr.join(', ');
@@ -45,12 +71,57 @@ export default function WorkerEdit({ profile, categories, allSkills }: Props) {
         return '';
     };
 
+    /* Resolve the primary category ID from the profile title */
+    const existingCategoryIds = (profile.job_categories ?? profile.categories)?.map(c => c.id) || [];
+    const matchedPrimary = categories.find(c => c.name === profile.title);
+    const initialPrimaryCategoryId = matchedPrimary?.id.toString() || '';
+
+    const initialExperiences: WorkExpEntry[] = (profile.work_experiences && profile.work_experiences.length > 0)
+        ? profile.work_experiences.map(we => ({
+            id: we.id,
+            job_title: we.job_title || '',
+            company_name: we.company_name || '',
+            project_name: we.project_name || '',
+            description: we.description || '',
+            location: we.location || '',
+            start_date: we.start_date ? we.start_date.split('T')[0] : '',
+            end_date: we.end_date ? we.end_date.split('T')[0] : '',
+            is_current: we.is_current || false,
+        }))
+        : [];
+
+    const [workExperiences, setWorkExperiences] = useState<WorkExpEntry[]>(initialExperiences);
+
+    /* ── Portfolio photos state ───────────────────── */
+    const [photos, setPhotos] = useState<PortfolioPhoto[]>(profile.portfolio_photos || []);
+    const [uploading, setUploading] = useState(false);
+    const [editingCaption, setEditingCaption] = useState<number | null>(null);
+    const [captionText, setCaptionText] = useState('');
+    const fileInputRef = useRef<HTMLInputElement>(null);
+
+    // Sync photos when props change (after Inertia redirect)
+    useEffect(() => {
+        setPhotos(profile.portfolio_photos || []);
+    }, [profile.portfolio_photos]);
+
+    const addExperience = () => setWorkExperiences(prev => [...prev, emptyExp()]);
+    const removeExperience = (idx: number) => setWorkExperiences(prev => prev.filter((_, i) => i !== idx));
+    const updateExperience = (idx: number, field: keyof WorkExpEntry, value: string | boolean) => {
+        setWorkExperiences(prev => prev.map((exp, i) => {
+            if (i !== idx) return exp;
+            const updated = { ...exp, [field]: value };
+            if (field === 'is_current' && value === true) updated.end_date = '';
+            return updated;
+        }));
+    };
+
     const form = useForm({
         title: profile.title || '',
+        primary_category_id: initialPrimaryCategoryId,
         bio: profile.bio || '',
         experience_level: profile.experience_level || 'entry',
         years_experience: profile.years_experience?.toString() || '0',
-        hourly_rate: profile.hourly_rate?.toString() || '',
+        hourly_rate: profile.hourly_rate?.toString() || '0',
         daily_rate: profile.daily_rate?.toString() || '',
         city: profile.city || '',
         state: profile.state || '',
@@ -58,46 +129,139 @@ export default function WorkerEdit({ profile, categories, allSkills }: Props) {
         certifications: arrayToString(profile.certifications),
         languages: arrayToString(profile.languages),
         skills: profile.skills?.map(s => s.id) || [],
-        categories: (profile.job_categories ?? profile.categories)?.map(c => c.id) || [],
+        categories: existingCategoryIds,
     });
 
+    /* When the primary category changes, update title + categories */
+    const handlePrimaryCategoryChange = (categoryId: string) => {
+        const prevPrimaryId = Number(form.data.primary_category_id);
+        const newPrimaryId = Number(categoryId);
+        const cat = categories.find(c => c.id === newPrimaryId);
+
+        // Update title to the category name
+        form.setData(data => {
+            const currentCats = data.categories as number[];
+            // Remove old primary from categories if it was there
+            let updated = prevPrimaryId ? currentCats.filter(id => id !== prevPrimaryId) : [...currentCats];
+            // Add new primary
+            if (newPrimaryId && !updated.includes(newPrimaryId)) {
+                updated = [newPrimaryId, ...updated];
+            }
+            // Ensure max 3 total
+            if (updated.length > 3) updated = updated.slice(0, 3);
+            return {
+                ...data,
+                primary_category_id: categoryId,
+                title: cat?.name || '',
+                categories: updated,
+            };
+        });
+    };
+
+    const primaryCatId = Number(form.data.primary_category_id);
+    const extraCategories = (form.data.categories as number[]).filter(id => id !== primaryCatId);
+
     const toggleCategory = (id: number) => {
+        // Don't allow toggling the primary category off from here
+        if (id === primaryCatId) return;
         const current = form.data.categories as number[];
         if (current.includes(id)) {
             form.setData('categories', current.filter(x => x !== id));
-        } else if (current.length < 3) {
+        } else if (extraCategories.length < 2) {
             form.setData('categories', [...current, id]);
         }
     };
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
+        // Include work experiences in the form data before submitting
+        form.transform((data) => ({
+            ...data,
+            work_experiences: workExperiences,
+        }));
         form.put('/worker/profile');
     };
 
     const markTouched = (field: string) => setTouched(prev => ({ ...prev, [field]: true }));
 
     /* ── Per-step validation ─────────────────────────── */
-    const stepValid = [
-        /* 0 identity   */ form.data.title.trim() !== '' && form.data.bio.trim() !== '',
-        /* 1 experience */ form.data.years_experience.trim() !== '',
-        /* 2 rates      */ form.data.hourly_rate.trim() !== '' && form.data.daily_rate.trim() !== '',
-        /* 3 location   */ form.data.city.trim() !== '' && form.data.state.trim() !== '',
-        /* 4 details    */ form.data.languages.trim() !== '',
-        /* 5 categories */ (form.data.categories as number[]).length > 0,
+    const workExpValid = workExperiences.length === 0 || workExperiences.every(
+        we => we.job_title.trim() !== '' && we.company_name.trim() !== '' && we.start_date !== '' && (we.is_current || we.end_date !== '')
+    );
+    const stepFieldsValid = [
+        /* 0 identity     */ form.data.primary_category_id !== '' && form.data.bio.trim() !== '',
+        /* 1 experience   */ form.data.experience_level.trim() !== '' && form.data.years_experience.trim() !== '' && Number(form.data.years_experience) >= 0,
+        /* 2 work history */ workExpValid,
+        /* 3 rates        */ form.data.daily_rate.trim() !== '' && Number(form.data.daily_rate) > 0,
+        /* 4 location     */ form.data.city.trim() !== '' && form.data.state.trim() !== '',
+        /* 5 details      */ form.data.availability.trim() !== '' && form.data.languages.trim() !== '',
+        /* 6 categories   */ true, /* always valid — primary category is enforced in step 0; extra categories are optional */
+        /* 7 portfolio    */ true, /* always valid — portfolio photos are optional */
     ];
-    const isFormValid = stepValid.every(Boolean);
+    // A step counts as "done" only if the user has visited it AND all its fields are valid
+    const stepValid = stepFieldsValid.map((valid, i) => visitedSteps.has(i) && valid);
+    const isFormValid = stepFieldsValid.every(Boolean);
     const completedSteps = stepValid.filter(Boolean).length;
     const progressPct = Math.round((completedSteps / STEPS.length) * 100);
 
     const stepLabels = [
         t('workerEdit.basicInfo'),
         t('workerEdit.experienceLevel'),
+        t('workerEdit.workHistory'),
         t('workerEdit.rates'),
         t('workerEdit.location'),
         t('workerEdit.additionalDetails'),
         t('workerEdit.jobCategories'),
+        t('workerEdit.portfolio'),
     ];
+
+    /* ── Portfolio handlers ───────────────────────── */
+    const handlePhotoUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const files = e.target.files;
+        if (!files || files.length === 0) return;
+
+        const formData = new FormData();
+        Array.from(files).forEach(file => formData.append('photos[]', file));
+
+        setUploading(true);
+        router.post('/worker/profile/photos', formData, {
+            forceFormData: true,
+            preserveScroll: true,
+            onSuccess: () => {
+                setUploading(false);
+                if (fileInputRef.current) fileInputRef.current.value = '';
+            },
+            onError: () => {
+                setUploading(false);
+                if (fileInputRef.current) fileInputRef.current.value = '';
+            },
+        });
+    };
+
+    const handleDeletePhoto = (photoId: number) => {
+        if (!confirm(t('workerEdit.confirmDeletePhoto') || 'Delete this photo?')) return;
+        router.delete(`/worker/profile/photos/${photoId}`, {
+            preserveScroll: true,
+            onSuccess: () => {
+                setPhotos(prev => prev.filter(p => p.id !== photoId));
+            },
+        });
+    };
+
+    const startEditCaption = (photo: PortfolioPhoto) => {
+        setEditingCaption(photo.id);
+        setCaptionText(photo.caption || '');
+    };
+
+    const saveCaption = (photoId: number) => {
+        router.patch(`/worker/profile/photos/${photoId}/caption`, { caption: captionText }, {
+            preserveScroll: true,
+            onSuccess: () => {
+                setPhotos(prev => prev.map(p => p.id === photoId ? { ...p, caption: captionText } : p));
+                setEditingCaption(null);
+            },
+        });
+    };
 
     /* ── Field helper ────────────────────────────────── */
     const fieldError = (name: string) => {
@@ -171,7 +335,7 @@ export default function WorkerEdit({ profile, categories, allSkills }: Props) {
                                 const isActive = step === i;
                                 const isDone = stepValid[i];
                                 return (
-                                    <button key={s.key} type="button" onClick={() => setStep(i)}
+                                    <button key={s.key} type="button" onClick={() => goToStep(i)}
                                         className={`w-full flex items-center gap-3 px-3.5 py-3 rounded-xl text-left text-sm font-medium transition-all duration-200
                                             ${isActive
                                                 ? 'bg-amber-50 text-amber-700 shadow-sm ring-1 ring-amber-200/60'
@@ -203,7 +367,7 @@ export default function WorkerEdit({ profile, categories, allSkills }: Props) {
                                 const isActive = step === i;
                                 const isDone = stepValid[i];
                                 return (
-                                    <button key={s.key} type="button" onClick={() => setStep(i)}
+                                    <button key={s.key} type="button" onClick={() => goToStep(i)}
                                         className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs font-semibold whitespace-nowrap transition-all
                                             ${isActive
                                                 ? 'bg-amber-500 text-white shadow-md'
@@ -238,11 +402,17 @@ export default function WorkerEdit({ profile, categories, allSkills }: Props) {
 
                                         <div>
                                             <label className={labelCls}>{t('workerEdit.professionalTitle')} <span className="text-red-400">*</span></label>
-                                            <input type="text" required value={form.data.title}
+                                            <select required value={form.data.primary_category_id}
                                                 onBlur={() => markTouched('title')}
-                                                onChange={(e) => form.setData('title', e.target.value)}
-                                                placeholder={t('workerEdit.professionalTitlePlaceholder')}
-                                                className={inputCls(touched.title && !form.data.title.trim())} />
+                                                onChange={(e) => handlePrimaryCategoryChange(e.target.value)}
+                                                className={inputCls(touched.title && !form.data.primary_category_id)}>
+                                                <option value="">{t('workerEdit.selectProfessionalTitle') || 'Select your professional title...'}</option>
+                                                {categories.map(cat => (
+                                                    <option key={cat.id} value={cat.id.toString()}>
+                                                        {t(`categories.${cat.name}`) !== `categories.${cat.name}` ? t(`categories.${cat.name}`) : cat.name}
+                                                    </option>
+                                                ))}
+                                            </select>
                                             {fieldError('title')}
                                         </div>
 
@@ -316,8 +486,133 @@ export default function WorkerEdit({ profile, categories, allSkills }: Props) {
                                     </motion.div>
                                 )}
 
-                                {/* ── Step 2: Rates ──────────────────────── */}
+                                {/* ── Step 2: Work History ────────────── */}
                                 {step === 2 && (
+                                    <motion.div key="work_history" {...fadeSlide} className="p-6 sm:p-8 space-y-6">
+                                        <div className="flex items-center justify-between mb-2">
+                                            <div className="flex items-center gap-3">
+                                                <div className="flex items-center justify-center w-10 h-10 rounded-xl bg-orange-50 text-orange-600">
+                                                    <HardHat className="w-5 h-5" />
+                                                </div>
+                                                <div>
+                                                    <h2 className="text-lg font-bold text-gray-900">{t('workerEdit.workHistory')} <span className="text-sm font-normal text-gray-400">({t('workerEdit.optional')})</span></h2>
+                                                    <p className="text-xs text-gray-400">{t('workerEdit.workHistoryDesc')}</p>
+                                                </div>
+                                            </div>
+                                            <button type="button" onClick={addExperience}
+                                                className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-sm font-semibold bg-amber-500 text-white hover:bg-amber-600 shadow-sm transition-all">
+                                                <Plus className="w-4 h-4" />
+                                                {t('workerEdit.addExperience')}
+                                            </button>
+                                        </div>
+
+                                        {workExperiences.length === 0 && (
+                                            <div className="text-center py-12 border-2 border-dashed border-gray-200 rounded-2xl">
+                                                <HardHat className="w-10 h-10 text-gray-300 mx-auto mb-3" />
+                                                <p className="text-sm font-medium text-gray-400">{t('workerEdit.noExperienceYet')}</p>
+                                                <p className="text-xs text-gray-300 mt-1">{t('workerEdit.noExperienceHint')}</p>
+                                            </div>
+                                        )}
+
+                                        <div className="space-y-5">
+                                            {workExperiences.map((exp, idx) => (
+                                                <div key={idx} className="bg-gray-50 rounded-2xl border border-gray-100 p-5 space-y-4 relative">
+                                                    <div className="flex items-center justify-between">
+                                                        <span className="text-xs font-bold text-gray-400 uppercase tracking-wider">
+                                                            {t('workerEdit.experienceEntry')} #{idx + 1}
+                                                        </span>
+                                                        <button type="button" onClick={() => removeExperience(idx)}
+                                                            className="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-lg text-xs font-medium text-red-500 hover:bg-red-50 hover:text-red-600 transition-colors">
+                                                            <Trash2 className="w-3.5 h-3.5" />
+                                                            {t('workerEdit.remove')}
+                                                        </button>
+                                                    </div>
+
+                                                    <div className="grid sm:grid-cols-2 gap-4">
+                                                        <div>
+                                                            <label className={labelCls}>{t('workerEdit.jobTitle')} <span className="text-red-400">*</span></label>
+                                                            <input type="text" value={exp.job_title}
+                                                                onChange={(e) => updateExperience(idx, 'job_title', e.target.value)}
+                                                                placeholder={t('workerEdit.jobTitlePlaceholder')}
+                                                                className={inputCls(!exp.job_title.trim() && touched[`exp_${idx}_title`])}
+                                                                onBlur={() => markTouched(`exp_${idx}_title`)} />
+                                                        </div>
+                                                        <div>
+                                                            <label className={labelCls}>{t('workerEdit.companyName')} <span className="text-red-400">*</span></label>
+                                                            <input type="text" value={exp.company_name}
+                                                                onChange={(e) => updateExperience(idx, 'company_name', e.target.value)}
+                                                                placeholder={t('workerEdit.companyNamePlaceholder')}
+                                                                className={inputCls(!exp.company_name.trim() && touched[`exp_${idx}_company`])}
+                                                                onBlur={() => markTouched(`exp_${idx}_company`)} />
+                                                        </div>
+                                                    </div>
+
+                                                    <div className="grid sm:grid-cols-2 gap-4">
+                                                        <div>
+                                                            <label className={labelCls}>{t('workerEdit.project')}</label>
+                                                            <input type="text" value={exp.project_name}
+                                                                onChange={(e) => updateExperience(idx, 'project_name', e.target.value)}
+                                                                placeholder={t('workerEdit.projectPlaceholder')}
+                                                                className={inputCls()} />
+                                                        </div>
+                                                        <div>
+                                                            <label className={labelCls}>{t('workerEdit.expLocation')}</label>
+                                                            <div className="relative">
+                                                                <MapPin className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+                                                                <input type="text" value={exp.location}
+                                                                    onChange={(e) => updateExperience(idx, 'location', e.target.value)}
+                                                                    placeholder={t('workerEdit.expLocationPlaceholder')}
+                                                                    className={`${inputCls()} pl-10`} />
+                                                            </div>
+                                                        </div>
+                                                    </div>
+
+                                                    <div>
+                                                        <label className={labelCls}>{t('workerEdit.expDescription')}</label>
+                                                        <textarea rows={3} value={exp.description}
+                                                            onChange={(e) => updateExperience(idx, 'description', e.target.value)}
+                                                            placeholder={t('workerEdit.expDescriptionPlaceholder')}
+                                                            className={inputCls()} />
+                                                    </div>
+
+                                                    <div className="grid sm:grid-cols-2 gap-4">
+                                                        <div>
+                                                            <label className={labelCls}>{t('workerEdit.startDate')} <span className="text-red-400">*</span></label>
+                                                            <div className="relative">
+                                                                <Calendar className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+                                                                <input type="date" value={exp.start_date}
+                                                                    onChange={(e) => updateExperience(idx, 'start_date', e.target.value)}
+                                                                    className={`${inputCls(!exp.start_date && touched[`exp_${idx}_start`])} pl-10`}
+                                                                    onBlur={() => markTouched(`exp_${idx}_start`)} />
+                                                            </div>
+                                                        </div>
+                                                        <div>
+                                                            <label className={labelCls}>{t('workerEdit.endDate')} {!exp.is_current && <span className="text-red-400">*</span>}</label>
+                                                            <div className="relative">
+                                                                <Calendar className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+                                                                <input type="date" value={exp.end_date}
+                                                                    onChange={(e) => updateExperience(idx, 'end_date', e.target.value)}
+                                                                    disabled={exp.is_current}
+                                                                    className={`${inputCls(!exp.is_current && !exp.end_date && touched[`exp_${idx}_end`])} pl-10 disabled:bg-gray-100 disabled:text-gray-400`}
+                                                                    onBlur={() => markTouched(`exp_${idx}_end`)} />
+                                                            </div>
+                                                        </div>
+                                                    </div>
+
+                                                    <label className="inline-flex items-center gap-2.5 cursor-pointer select-none">
+                                                        <input type="checkbox" checked={exp.is_current}
+                                                            onChange={(e) => updateExperience(idx, 'is_current', e.target.checked)}
+                                                            className="w-4 h-4 rounded border-gray-300 text-amber-500 focus:ring-amber-500" />
+                                                        <span className="text-sm font-medium text-gray-600">{t('workerEdit.currentlyWorking')}</span>
+                                                    </label>
+                                                </div>
+                                            ))}
+                                        </div>
+                                    </motion.div>
+                                )}
+
+                                {/* ── Step 3: Rates ────────────────────── */}
+                                {step === 3 && (
                                     <motion.div key="rates" {...fadeSlide} className="p-6 sm:p-8 space-y-6">
                                         <div className="flex items-center gap-3 mb-2">
                                             <div className="flex items-center justify-center w-10 h-10 rounded-xl bg-emerald-50 text-emerald-600">
@@ -329,31 +624,17 @@ export default function WorkerEdit({ profile, categories, allSkills }: Props) {
                                             </div>
                                         </div>
 
-                                        <div className="grid sm:grid-cols-2 gap-5">
-                                            <div>
-                                                <label className={labelCls}>{t('workerEdit.hourlyRate')} <span className="text-red-400">*</span></label>
-                                                <div className="relative">
-                                                    <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-sm font-bold text-gray-400">FCFA</span>
-                                                    <input type="number" min="0" step="100" required value={form.data.hourly_rate}
-                                                        onBlur={() => markTouched('hourly_rate')}
-                                                        onChange={(e) => form.setData('hourly_rate', e.target.value)}
-                                                        placeholder="0"
-                                                        className={`${inputCls(touched.hourly_rate && !form.data.hourly_rate.trim())} pl-16`} />
-                                                </div>
-                                                {fieldError('hourly_rate')}
+                                        <div>
+                                            <label className={labelCls}>{t('workerEdit.dailyRate')} <span className="text-red-400">*</span></label>
+                                            <div className="relative">
+                                                <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-sm font-bold text-gray-400">FCFA</span>
+                                                <input type="number" min="0" step="100" required value={form.data.daily_rate}
+                                                    onBlur={() => markTouched('daily_rate')}
+                                                    onChange={(e) => form.setData('daily_rate', e.target.value)}
+                                                    placeholder="0"
+                                                    className={`${inputCls(touched.daily_rate && !form.data.daily_rate.trim())} pl-16`} />
                                             </div>
-                                            <div>
-                                                <label className={labelCls}>{t('workerEdit.dailyRate')} <span className="text-red-400">*</span></label>
-                                                <div className="relative">
-                                                    <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-sm font-bold text-gray-400">FCFA</span>
-                                                    <input type="number" min="0" step="100" required value={form.data.daily_rate}
-                                                        onBlur={() => markTouched('daily_rate')}
-                                                        onChange={(e) => form.setData('daily_rate', e.target.value)}
-                                                        placeholder="0"
-                                                        className={`${inputCls(touched.daily_rate && !form.data.daily_rate.trim())} pl-16`} />
-                                                </div>
-                                                {fieldError('daily_rate')}
-                                            </div>
+                                            {fieldError('daily_rate')}
                                         </div>
 
                                         {/* Tip card */}
@@ -367,8 +648,8 @@ export default function WorkerEdit({ profile, categories, allSkills }: Props) {
                                     </motion.div>
                                 )}
 
-                                {/* ── Step 3: Location ───────────────────── */}
-                                {step === 3 && (
+                                {/* ── Step 4: Location ─────────────────── */}
+                                {step === 4 && (
                                     <motion.div key="location" {...fadeSlide} className="p-6 sm:p-8 space-y-6">
                                         <div className="flex items-center gap-3 mb-2">
                                             <div className="flex items-center justify-center w-10 h-10 rounded-xl bg-rose-50 text-rose-600">
@@ -406,8 +687,8 @@ export default function WorkerEdit({ profile, categories, allSkills }: Props) {
                                     </motion.div>
                                 )}
 
-                                {/* ── Step 4: Additional Details ─────────── */}
-                                {step === 4 && (
+                                {/* ── Step 5: Additional Details ───────── */}
+                                {step === 5 && (
                                     <motion.div key="details" {...fadeSlide} className="p-6 sm:p-8 space-y-6">
                                         <div className="flex items-center gap-3 mb-2">
                                             <div className="flex items-center justify-center w-10 h-10 rounded-xl bg-sky-50 text-sky-600">
@@ -477,30 +758,49 @@ export default function WorkerEdit({ profile, categories, allSkills }: Props) {
                                     </motion.div>
                                 )}
 
-                                {/* ── Step 5: Categories ─────────────────── */}
-                                {step === 5 && (
+                                {/* ── Step 6: Categories ───────────────── */}
+                                {step === 6 && (
                                     <motion.div key="categories" {...fadeSlide} className="p-6 sm:p-8 space-y-6">
                                         <div className="flex items-center gap-3 mb-2">
                                             <div className="flex items-center justify-center w-10 h-10 rounded-xl bg-amber-50 text-amber-600">
                                                 <Tag className="w-5 h-5" />
                                             </div>
                                             <div>
-                                                <h2 className="text-lg font-bold text-gray-900">{t('workerEdit.jobCategories')} <span className="text-red-400">*</span></h2>
+                                                <h2 className="text-lg font-bold text-gray-900">{t('workerEdit.jobCategories')}</h2>
                                                 <p className="text-xs text-gray-400">
-                                                    {t('workerEdit.categoriesDesc')}
-                                                    <span className={`ml-2 font-bold ${(form.data.categories as number[]).length >= 3 ? 'text-amber-600' : (form.data.categories as number[]).length === 0 ? 'text-red-400' : 'text-gray-500'}`}>
-                                                        ({(form.data.categories as number[]).length}/3)
+                                                    {t('workerEdit.additionalCategoriesDesc') || 'Select up to 2 additional categories to complement your primary title'}
+                                                    <span className={`ml-2 font-bold ${extraCategories.length >= 2 ? 'text-amber-600' : 'text-gray-500'}`}>
+                                                        ({extraCategories.length}/2)
                                                     </span>
                                                 </p>
                                             </div>
                                         </div>
 
+                                        {/* Show primary category as locked */}
+                                        {primaryCatId > 0 && (() => {
+                                            const primaryCat = categories.find(c => c.id === primaryCatId);
+                                            if (!primaryCat) return null;
+                                            const catName = t(`categories.${primaryCat.name}`) !== `categories.${primaryCat.name}` ? t(`categories.${primaryCat.name}`) : primaryCat.name;
+                                            return (
+                                                <div className="flex items-center gap-3 px-4 py-3.5 rounded-xl border-2 border-blue-400 bg-blue-50 text-blue-800 ring-2 ring-blue-200/60 shadow-sm">
+                                                    <div className="flex items-center justify-center w-7 h-7 rounded-lg bg-blue-500 text-white flex-shrink-0">
+                                                        <User className="w-4 h-4" />
+                                                    </div>
+                                                    <div className="flex-1">
+                                                        <span className="text-sm font-semibold">{catName}</span>
+                                                        <span className="block text-[11px] text-blue-500 font-medium">{t('workerEdit.primaryTitle') || 'Primary title'}</span>
+                                                    </div>
+                                                    <ShieldCheck className="w-5 h-5 text-blue-400 flex-shrink-0" />
+                                                </div>
+                                            );
+                                        })()}
+
                                         {fieldError('categories')}
 
                                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                                            {categories.map((cat) => {
+                                            {categories.filter(cat => cat.id !== primaryCatId).map((cat) => {
                                                 const isSelected = (form.data.categories as number[]).includes(cat.id);
-                                                const isDisabled = !isSelected && (form.data.categories as number[]).length >= 3;
+                                                const isDisabled = !isSelected && extraCategories.length >= 2;
                                                 return (
                                                     <button key={cat.id} type="button" onClick={() => toggleCategory(cat.id)}
                                                         disabled={isDisabled}
@@ -522,11 +822,126 @@ export default function WorkerEdit({ profile, categories, allSkills }: Props) {
                                         </div>
                                     </motion.div>
                                 )}
+
+                                {/* ── Step 7: Portfolio Photos ──────── */}
+                                {step === 7 && (
+                                    <motion.div key="portfolio" {...fadeSlide} className="p-6 sm:p-8 space-y-6">
+                                        <div className="flex items-center justify-between mb-2">
+                                            <div className="flex items-center gap-3">
+                                                <div className="flex items-center justify-center w-10 h-10 rounded-xl bg-purple-50 text-purple-600">
+                                                    <Camera className="w-5 h-5" />
+                                                </div>
+                                                <div>
+                                                    <h2 className="text-lg font-bold text-gray-900">{t('workerEdit.portfolio')} <span className="text-sm font-normal text-gray-400">({t('workerEdit.optional')})</span></h2>
+                                                    <p className="text-xs text-gray-400">{t('workerEdit.portfolioDesc')}</p>
+                                                </div>
+                                            </div>
+                                            <span className={`text-xs font-bold ${photos.length >= 12 ? 'text-red-500' : 'text-gray-400'}`}>
+                                                {photos.length}/12
+                                            </span>
+                                        </div>
+
+                                        {/* Upload area */}
+                                        <input ref={fileInputRef} type="file" multiple accept="image/jpeg,image/png,image/webp"
+                                            onChange={handlePhotoUpload} className="hidden" />
+
+                                        {photos.length < 12 && (
+                                            <button type="button" onClick={() => fileInputRef.current?.click()}
+                                                disabled={uploading}
+                                                className="w-full flex flex-col items-center justify-center gap-3 py-10 border-2 border-dashed border-gray-200 rounded-2xl hover:border-amber-400 hover:bg-amber-50/30 transition-all duration-200 cursor-pointer disabled:opacity-50 disabled:cursor-wait group">
+                                                {uploading ? (
+                                                    <>
+                                                        <svg className="animate-spin w-8 h-8 text-amber-500" fill="none" viewBox="0 0 24 24">
+                                                            <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                                                            <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
+                                                        </svg>
+                                                        <span className="text-sm font-medium text-amber-600">{t('workerEdit.uploadingPhotos')}</span>
+                                                    </>
+                                                ) : (
+                                                    <>
+                                                        <div className="flex items-center justify-center w-14 h-14 rounded-2xl bg-gray-100 group-hover:bg-amber-100 text-gray-400 group-hover:text-amber-500 transition-colors">
+                                                            <ImagePlus className="w-7 h-7" />
+                                                        </div>
+                                                        <div className="text-center">
+                                                            <p className="text-sm font-semibold text-gray-600 group-hover:text-amber-700">{t('workerEdit.uploadPhotos')}</p>
+                                                            <p className="text-xs text-gray-400 mt-0.5">{t('workerEdit.uploadPhotosHint')}</p>
+                                                        </div>
+                                                    </>
+                                                )}
+                                            </button>
+                                        )}
+
+                                        {/* Photo grid */}
+                                        {photos.length === 0 && !uploading && (
+                                            <div className="text-center py-12 border-2 border-dashed border-gray-200 rounded-2xl">
+                                                <Camera className="w-10 h-10 text-gray-300 mx-auto mb-3" />
+                                                <p className="text-sm font-medium text-gray-400">{t('workerEdit.noPhotosYet')}</p>
+                                                <p className="text-xs text-gray-300 mt-1">{t('workerEdit.noPhotosHint')}</p>
+                                            </div>
+                                        )}
+
+                                        {photos.length > 0 && (
+                                            <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
+                                                {photos.map((photo) => (
+                                                    <div key={photo.id} className="group relative rounded-2xl overflow-hidden border border-gray-100 shadow-sm bg-gray-50 aspect-square">
+                                                        <img src={`/storage/${photo.path}`} alt={photo.caption || 'Portfolio photo'}
+                                                            className="w-full h-full object-cover" loading="lazy" />
+
+                                                        {/* Overlay on hover */}
+                                                        <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-200" />
+
+                                                        {/* Delete button */}
+                                                        <button type="button" onClick={() => handleDeletePhoto(photo.id)}
+                                                            className="absolute top-2 right-2 flex items-center justify-center w-8 h-8 rounded-full bg-red-500/90 text-white opacity-0 group-hover:opacity-100 transition-all duration-200 hover:bg-red-600 shadow-lg">
+                                                            <X className="w-4 h-4" />
+                                                        </button>
+
+                                                        {/* Caption area */}
+                                                        <div className="absolute bottom-0 left-0 right-0 p-3 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+                                                            {editingCaption === photo.id ? (
+                                                                <div className="flex items-center gap-1.5">
+                                                                    <input type="text" value={captionText}
+                                                                        onChange={(e) => setCaptionText(e.target.value)}
+                                                                        onKeyDown={(e) => e.key === 'Enter' && saveCaption(photo.id)}
+                                                                        placeholder={t('workerEdit.captionPlaceholder')}
+                                                                        className="flex-1 text-xs px-2.5 py-1.5 rounded-lg bg-white/90 border-0 text-gray-800 placeholder:text-gray-400 focus:ring-2 focus:ring-amber-500" autoFocus />
+                                                                    <button type="button" onClick={() => saveCaption(photo.id)}
+                                                                        className="flex-shrink-0 flex items-center justify-center w-7 h-7 rounded-lg bg-amber-500 text-white hover:bg-amber-600">
+                                                                        <Check className="w-3.5 h-3.5" />
+                                                                    </button>
+                                                                    <button type="button" onClick={() => setEditingCaption(null)}
+                                                                        className="flex-shrink-0 flex items-center justify-center w-7 h-7 rounded-lg bg-gray-500/80 text-white hover:bg-gray-600">
+                                                                        <X className="w-3.5 h-3.5" />
+                                                                    </button>
+                                                                </div>
+                                                            ) : (
+                                                                <button type="button" onClick={() => startEditCaption(photo)}
+                                                                    className="w-full flex items-center gap-1.5 text-xs text-white/90 hover:text-white transition-colors">
+                                                                    <Pencil className="w-3 h-3 flex-shrink-0" />
+                                                                    <span className="truncate">{photo.caption || t('workerEdit.addCaption')}</span>
+                                                                </button>
+                                                            )}
+                                                        </div>
+                                                    </div>
+                                                ))}
+                                            </div>
+                                        )}
+
+                                        {/* Tip card */}
+                                        <div className="flex items-start gap-3 bg-purple-50 rounded-xl p-4 border border-purple-100">
+                                            <Sparkles className="w-5 h-5 text-purple-500 mt-0.5 flex-shrink-0" />
+                                            <div className="text-sm text-purple-700 leading-relaxed">
+                                                <p className="font-semibold mb-0.5">{t('workerEdit.portfolioTipTitle')}</p>
+                                                <p className="text-purple-600">{t('workerEdit.portfolioTipDesc')}</p>
+                                            </div>
+                                        </div>
+                                    </motion.div>
+                                )}
                             </AnimatePresence>
 
                             {/* ── Navigation bar ────────────────────── */}
                             <div className="flex items-center justify-between px-6 sm:px-8 py-5 bg-gray-50/80 border-t border-gray-100">
-                                <button type="button" onClick={() => setStep(Math.max(0, step - 1))} disabled={step === 0}
+                                <button type="button" onClick={() => goToStep(Math.max(0, step - 1))} disabled={step === 0}
                                     className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-semibold text-gray-600 hover:bg-white hover:shadow-sm border border-transparent hover:border-gray-200 transition-all disabled:opacity-30 disabled:pointer-events-none">
                                     <ChevronLeft className="w-4 h-4" />
                                     {t('workerEdit.back') || 'Back'}
@@ -534,14 +949,14 @@ export default function WorkerEdit({ profile, categories, allSkills }: Props) {
 
                                 <div className="flex items-center gap-1.5">
                                     {STEPS.map((_, i) => (
-                                        <button key={i} type="button" onClick={() => setStep(i)}
+                                        <button key={i} type="button" onClick={() => goToStep(i)}
                                             className={`w-2 h-2 rounded-full transition-all duration-300
                                                 ${i === step ? 'w-6 bg-amber-500' : stepValid[i] ? 'bg-emerald-400' : 'bg-gray-300'}`} />
                                     ))}
                                 </div>
 
                                 {step < STEPS.length - 1 ? (
-                                    <button type="button" onClick={() => setStep(step + 1)}
+                                    <button type="button" onClick={() => goToStep(step + 1)}
                                         className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-semibold bg-slate-800 text-white hover:bg-slate-900 shadow-sm transition-all">
                                         {t('workerEdit.next') || 'Next'}
                                         <ChevronRight className="w-4 h-4" />

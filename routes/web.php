@@ -26,6 +26,9 @@ Route::middleware('auth')->group(function () {
     // Worker profile
     Route::get('/worker/profile', [WorkerProfileController::class, 'edit'])->name('worker.profile.edit');
     Route::put('/worker/profile', [WorkerProfileController::class, 'update'])->name('worker.profile.update');
+    Route::post('/worker/profile/photos', [WorkerProfileController::class, 'uploadPhoto'])->name('worker.profile.photos.upload');
+    Route::delete('/worker/profile/photos/{photo}', [WorkerProfileController::class, 'deletePhoto'])->name('worker.profile.photos.delete');
+    Route::patch('/worker/profile/photos/{photo}/caption', [WorkerProfileController::class, 'updatePhotoCaption'])->name('worker.profile.photos.caption');
 });
 
 require __DIR__.'/auth.php';

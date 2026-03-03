@@ -150,22 +150,13 @@ export default function WorkerShow({ worker }: Props) {
                                 </div>
 
                                 {/* Rate highlights */}
-                                {(worker.hourly_rate || worker.daily_rate) && (
+                                {worker.daily_rate && (
                                     <div className="flex items-center gap-3 mt-5">
-                                        {worker.hourly_rate && (
-                                            <div className="inline-flex items-center gap-2 bg-white/5 backdrop-blur-sm border border-white/10 rounded-xl px-4 py-2.5">
-                                                <svg className="w-4 h-4 text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 6v12m-3-2.818l.879.659c1.171.879 3.07.879 4.242 0 1.172-.879 1.172-2.303 0-3.182C13.536 12.219 12.768 12 12 12c-.725 0-1.45-.22-2.003-.659-1.106-.879-1.106-2.303 0-3.182s2.9-.879 4.006 0l.415.33M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
-                                                <span className="text-lg font-bold text-white">{Number(worker.hourly_rate).toLocaleString()} FCFA</span>
-                                                <span className="text-xs text-gray-400">{t('common.perHour')}</span>
-                                            </div>
-                                        )}
-                                        {worker.daily_rate && (
-                                            <div className="inline-flex items-center gap-2 bg-white/5 backdrop-blur-sm border border-white/10 rounded-xl px-4 py-2.5">
-                                                <svg className="w-4 h-4 text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 6v12m-3-2.818l.879.659c1.171.879 3.07.879 4.242 0 1.172-.879 1.172-2.303 0-3.182C13.536 12.219 12.768 12 12 12c-.725 0-1.45-.22-2.003-.659-1.106-.879-1.106-2.303 0-3.182s2.9-.879 4.006 0l.415.33M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
-                                                <span className="text-lg font-bold text-white">{Number(worker.daily_rate).toLocaleString()} FCFA</span>
-                                                <span className="text-xs text-gray-400">{t('common.perDay')}</span>
-                                            </div>
-                                        )}
+                                        <div className="inline-flex items-center gap-2 bg-white/5 backdrop-blur-sm border border-white/10 rounded-xl px-4 py-2.5">
+                                            <svg className="w-4 h-4 text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 6v12m-3-2.818l.879.659c1.171.879 3.07.879 4.242 0 1.172-.879 1.172-2.303 0-3.182C13.536 12.219 12.768 12 12 12c-.725 0-1.45-.22-2.003-.659-1.106-.879-1.106-2.303 0-3.182s2.9-.879 4.006 0l.415.33M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                                            <span className="text-lg font-bold text-white">{Number(worker.daily_rate).toLocaleString()} FCFA</span>
+                                            <span className="text-xs text-gray-400">{t('common.perDay')}</span>
+                                        </div>
                                     </div>
                                 )}
                             </div>
@@ -216,13 +207,7 @@ export default function WorkerShow({ worker }: Props) {
                                     <p className="text-xs font-medium text-gray-400 uppercase tracking-wider mb-1">{t('workerShow.ratingStat')}</p>
                                     <p className="font-bold text-gray-900">{averageRating || t('common.na')} <span className="text-gray-400 font-normal text-xs">/ 5</span></p>
                                 </div>
-                                <div className="bg-white rounded-2xl border border-gray-100 p-5 shadow-sm hover:shadow-md transition-shadow">
-                                    <div className="w-10 h-10 rounded-xl bg-emerald-50 flex items-center justify-center mb-3">
-                                        <svg className="w-5 h-5 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" /></svg>
-                                    </div>
-                                    <p className="text-xs font-medium text-gray-400 uppercase tracking-wider mb-1">{t('workerShow.skillsStat')}</p>
-                                    <p className="font-bold text-gray-900">{worker.skills?.length || 0}</p>
-                                </div>
+
                                 <div className="bg-white rounded-2xl border border-gray-100 p-5 shadow-sm hover:shadow-md transition-shadow">
                                     <div className="w-10 h-10 rounded-xl bg-violet-50 flex items-center justify-center mb-3">
                                         <svg className="w-5 h-5 text-violet-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M11.48 3.499a.562.562 0 011.04 0l2.125 5.111a.563.563 0 00.475.345l5.518.442c.499.04.701.663.321.988l-4.204 3.602a.563.563 0 00-.182.557l1.285 5.385a.562.562 0 01-.84.61l-4.725-2.885a.563.563 0 00-.586 0L6.982 20.54a.562.562 0 01-.84-.61l1.285-5.386a.562.562 0 00-.182-.557l-4.204-3.602a.563.563 0 01.321-.988l5.518-.442a.563.563 0 00.475-.345L11.48 3.5z" /></svg>
@@ -249,31 +234,7 @@ export default function WorkerShow({ worker }: Props) {
                                 </div>
                             )}
 
-                            {/* Skills */}
-                            {worker.skills && worker.skills.length > 0 && (
-                                <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
-                                    <div className="px-8 py-6 border-b border-gray-100">
-                                        <div className="flex items-center gap-3">
-                                            <div className="w-8 h-8 rounded-lg bg-violet-600 flex items-center justify-center">
-                                                <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" /></svg>
-                                            </div>
-                                            <h2 className="text-lg font-bold text-gray-900">{t('workerShow.skillsExpertise')}</h2>
-                                        </div>
-                                    </div>
-                                    <div className="px-8 py-6">
-                                        <div className="flex flex-wrap gap-2">
-                                            {worker.skills.map((skill) => (
-                                                <span key={skill.id} className="inline-flex items-center px-4 py-2 rounded-xl text-sm font-medium bg-gray-50 text-gray-700 border border-gray-200 hover:bg-amber-50 hover:text-amber-700 hover:border-amber-200 transition-colors cursor-default">
-                                                    {skill.name}
-                                                    {skill.pivot?.proficiency && (
-                                                        <span className="ml-2 text-xs text-gray-400 capitalize">· {skill.pivot.proficiency}</span>
-                                                    )}
-                                                </span>
-                                            ))}
-                                        </div>
-                                    </div>
-                                </div>
-                            )}
+
 
                             {/* Specializations */}
                             {((worker.categories && worker.categories.length > 0) || (worker.job_categories && worker.job_categories.length > 0)) && (
@@ -529,15 +490,6 @@ export default function WorkerShow({ worker }: Props) {
                                                 {expLabels[worker.experience_level] || worker.experience_level}
                                             </span>
                                         </div>
-                                        {worker.hourly_rate && (
-                                            <div className="flex items-center justify-between">
-                                                <span className="text-sm text-gray-500 flex items-center gap-2">
-                                                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 6v12m-3-2.818l.879.659c1.171.879 3.07.879 4.242 0 1.172-.879 1.172-2.303 0-3.182C13.536 12.219 12.768 12 12 12c-.725 0-1.45-.22-2.003-.659-1.106-.879-1.106-2.303 0-3.182s2.9-.879 4.006 0l.415.33M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
-                                                    {t('workerShow.hourlyRate')}
-                                                </span>
-                                                <span className="text-sm font-bold text-amber-600">{Number(worker.hourly_rate).toLocaleString()} FCFA{t('workerCard.hr')}</span>
-                                            </div>
-                                        )}
                                         {worker.daily_rate && (
                                             <div className="flex items-center justify-between">
                                                 <span className="text-sm text-gray-500 flex items-center gap-2">

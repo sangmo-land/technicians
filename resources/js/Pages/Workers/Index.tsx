@@ -534,14 +534,6 @@ export default function WorkersIndex({ workers, categories, filters }: Props) {
                                                             </div>
                                                         )}
 
-                                                        {/* Rate badge */}
-                                                        {worker.hourly_rate && (
-                                                            <div className="absolute bottom-3 right-3">
-                                                                <span className="px-3 py-1.5 bg-white/95 backdrop-blur-sm rounded-lg text-sm font-extrabold text-gray-900 shadow-sm">
-                                                                    {Number(worker.hourly_rate).toLocaleString()} <span className="text-gray-400 font-medium text-[10px]">FCFA{t('workerCard.hr')}</span>
-                                                                </span>
-                                                            </div>
-                                                        )}
                                                     </div>
 
                                                     {/* Content */}
@@ -591,20 +583,6 @@ export default function WorkersIndex({ workers, categories, filters }: Props) {
                                                                 </div>
                                                                 <span className="text-xs font-bold text-amber-700">{rating.toFixed(1)}</span>
                                                                 <span className="text-[11px] text-gray-400">({reviewCount} {reviewCount === 1 ? t('common.review') : t('common.reviews')})</span>
-                                                            </div>
-                                                        )}
-
-                                                        {/* Skills */}
-                                                        {worker.skills && worker.skills.length > 0 && (
-                                                            <div className="flex flex-wrap gap-1.5 mb-4">
-                                                                {worker.skills.slice(0, 3).map((skill) => (
-                                                                    <span key={skill.id} className="px-2 py-0.5 text-[11px] font-medium text-gray-600 bg-gray-100 rounded-md">
-                                                                        {skill.name}
-                                                                    </span>
-                                                                ))}
-                                                                {worker.skills.length > 3 && (
-                                                                    <span className="px-2 py-0.5 text-[11px] font-medium text-gray-400 bg-gray-50 rounded-md">+{worker.skills.length - 3}</span>
-                                                                )}
                                                             </div>
                                                         )}
 

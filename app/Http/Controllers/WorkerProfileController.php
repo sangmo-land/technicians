@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Models\WorkerProfile;
+use App\Models\WorkExperience;
+use App\Models\PortfolioPhoto;
 use App\Models\JobCategory;
 use App\Models\Skill;
 use Illuminate\Http\Request;
@@ -75,7 +77,7 @@ class WorkerProfileController extends Controller
             ]);
         }
 
-        $profile->load(['skills', 'jobCategories', 'workExperiences']);
+        $profile->load(['skills', 'jobCategories', 'workExperiences', 'portfolioPhotos']);
 
         $categories = JobCategory::with('skills')->where('is_active', true)->get();
         $allSkills = Skill::orderBy('name')->get();
@@ -108,7 +110,7 @@ class WorkerProfileController extends Controller
             'state' => 'required|string|max:100',
             'years_experience' => 'required|integer|min:0',
             'experience_level' => 'required|in:entry,intermediate,experienced,expert',
-            'hourly_rate' => 'required|numeric|min:0',
+            'hourly_rate' => 'nullable|numeric|min:0',
             'daily_rate' => 'required|numeric|min:0',
             'availability' => 'required|in:available,busy,not_available',
             'skills' => 'nullable|array',
@@ -138,6 +140,107 @@ class WorkerProfileController extends Controller
             $profile->jobCategories()->sync($request->categories);
         }
 
+        // Sync work experiences
+        if ($request->has('work_experiences')) {
+            $existingIds = [];
+            foreach ($request->work_experiences as $expData) {
+                if (!empty($expData['job_title']) && !empty($expData['company_name']) && !empty($expData['start_date'])) {
+                    if (!empty($expData['id'])) {
+                        // Update existing
+                        $exp = $profile->workExperiences()->find($expData['id']);
+                        if ($exp) {
+                            $exp->update([
+                                'job_title' => $expData['job_title'],
+                                'company_name' => $expData['company_name'],
+                                'project_name' => $expData['project_name'] ?? null,
+                                'description' => $expData['description'] ?? null,
+                                'location' => $expData['location'] ?? null,
+                                'start_date' => $expData['start_date'],
+                                'end_date' => !empty($expData['is_current']) ? null : ($expData['end_date'] ?? null),
+                                'is_current' => !empty($expData['is_current']),
+                            ]);
+                            $existingIds[] = $exp->id;
+                        }
+                    } else {
+                        // Create new
+                        $exp = $profile->workExperiences()->create([
+                            'job_title' => $expData['job_title'],
+                            'company_name' => $expData['company_name'],
+                            'project_name' => $expData['project_name'] ?? null,
+                            'description' => $expData['description'] ?? null,
+                            'location' => $expData['location'] ?? null,
+                            'start_date' => $expData['start_date'],
+                            'end_date' => !empty($expData['is_current']) ? null : ($expData['end_date'] ?? null),
+                            'is_current' => !empty($expData['is_current']),
+                        ]);
+                        $existingIds[] = $exp->id;
+                    }
+                }
+            }
+            // Delete removed experiences
+            $profile->workExperiences()->whereNotIn('id', $existingIds)->delete();
+        }
+
         return back()->with('success', 'Profile updated successfully!');
+    }
+
+    public function uploadPhoto(Request $request)
+    {
+        $request->validate([
+            'photos' => 'required|array|max:10',
+            'photos.*' => 'image|mimes:jpg,jpeg,png,webp|max:5120',
+        ]);
+
+        $profile = auth()->user()->workerProfile;
+        if (!$profile) {
+            return back()->withErrors(['photos' => 'Worker profile not found.']);
+        }
+
+        $currentCount = $profile->portfolioPhotos()->count();
+        $maxPhotos = 12;
+
+        $uploaded = [];
+        foreach ($request->file('photos') as $photo) {
+            if ($currentCount >= $maxPhotos) break;
+
+            $path = $photo->store('portfolio/' . $profile->id, 'public');
+
+            $uploaded[] = $profile->portfolioPhotos()->create([
+                'path' => $path,
+                'caption' => null,
+                'sort_order' => $currentCount,
+            ]);
+
+            $currentCount++;
+        }
+
+        return back()->with('success', count($uploaded) . ' photo(s) uploaded successfully!');
+    }
+
+    public function deletePhoto(PortfolioPhoto $photo)
+    {
+        $profile = auth()->user()->workerProfile;
+        if (!$profile || $photo->worker_profile_id !== $profile->id) {
+            abort(403);
+        }
+
+        // Delete file from storage
+        \Illuminate\Support\Facades\Storage::disk('public')->delete($photo->path);
+        $photo->delete();
+
+        return back()->with('success', 'Photo deleted successfully!');
+    }
+
+    public function updatePhotoCaption(Request $request, PortfolioPhoto $photo)
+    {
+        $profile = auth()->user()->workerProfile;
+        if (!$profile || $photo->worker_profile_id !== $profile->id) {
+            abort(403);
+        }
+
+        $request->validate(['caption' => 'nullable|string|max:255']);
+        $photo->update(['caption' => $request->caption]);
+
+        return back()->with('success', 'Caption updated!');
     }
 }
