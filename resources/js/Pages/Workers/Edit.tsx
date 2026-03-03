@@ -1,6 +1,7 @@
 import { Head, useForm, usePage, router } from '@inertiajs/react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect, useMemo } from 'react';
+import { cameroonRegions } from '@/data/cameroonLocations';
 import AppLayout from '@/Layouts/AppLayout';
 import { WorkerProfile, JobCategory, Skill, WorkExperience, PortfolioPhoto } from '@/types';
 import { useTranslation } from '@/hooks/useTranslation';
@@ -9,7 +10,7 @@ import {
     ChevronRight, ChevronLeft, Check, Save, Sparkles,
     Clock, Banknote, Languages, ShieldCheck, Tag,
     AlertCircle, HardHat, Plus, Trash2, Calendar,
-    Camera, Upload, X, ImagePlus, Pencil,
+    Camera, Upload, X, ImagePlus, Pencil, Phone,
 } from 'lucide-react';
 
 interface Props {
@@ -99,10 +100,20 @@ export default function WorkerEdit({ profile, categories, allSkills }: Props) {
     const [captionText, setCaptionText] = useState('');
     const fileInputRef = useRef<HTMLInputElement>(null);
 
+    /* ── Profile photo (avatar) state ────────────── */
+    const [avatar, setAvatar] = useState<string | null>(profile.user?.avatar || null);
+    const [uploadingAvatar, setUploadingAvatar] = useState(false);
+    const avatarInputRef = useRef<HTMLInputElement>(null);
+
     // Sync photos when props change (after Inertia redirect)
     useEffect(() => {
         setPhotos(profile.portfolio_photos || []);
     }, [profile.portfolio_photos]);
+
+    // Sync avatar when props change
+    useEffect(() => {
+        setAvatar(profile.user?.avatar || null);
+    }, [profile.user?.avatar]);
 
     const addExperience = () => setWorkExperiences(prev => [...prev, emptyExp()]);
     const removeExperience = (idx: number) => setWorkExperiences(prev => prev.filter((_, i) => i !== idx));
@@ -119,6 +130,7 @@ export default function WorkerEdit({ profile, categories, allSkills }: Props) {
         title: profile.title || '',
         primary_category_id: initialPrimaryCategoryId,
         bio: profile.bio || '',
+        phone: profile.user?.phone || '',
         experience_level: profile.experience_level || 'entry',
         years_experience: profile.years_experience?.toString() || '0',
         hourly_rate: profile.hourly_rate?.toString() || '0',
@@ -127,7 +139,7 @@ export default function WorkerEdit({ profile, categories, allSkills }: Props) {
         state: profile.state || '',
         availability: profile.availability || 'available',
         certifications: arrayToString(profile.certifications),
-        languages: arrayToString(profile.languages),
+        languages: Array.isArray(profile.languages) ? profile.languages.join(', ') : (profile.languages || ''),
         skills: profile.skills?.map(s => s.id) || [],
         categories: existingCategoryIds,
     });
@@ -184,17 +196,65 @@ export default function WorkerEdit({ profile, categories, allSkills }: Props) {
 
     const markTouched = (field: string) => setTouched(prev => ({ ...prev, [field]: true }));
 
+    /* ── Cameroon cascading location state ────────── */
+    // Derive initial region/division from existing profile data
+    const inferredRegion = useMemo(() => {
+        if (!profile.state) return '';
+        const found = cameroonRegions.find(r => r.name === profile.state);
+        return found ? found.name : '';
+    }, [profile.state]);
+
+    const inferredDivision = useMemo(() => {
+        if (!inferredRegion || !profile.city) return '';
+        const region = cameroonRegions.find(r => r.name === inferredRegion);
+        if (!region) return '';
+        for (const div of region.divisions) {
+            if (div.subdivisions.some(s => s.name === profile.city)) return div.name;
+        }
+        return '';
+    }, [inferredRegion, profile.city]);
+
+    const [selectedRegion, setSelectedRegion] = useState(inferredRegion);
+    const [selectedDivision, setSelectedDivision] = useState(inferredDivision);
+
+    const availableDivisions = useMemo(() => {
+        const region = cameroonRegions.find(r => r.name === selectedRegion);
+        return region ? region.divisions : [];
+    }, [selectedRegion]);
+
+    const availableSubdivisions = useMemo(() => {
+        const region = cameroonRegions.find(r => r.name === selectedRegion);
+        if (!region) return [];
+        const div = region.divisions.find(d => d.name === selectedDivision);
+        return div ? div.subdivisions : [];
+    }, [selectedRegion, selectedDivision]);
+
+    /* ── Language toggle helpers ──────────────────── */
+    const selectedLanguages = useMemo(() => {
+        const raw = form.data.languages;
+        if (!raw) return [] as string[];
+        return raw.split(',').map((s: string) => s.trim()).filter(Boolean);
+    }, [form.data.languages]);
+
+    const toggleLanguage = (lang: string) => {
+        const current = selectedLanguages;
+        const next = current.includes(lang)
+            ? current.filter((l: string) => l !== lang)
+            : [...current, lang];
+        form.setData('languages', next.join(', '));
+    };
+
     /* ── Per-step validation ─────────────────────────── */
     const workExpValid = workExperiences.length === 0 || workExperiences.every(
         we => we.job_title.trim() !== '' && we.company_name.trim() !== '' && we.start_date !== '' && (we.is_current || we.end_date !== '')
     );
     const stepFieldsValid = [
-        /* 0 identity     */ form.data.primary_category_id !== '' && form.data.bio.trim() !== '',
+        /* 0 identity     */ form.data.primary_category_id !== '' && form.data.bio.trim() !== '' && form.data.phone.trim() !== '',
         /* 1 experience   */ form.data.experience_level.trim() !== '' && form.data.years_experience.trim() !== '' && Number(form.data.years_experience) >= 0,
         /* 2 work history */ workExpValid,
         /* 3 rates        */ form.data.daily_rate.trim() !== '' && Number(form.data.daily_rate) > 0,
         /* 4 location     */ form.data.city.trim() !== '' && form.data.state.trim() !== '',
-        /* 5 details      */ form.data.availability.trim() !== '' && form.data.languages.trim() !== '',
+        /* 5 details      */ form.data.availability.trim() !== '' && form.data.languages.trim().length > 0,
         /* 6 categories   */ true, /* always valid — primary category is enforced in step 0; extra categories are optional */
         /* 7 portfolio    */ true, /* always valid — portfolio photos are optional */
     ];
@@ -214,6 +274,29 @@ export default function WorkerEdit({ profile, categories, allSkills }: Props) {
         t('workerEdit.jobCategories'),
         t('workerEdit.portfolio'),
     ];
+
+    /* ── Avatar upload handler ────────────────────── */
+    const handleAvatarUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const file = e.target.files?.[0];
+        if (!file) return;
+
+        const formData = new FormData();
+        formData.append('avatar', file);
+
+        setUploadingAvatar(true);
+        router.post('/worker/profile/avatar', formData, {
+            forceFormData: true,
+            preserveScroll: true,
+            onSuccess: () => {
+                setUploadingAvatar(false);
+                if (avatarInputRef.current) avatarInputRef.current.value = '';
+            },
+            onError: () => {
+                setUploadingAvatar(false);
+                if (avatarInputRef.current) avatarInputRef.current.value = '';
+            },
+        });
+    };
 
     /* ── Portfolio handlers ───────────────────────── */
     const handlePhotoUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -425,6 +508,20 @@ export default function WorkerEdit({ profile, categories, allSkills }: Props) {
                                                 className={inputCls(touched.bio && !form.data.bio.trim())} />
                                             <p className="text-xs text-gray-400 mt-1.5 text-right">{form.data.bio.length} / 5000</p>
                                             {fieldError('bio')}
+                                        </div>
+
+                                        <div>
+                                            <label className={labelCls}>{t('workerEdit.phoneNumber')} <span className="text-red-400">*</span></label>
+                                            <div className="relative">
+                                                <Phone className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+                                                <input type="tel" required value={form.data.phone}
+                                                    onBlur={() => markTouched('phone')}
+                                                    onChange={(e) => form.setData('phone', e.target.value)}
+                                                    placeholder={t('workerEdit.phonePlaceholder')}
+                                                    className={`${inputCls(touched.phone && !form.data.phone.trim())} pl-10`} />
+                                            </div>
+                                            <p className="text-xs text-gray-400 mt-1">{t('workerEdit.phoneHint')}</p>
+                                            {fieldError('phone')}
                                         </div>
                                     </motion.div>
                                 )}
@@ -657,32 +754,72 @@ export default function WorkerEdit({ profile, categories, allSkills }: Props) {
                                             </div>
                                             <div>
                                                 <h2 className="text-lg font-bold text-gray-900">{t('workerEdit.location')}</h2>
-                                                <p className="text-xs text-gray-400">Where clients can find you</p>
+                                                <p className="text-xs text-gray-400">{t('workerEdit.locationDesc')}</p>
                                             </div>
                                         </div>
 
-                                        <div className="grid sm:grid-cols-2 gap-5">
+                                        <div className="space-y-5">
+                                            {/* Region */}
                                             <div>
-                                                <label className={labelCls}>{t('workerEdit.city')} <span className="text-red-400">*</span></label>
+                                                <label className={labelCls}>{t('workerEdit.region')} <span className="text-red-400">*</span></label>
                                                 <div className="relative">
                                                     <MapPin className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
-                                                    <input type="text" required value={form.data.city}
-                                                        onBlur={() => markTouched('city')}
-                                                        onChange={(e) => form.setData('city', e.target.value)}
-                                                        placeholder="e.g. Douala"
-                                                        className={`${inputCls(touched.city && !form.data.city.trim())} pl-10`} />
+                                                    <select
+                                                        value={selectedRegion}
+                                                        onBlur={() => markTouched('state')}
+                                                        onChange={(e) => {
+                                                            const region = e.target.value;
+                                                            setSelectedRegion(region);
+                                                            setSelectedDivision('');
+                                                            form.setData(prev => ({ ...prev, state: region, city: '' }));
+                                                        }}
+                                                        className={`${inputCls(touched.state && !form.data.state.trim())} pl-10 appearance-none`}>
+                                                        <option value="">{t('workerEdit.selectRegion')}</option>
+                                                        {cameroonRegions.map(r => (
+                                                            <option key={r.name} value={r.name}>{r.name}</option>
+                                                        ))}
+                                                    </select>
                                                 </div>
-                                                {fieldError('city')}
-                                            </div>
-                                            <div>
-                                                <label className={labelCls}>{t('workerEdit.stateProvince')} <span className="text-red-400">*</span></label>
-                                                <input type="text" required value={form.data.state}
-                                                    onBlur={() => markTouched('state')}
-                                                    onChange={(e) => form.setData('state', e.target.value)}
-                                                    placeholder="e.g. Littoral"
-                                                    className={inputCls(touched.state && !form.data.state.trim())} />
                                                 {fieldError('state')}
                                             </div>
+
+                                            {/* Division */}
+                                            {selectedRegion && (
+                                                <div>
+                                                    <label className={labelCls}>{t('workerEdit.division')} <span className="text-red-400">*</span></label>
+                                                    <select
+                                                        value={selectedDivision}
+                                                        onChange={(e) => {
+                                                            const div = e.target.value;
+                                                            setSelectedDivision(div);
+                                                            form.setData('city', '');
+                                                        }}
+                                                        className={`${inputCls(!selectedDivision && touched.state)} appearance-none`}>
+                                                        <option value="">{t('workerEdit.selectDivision')}</option>
+                                                        {availableDivisions.map(d => (
+                                                            <option key={d.name} value={d.name}>{d.name}</option>
+                                                        ))}
+                                                    </select>
+                                                </div>
+                                            )}
+
+                                            {/* Subdivision */}
+                                            {selectedDivision && (
+                                                <div>
+                                                    <label className={labelCls}>{t('workerEdit.subdivision')} <span className="text-red-400">*</span></label>
+                                                    <select
+                                                        value={form.data.city}
+                                                        onBlur={() => markTouched('city')}
+                                                        onChange={(e) => form.setData('city', e.target.value)}
+                                                        className={`${inputCls(touched.city && !form.data.city.trim())} appearance-none`}>
+                                                        <option value="">{t('workerEdit.selectSubdivision')}</option>
+                                                        {availableSubdivisions.map(s => (
+                                                            <option key={s.name} value={s.name}>{s.name}</option>
+                                                        ))}
+                                                    </select>
+                                                    {fieldError('city')}
+                                                </div>
+                                            )}
                                         </div>
                                     </motion.div>
                                 )}
@@ -732,14 +869,30 @@ export default function WorkerEdit({ profile, categories, allSkills }: Props) {
                                             <div className="space-y-5">
                                                 <div>
                                                     <label className={labelCls}>{t('workerEdit.languages')} <span className="text-red-400">*</span></label>
-                                                    <div className="relative">
-                                                        <Languages className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
-                                                        <input type="text" required value={form.data.languages}
-                                                            onBlur={() => markTouched('languages')}
-                                                            onChange={(e) => form.setData('languages', e.target.value)}
-                                                            placeholder={t('workerEdit.languagesPlaceholder')}
-                                                            className={`${inputCls(touched.languages && !form.data.languages.trim())} pl-10`} />
+                                                    <div className="space-y-2">
+                                                        {(['English', 'French'] as const).map((lang) => {
+                                                            const isSelected = selectedLanguages.includes(lang);
+                                                            return (
+                                                                <button key={lang} type="button"
+                                                                    onClick={() => toggleLanguage(lang)}
+                                                                    className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl border-2 text-sm font-medium transition-all
+                                                                        ${isSelected ? 'border-amber-400 bg-amber-50 text-amber-700 ring-2 ring-amber-200' : 'border-gray-200 text-gray-600 hover:border-gray-300'}`}>
+                                                                    <div className={`w-5 h-5 rounded-md border-2 flex items-center justify-center transition-all
+                                                                        ${isSelected ? 'border-amber-500 bg-amber-500' : 'border-gray-300'}`}>
+                                                                        {isSelected && <Check className="w-3.5 h-3.5 text-white" />}
+                                                                    </div>
+                                                                    <Languages className="w-4 h-4 text-gray-400" />
+                                                                    {lang === 'English' ? t('workerEdit.english') : t('workerEdit.french')}
+                                                                </button>
+                                                            );
+                                                        })}
                                                     </div>
+                                                    {touched.languages && selectedLanguages.length === 0 && (
+                                                        <motion.p initial={{ opacity: 0, y: -4 }} animate={{ opacity: 1, y: 0 }}
+                                                            className="mt-1.5 text-xs text-red-500 flex items-center gap-1">
+                                                            <AlertCircle className="w-3 h-3" /> {t('workerEdit.languageRequired')}
+                                                        </motion.p>
+                                                    )}
                                                     {fieldError('languages')}
                                                 </div>
                                                 <div>
@@ -839,6 +992,56 @@ export default function WorkerEdit({ profile, categories, allSkills }: Props) {
                                             <span className={`text-xs font-bold ${photos.length >= 12 ? 'text-red-500' : 'text-gray-400'}`}>
                                                 {photos.length}/12
                                             </span>
+                                        </div>
+
+                                        {/* ── Profile Photo (Avatar) ─────── */}
+                                        <div className="bg-gradient-to-r from-slate-50 to-gray-50 rounded-2xl border border-gray-100 p-5">
+                                            <h3 className="text-sm font-bold text-gray-800 mb-3">{t('workerEdit.profilePhoto')}</h3>
+                                            <p className="text-xs text-gray-400 mb-4">{t('workerEdit.profilePhotoDesc')}</p>
+
+                                            <input ref={avatarInputRef} type="file" accept="image/jpeg,image/png,image/webp"
+                                                onChange={handleAvatarUpload} className="hidden" />
+
+                                            <div className="flex items-center gap-5">
+                                                {/* Current avatar preview */}
+                                                <div className="relative group/avatar flex-shrink-0">
+                                                    <div className="w-24 h-24 rounded-2xl overflow-hidden border-2 border-gray-200 bg-white shadow-sm">
+                                                        {avatar ? (
+                                                            <img src={`/storage/${avatar}`} alt="Profile" className="w-full h-full object-cover" />
+                                                        ) : (
+                                                            <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-gray-100 to-gray-200">
+                                                                <User className="w-10 h-10 text-gray-300" />
+                                                            </div>
+                                                        )}
+                                                    </div>
+                                                    {uploadingAvatar && (
+                                                        <div className="absolute inset-0 rounded-2xl bg-black/40 flex items-center justify-center">
+                                                            <svg className="animate-spin w-6 h-6 text-white" fill="none" viewBox="0 0 24 24">
+                                                                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                                                                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
+                                                            </svg>
+                                                        </div>
+                                                    )}
+                                                </div>
+
+                                                {/* Upload button + hints */}
+                                                <div className="flex-1 space-y-2">
+                                                    <button type="button" onClick={() => avatarInputRef.current?.click()}
+                                                        disabled={uploadingAvatar}
+                                                        className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold bg-white border border-gray-200 text-gray-700 hover:bg-gray-50 hover:border-gray-300 shadow-sm transition-all disabled:opacity-50 disabled:cursor-wait">
+                                                        <Upload className="w-4 h-4" />
+                                                        {avatar ? t('workerEdit.changePhoto') : t('workerEdit.uploadPhoto')}
+                                                    </button>
+                                                    <p className="text-[11px] text-gray-400">{t('workerEdit.photoRequirements')}</p>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        {/* ── Divider ─────────────────────── */}
+                                        <div className="flex items-center gap-3">
+                                            <div className="flex-1 h-px bg-gray-200" />
+                                            <span className="text-xs font-semibold text-gray-400 uppercase tracking-wider">{t('workerEdit.workPhotos')}</span>
+                                            <div className="flex-1 h-px bg-gray-200" />
                                         </div>
 
                                         {/* Upload area */}

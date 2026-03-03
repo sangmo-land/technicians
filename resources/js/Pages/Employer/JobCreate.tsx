@@ -42,7 +42,7 @@ export default function JobCreate({ categories, allSkills }: Props) {
 
     return (
         <AppLayout>
-            <Head title="Post a Job - NexJobs" />
+            <Head title="Post a Job" />
 
             <div className="bg-gradient-to-r from-gray-900 to-gray-800 py-10">
                 <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">

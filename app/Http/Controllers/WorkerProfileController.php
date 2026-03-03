@@ -77,7 +77,7 @@ class WorkerProfileController extends Controller
             ]);
         }
 
-        $profile->load(['skills', 'jobCategories', 'workExperiences', 'portfolioPhotos']);
+        $profile->load(['user', 'skills', 'jobCategories', 'workExperiences', 'portfolioPhotos']);
 
         $categories = JobCategory::with('skills')->where('is_active', true)->get();
         $allSkills = Skill::orderBy('name')->get();
@@ -106,6 +106,7 @@ class WorkerProfileController extends Controller
         $request->validate([
             'title' => 'required|string|max:255',
             'bio' => 'required|string|max:5000',
+            'phone' => 'required|string|max:30',
             'city' => 'required|string|max:100',
             'state' => 'required|string|max:100',
             'years_experience' => 'required|integer|min:0',
@@ -129,6 +130,9 @@ class WorkerProfileController extends Controller
             'hourly_rate', 'daily_rate', 'availability',
             'certifications', 'languages',
         ]));
+
+        // Update phone on user record
+        auth()->user()->update(['phone' => $request->phone]);
 
         // Sync skills
         if ($request->has('skills')) {
@@ -182,6 +186,25 @@ class WorkerProfileController extends Controller
         }
 
         return back()->with('success', 'Profile updated successfully!');
+    }
+
+    public function uploadAvatar(Request $request)
+    {
+        $request->validate([
+            'avatar' => 'required|image|mimes:jpg,jpeg,png,webp|max:5120',
+        ]);
+
+        $user = auth()->user();
+
+        // Delete old avatar if exists
+        if ($user->avatar) {
+            \Illuminate\Support\Facades\Storage::disk('public')->delete($user->avatar);
+        }
+
+        $path = $request->file('avatar')->store('avatars', 'public');
+        $user->update(['avatar' => $path]);
+
+        return back()->with('success', 'Profile photo updated!');
     }
 
     public function uploadPhoto(Request $request)

@@ -60,7 +60,7 @@ const fr = {
 
     // ─── Home / Welcome ──────────────────────────────────
     home: {
-        pageTitle: 'NexJobs - Trouvez des ouvriers qualifiés',
+        pageTitle: 'Trouvez des ouvriers qualifiés',
         heroStatPill: '{{workers}} ouvriers vérifiés · {{categories}} catégories de métiers',
         heroHeading1: 'Trouvez des ouvriers',
         heroHeading2: 'qualifiés instantanément.',
@@ -178,7 +178,7 @@ const fr = {
 
     // ─── Jobs Index ──────────────────────────────────────
     jobs: {
-        pageTitle: 'Parcourir les emplois - NexJobs',
+        pageTitle: 'Parcourir les emplois',
         heroHeading: 'Trouvez votre prochain emploi',
         heroSub: '{{count}} postes disponibles en génie civil',
         filtersHeading: 'Filtres',
@@ -279,7 +279,12 @@ const fr = {
         reviewsSection: 'Avis',
         signInToContact: 'Connectez-vous pour contacter cet ouvrier',
         signIn: 'Se connecter',
+        call: 'Appeler',
+        whatsappMessage: 'Bonjour {{name}}, j\'ai trouvé votre profil sur NexJobs et je suis intéressé par vos services. Êtes-vous disponible ?',
+        getInTouch: 'Prendre contact',
+        signInForMore: 'Connectez-vous pour la messagerie et plus',
         profileDetails: 'Détails du profil',
+        phone: 'Téléphone',
         level: 'Niveau',
         hourlyRate: 'Taux horaire',
         dailyRate: 'Taux journalier',
@@ -292,7 +297,7 @@ const fr = {
 
     // ─── Auth / Login ────────────────────────────────────
     login: {
-        pageTitle: 'Connexion — NexJobs',
+        pageTitle: 'Connexion',
         welcomeBack: 'Bienvenue dans le',
         futureOfHiring: "futur du recrutement",
         leftDescription: "Connectez-vous avec les meilleurs talents et opportunités en génie civil à travers le pays.",
@@ -325,7 +330,7 @@ const fr = {
 
     // ─── Auth / Register ─────────────────────────────────
     register: {
-        pageTitle: 'Créer un compte — NexJobs',
+        pageTitle: 'Créer un compte',
         leftHeading1: 'Commencez votre parcours dans le',
         leftHeading2: 'génie civil',
         leftDescription: "Rejoignez des milliers de professionnels qui construisent l'infrastructure de demain.",
@@ -383,7 +388,7 @@ const fr = {
 
     // ─── Workers Index (Page de recherche) ───────────────
     workersIndex: {
-        pageTitle: 'Trouver des ouvriers - NexJobs',
+        pageTitle: 'Trouver des ouvriers',
         home: 'Accueil',
         workers: 'Ouvriers',
         workerCount: '{{count}} professionnels disponibles',
@@ -421,7 +426,7 @@ const fr = {
 
     // ─── Worker Profile Edit ─────────────────────────────
     workerEdit: {
-        pageTitle: 'Modifier le profil - NexJobs',
+        pageTitle: 'Modifier le profil',
         heading: 'Modifier votre profil',
         subtitle: 'Mettez en valeur vos compétences et votre expérience auprès des clients potentiels',
         basicInfo: 'Informations de base',
@@ -429,6 +434,9 @@ const fr = {
         professionalTitlePlaceholder: 'ex. Coffreur senior',
         bio: 'Biographie',
         bioPlaceholder: 'Parlez de vous, de votre expérience et de ce qui vous distingue...',
+        phoneNumber: 'Numéro de téléphone',
+        phonePlaceholder: 'ex. +237 6XX XXX XXX',
+        phoneHint: 'Ce numéro sera visible sur votre profil pour que les clients puissent vous contacter directement',
         experienceLevel: "Niveau d'expérience",
         entryLevel: 'Débutant',
         intermediate: 'Intermédiaire',
@@ -439,12 +447,22 @@ const fr = {
         hourlyRate: 'Taux horaire (FCFA)',
         dailyRate: 'Taux journalier (FCFA)',
         location: 'Localisation',
+        locationDesc: 'Où les clients peuvent vous trouver',
+        region: 'Région',
+        selectRegion: '-- Sélectionnez une région --',
+        division: 'Division',
+        selectDivision: '-- Sélectionnez une division --',
+        subdivision: 'Subdivision / Arrondissement',
+        selectSubdivision: '-- Sélectionnez une subdivision --',
         city: 'Ville',
         stateProvince: 'Région / Province',
         country: 'Pays',
         additionalDetails: 'Détails supplémentaires',
         availability: 'Statut de disponibilité',
         languages: 'Langues',
+        english: 'Anglais',
+        french: 'Français',
+        languageRequired: 'Veuillez sélectionner au moins une langue',
         languagesPlaceholder: 'ex. Français, Anglais',
         certifications: 'Certifications',
         certificationsPlaceholder: 'Listez vos certifications, séparées par des virgules',
@@ -492,6 +510,12 @@ const fr = {
         confirmDeletePhoto: 'Supprimer cette photo ?',
         portfolioTipTitle: 'Conseil portfolio',
         portfolioTipDesc: 'Les photos de projets terminés, les comparaisons avant/après et les détails en gros plan aident les clients à apprécier la qualité de votre travail.',
+        profilePhoto: 'Photo de profil',
+        profilePhotoDesc: 'Cette photo apparaîtra sur votre carte de travailleur et votre page de profil. Utilisez une photo claire et professionnelle.',
+        uploadPhoto: 'Ajouter une photo',
+        changePhoto: 'Changer la photo',
+        photoRequirements: 'JPG, PNG ou WebP — max 5 Mo — les photos carrées fonctionnent mieux',
+        workPhotos: 'Photos de travaux',
     },
 
     // ─── Category Names ─────────────────────────────────

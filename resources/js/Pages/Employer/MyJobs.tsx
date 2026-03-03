@@ -22,7 +22,7 @@ const statusColors: Record<string, string> = {
 export default function MyJobs({ jobs }: Props) {
     return (
         <AppLayout>
-            <Head title="My Jobs - NexJobs" />
+            <Head title="My Jobs" />
 
             <div className="bg-gradient-to-r from-gray-900 to-gray-800 py-10">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between">

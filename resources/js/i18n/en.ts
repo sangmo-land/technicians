@@ -60,7 +60,7 @@ const en = {
 
     // ─── Home / Welcome ──────────────────────────────────
     home: {
-        pageTitle: 'NexJobs - Find Skilled Workers',
+        pageTitle: 'Find Skilled Workers',
         heroStatPill: '{{workers}} Verified Workers · {{categories}} Trade Categories',
         heroHeading1: 'Find Skilled',
         heroHeading2: 'Workers Instantly.',
@@ -178,7 +178,7 @@ const en = {
 
     // ─── Jobs Index ──────────────────────────────────────
     jobs: {
-        pageTitle: 'Browse Jobs - NexJobs',
+        pageTitle: 'Browse Jobs',
         heroHeading: 'Find Your Next Job',
         heroSub: '{{count}} positions available in civil engineering',
         filtersHeading: 'Filters',
@@ -279,7 +279,12 @@ const en = {
         reviewsSection: 'Reviews',
         signInToContact: 'Sign in to contact this worker',
         signIn: 'Sign In',
+        call: 'Call',
+        whatsappMessage: 'Hello {{name}}, I found your profile on NexJobs and I am interested in your services. Are you available?',
+        getInTouch: 'Get in touch',
+        signInForMore: 'Sign in for messaging & more features',
         profileDetails: 'Profile Details',
+        phone: 'Phone',
         level: 'Level',
         hourlyRate: 'Hourly Rate',
         dailyRate: 'Daily Rate',
@@ -292,7 +297,7 @@ const en = {
 
     // ─── Auth / Login ────────────────────────────────────
     login: {
-        pageTitle: 'Sign In — NexJobs',
+        pageTitle: 'Sign In',
         welcomeBack: 'Welcome back to the',
         futureOfHiring: 'future of hiring',
         leftDescription: 'Connect with top civil engineering talent and opportunities across the country.',
@@ -325,7 +330,7 @@ const en = {
 
     // ─── Auth / Register ─────────────────────────────────
     register: {
-        pageTitle: 'Create Account — NexJobs',
+        pageTitle: 'Create Account',
         leftHeading1: 'Start your journey in',
         leftHeading2: 'civil engineering',
         leftDescription: 'Join thousands of professionals building the infrastructure of tomorrow.',
@@ -383,7 +388,7 @@ const en = {
 
     // ─── Workers Index (Search Page) ─────────────────────
     workersIndex: {
-        pageTitle: 'Find Workers - NexJobs',
+        pageTitle: 'Find Workers',
         home: 'Home',
         workers: 'Workers',
         workerCount: '{{count}} professionals available',
@@ -421,7 +426,7 @@ const en = {
 
     // ─── Worker Profile Edit ─────────────────────────────
     workerEdit: {
-        pageTitle: 'Edit Profile - NexJobs',
+        pageTitle: 'Edit Profile',
         heading: 'Edit Your Profile',
         subtitle: 'Showcase your skills and experience to potential clients',
         basicInfo: 'Basic Information',
@@ -429,6 +434,9 @@ const en = {
         professionalTitlePlaceholder: 'e.g. Senior Formwork Maker',
         bio: 'Bio',
         bioPlaceholder: 'Tell clients about yourself, your experience, and what makes you stand out...',
+        phoneNumber: 'Phone Number',
+        phonePlaceholder: 'e.g. +237 6XX XXX XXX',
+        phoneHint: 'This number will be visible on your profile so clients can reach you directly',
         experienceLevel: 'Experience Level',
         entryLevel: 'Entry Level',
         intermediate: 'Intermediate',
@@ -439,12 +447,22 @@ const en = {
         hourlyRate: 'Hourly Rate (FCFA)',
         dailyRate: 'Daily Rate (FCFA)',
         location: 'Location',
+        locationDesc: 'Where clients can find you',
+        region: 'Region',
+        selectRegion: '-- Select a region --',
+        division: 'Division',
+        selectDivision: '-- Select a division --',
+        subdivision: 'Subdivision',
+        selectSubdivision: '-- Select a subdivision --',
         city: 'City',
         stateProvince: 'State / Province',
         country: 'Country',
         additionalDetails: 'Additional Details',
         availability: 'Availability Status',
         languages: 'Languages',
+        english: 'English',
+        french: 'French',
+        languageRequired: 'Please select at least one language',
         languagesPlaceholder: 'e.g. English, French',
         certifications: 'Certifications',
         certificationsPlaceholder: 'List your certifications, separated by commas',
@@ -492,6 +510,12 @@ const en = {
         confirmDeletePhoto: 'Delete this photo?',
         portfolioTipTitle: 'Portfolio tip',
         portfolioTipDesc: 'Photos of finished projects, before/after shots, and close-up details help clients see the quality of your work.',
+        profilePhoto: 'Profile Photo',
+        profilePhotoDesc: 'This photo will appear on your worker card and profile page. Use a clear, professional headshot.',
+        uploadPhoto: 'Upload Photo',
+        changePhoto: 'Change Photo',
+        photoRequirements: 'JPG, PNG or WebP — max 5MB — square photos work best',
+        workPhotos: 'Work Photos',
     },
 
     // ─── Category Names ─────────────────────────────────

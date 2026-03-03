@@ -36,7 +36,7 @@ export default function EmployerDashboard({ stats, recentApplications, company }
 
     return (
         <AppLayout>
-            <Head title="Employer Dashboard - NexJobs" />
+            <Head title="Employer Dashboard" />
 
             <div className="bg-gradient-to-r from-gray-900 to-gray-800 py-10">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
