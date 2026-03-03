@@ -107,7 +107,7 @@ class WorkerProfileController extends Controller
             'title' => 'required|string|max:255',
             'bio' => 'required|string|max:5000',
             'phone' => 'required|string|max:30',
-            'city' => 'required|string|max:100',
+            'city' => 'nullable|string|max:100',
             'state' => 'required|string|max:100',
             'years_experience' => 'required|integer|min:0',
             'experience_level' => 'required|in:entry,intermediate,experienced,expert',

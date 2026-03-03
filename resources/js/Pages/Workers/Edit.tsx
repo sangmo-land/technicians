@@ -253,7 +253,7 @@ export default function WorkerEdit({ profile, categories, allSkills }: Props) {
         /* 1 experience   */ form.data.experience_level.trim() !== '' && form.data.years_experience.trim() !== '' && Number(form.data.years_experience) >= 0,
         /* 2 work history */ workExpValid,
         /* 3 rates        */ form.data.daily_rate.trim() !== '' && Number(form.data.daily_rate) > 0,
-        /* 4 location     */ form.data.city.trim() !== '' && form.data.state.trim() !== '',
+        /* 4 location     */ form.data.state.trim() !== '',
         /* 5 details      */ form.data.availability.trim() !== '' && form.data.languages.trim().length > 0,
         /* 6 categories   */ true, /* always valid — primary category is enforced in step 0; extra categories are optional */
         /* 7 portfolio    */ true, /* always valid — portfolio photos are optional */
@@ -783,10 +783,10 @@ export default function WorkerEdit({ profile, categories, allSkills }: Props) {
                                                 {fieldError('state')}
                                             </div>
 
-                                            {/* Division */}
+                                            {/* Division (Optional) */}
                                             {selectedRegion && (
                                                 <div>
-                                                    <label className={labelCls}>{t('workerEdit.division')} <span className="text-red-400">*</span></label>
+                                                    <label className={labelCls}>{t('workerEdit.division')} <span className="text-gray-400 text-xs font-normal">({t('workerEdit.optional')})</span></label>
                                                     <select
                                                         value={selectedDivision}
                                                         onChange={(e) => {
@@ -794,7 +794,7 @@ export default function WorkerEdit({ profile, categories, allSkills }: Props) {
                                                             setSelectedDivision(div);
                                                             form.setData('city', '');
                                                         }}
-                                                        className={`${inputCls(!selectedDivision && touched.state)} appearance-none`}>
+                                                        className={`${inputCls()} appearance-none`}>
                                                         <option value="">{t('workerEdit.selectDivision')}</option>
                                                         {availableDivisions.map(d => (
                                                             <option key={d.name} value={d.name}>{d.name}</option>
@@ -803,21 +803,19 @@ export default function WorkerEdit({ profile, categories, allSkills }: Props) {
                                                 </div>
                                             )}
 
-                                            {/* Subdivision */}
+                                            {/* Subdivision (Optional) */}
                                             {selectedDivision && (
                                                 <div>
-                                                    <label className={labelCls}>{t('workerEdit.subdivision')} <span className="text-red-400">*</span></label>
+                                                    <label className={labelCls}>{t('workerEdit.subdivision')} <span className="text-gray-400 text-xs font-normal">({t('workerEdit.optional')})</span></label>
                                                     <select
                                                         value={form.data.city}
-                                                        onBlur={() => markTouched('city')}
                                                         onChange={(e) => form.setData('city', e.target.value)}
-                                                        className={`${inputCls(touched.city && !form.data.city.trim())} appearance-none`}>
+                                                        className={`${inputCls()} appearance-none`}>
                                                         <option value="">{t('workerEdit.selectSubdivision')}</option>
                                                         {availableSubdivisions.map(s => (
                                                             <option key={s.name} value={s.name}>{s.name}</option>
                                                         ))}
                                                     </select>
-                                                    {fieldError('city')}
                                                 </div>
                                             )}
                                         </div>
