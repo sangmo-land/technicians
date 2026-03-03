@@ -5,6 +5,12 @@ import AppLayout from '@/Layouts/AppLayout';
 import { JobCategory, WorkerProfile, PaginatedData } from '@/types';
 import { getCategoryColor } from '@/utils/categoryColors';
 import { useTranslation } from '@/hooks/useTranslation';
+import {
+    Layers, Link2, BrickWall, FlaskConical, Hammer, Compass,
+    Construction, Truck, Zap, Wrench, Flame, PaintRoller,
+    Fence, HardHat, Droplets, Route, ArrowDownToLine,
+    Grid3x3, Settings, Home, Shovel, type LucideIcon,
+} from 'lucide-react';
 
 /* ── Animated number counter hook ───────────────── */
 function useCountUp(target: number, duration = 2000) {
@@ -55,27 +61,41 @@ const fadeUp = {
 
 const stagger = { visible: { transition: { staggerChildren: 0.08 } } };
 
-/* Category icon map – unique SVG paths per trade */
-const categoryIcons: Record<string, string> = {
-    'Masonry': 'M3 10h18M3 14h18M5 6h14a2 2 0 012 2v8a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2z',
-    'Iron Bending': 'M19.5 12c0-1.232-.046-2.453-.138-3.662a4.006 4.006 0 00-3.7-3.7 48.678 48.678 0 00-7.324 0 4.006 4.006 0 00-3.7 3.7c-.017.22-.032.441-.046.662M19.5 12l3-3m-3 3l-3-3m-12 3c0 1.232.046 2.453.138 3.662a4.006 4.006 0 003.7 3.7 48.656 48.656 0 007.324 0 4.006 4.006 0 003.7-3.7c.017-.22.032-.441.046-.662M4.5 12l3 3m-3-3l-3 3',
-    'Formwork': 'M4 5a1 1 0 011-1h14a1 1 0 011 1v2a1 1 0 01-1 1H5a1 1 0 01-1-1V5zM4 13a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H5a1 1 0 01-1-1v-6zM16 13a1 1 0 011-1h2a1 1 0 011 1v6a1 1 0 01-1 1h-2a1 1 0 01-1-1v-6z',
-    'Concrete Work': 'M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z',
-    'Welding': 'M15.362 5.214A8.252 8.252 0 0112 21 8.25 8.25 0 016.038 7.048 8.287 8.287 0 009 9.6a8.983 8.983 0 013.361-6.867 8.21 8.21 0 003 2.48z',
-    'Plumbing': 'M12 3c2.755 0 5.455.232 8.083.678.533.09.917.556.917 1.096v1.044a2.25 2.25 0 01-.659 1.591l-5.432 5.432a2.25 2.25 0 00-.659 1.591v2.927a2.25 2.25 0 01-1.244 2.013L9.75 21v-6.568a2.25 2.25 0 00-.659-1.591L3.659 7.409A2.25 2.25 0 013 5.818V4.774c0-.54.384-1.006.917-1.096A48.32 48.32 0 0112 3z',
-    'Electrical': 'M3.75 13.5l10.5-11.25L12 10.5h8.25L9.75 21.75 12 13.5H3.75z',
-    'Tiling': 'M3.75 6A2.25 2.25 0 016 3.75h2.25A2.25 2.25 0 0110.5 6v2.25a2.25 2.25 0 01-2.25 2.25H6a2.25 2.25 0 01-2.25-2.25V6zM3.75 15.75A2.25 2.25 0 016 13.5h2.25a2.25 2.25 0 012.25 2.25V18a2.25 2.25 0 01-2.25 2.25H6A2.25 2.25 0 013.75 18v-2.25zM13.5 6a2.25 2.25 0 012.25-2.25H18A2.25 2.25 0 0120.25 6v2.25A2.25 2.25 0 0118 10.5h-2.25a2.25 2.25 0 01-2.25-2.25V6zM13.5 15.75a2.25 2.25 0 012.25-2.25H18a2.25 2.25 0 012.25 2.25V18A2.25 2.25 0 0118 20.25h-2.25A2.25 2.25 0 0113.5 18v-2.25z',
-    'Painting': 'M9.53 16.122a3 3 0 00-5.78 1.128 2.25 2.25 0 01-2.4 2.245 4.5 4.5 0 008.4-2.245c0-.399-.078-.78-.22-1.128zm0 0a15.998 15.998 0 003.388-1.62m-5.043-.025a15.994 15.994 0 011.622-3.395m3.42 3.42a15.995 15.995 0 004.764-4.648l3.876-5.814a1.151 1.151 0 00-1.597-1.597L14.146 6.32a15.996 15.996 0 00-4.649 4.763m3.42 3.42a6.776 6.776 0 00-3.42-3.42',
-    'Steel Fixing': 'M11.42 15.17L17.25 21A2.652 2.652 0 0021 17.25l-5.877-5.877M11.42 15.17l2.496-3.03c.317-.384.74-.626 1.208-.766M11.42 15.17l-4.655 5.653a2.548 2.548 0 11-3.586-3.586l6.837-5.63m5.108-.233c.55-.164 1.163-.188 1.743-.14a4.5 4.5 0 004.486-6.336l-3.276 3.277a3.004 3.004 0 01-2.25-2.25l3.276-3.276a4.5 4.5 0 00-6.336 4.486c.091 1.076-.071 2.264-.904 2.95l-.102.085',
-    'Scaffolding': 'M3.75 21h16.5M4.5 3h15M5.25 3v18m13.5-18v18M9 6.75h1.5m-1.5 3h1.5m-1.5 3h1.5m3-6H15m-1.5 3H15m-1.5 3H15M9 21v-3.375c0-.621.504-1.125 1.125-1.125h3.75c.621 0 1.125.504 1.125 1.125V21',
-    'Crane Operation': 'M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5m-13.5-9L12 3m0 0l4.5 4.5M12 3v13.5',
-    'Plastering': 'M4.098 19.902a3.75 3.75 0 005.304 0l6.401-6.402M6.75 21A3.75 3.75 0 013 17.25V4.125C3 3.504 3.504 3 4.125 3h5.25c.621 0 1.125.504 1.125 1.125v4.072M6.75 21a3.75 3.75 0 003.75-3.75V8.197M6.75 21h13.125c.621 0 1.125-.504 1.125-1.125v-5.25c0-.621-.504-1.125-1.125-1.125h-4.072M10.5 8.197l2.88-2.88c.438-.439 1.15-.439 1.59 0l3.712 3.713c.44.44.44 1.152 0 1.59l-2.879 2.88M6.75 17.25h.008v.008H6.75v-.008z',
-    'Surveying': 'M7.5 3.75H6A2.25 2.25 0 003.75 6v1.5M16.5 3.75H18A2.25 2.25 0 0120.25 6v1.5m0 9V18A2.25 2.25 0 0118 20.25h-1.5m-9 0H6A2.25 2.25 0 013.75 18v-1.5M15 12a3 3 0 11-6 0 3 3 0 016 0z',
-    'Roofing': 'M2.25 12l8.954-8.955c.44-.439 1.152-.439 1.591 0L21.75 12M4.5 9.75v10.125c0 .621.504 1.125 1.125 1.125H9.75v-4.875c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21h4.125c.621 0 1.125-.504 1.125-1.125V9.75M8.25 21h8.25',
-    'Excavation': 'M19.5 13.5L12 21m0 0l-7.5-7.5M12 21V3',
-    'Carpentry': 'M21.75 6.75a4.5 4.5 0 01-4.884 4.484c-1.076-.091-2.264.071-2.95.904l-7.152 8.684a2.548 2.548 0 11-3.586-3.586l8.684-7.152c.833-.686.995-1.874.904-2.95a4.5 4.5 0 016.336-4.486l-3.276 3.276a3.004 3.004 0 002.25 2.25l3.276-3.276c.256.565.398 1.192.398 1.852z',
-    'MEP': 'M9.594 3.94c.09-.542.56-.94 1.11-.94h2.593c.55 0 1.02.398 1.11.94l.213 1.281c.063.374.313.686.645.87.074.04.147.083.22.127.325.196.72.257 1.075.124l1.217-.456a1.125 1.125 0 011.37.49l1.296 2.247a1.125 1.125 0 01-.26 1.431l-1.003.827c-.293.241-.438.613-.431.992a6.759 6.759 0 010 .255c-.007.378.138.75.43.99l1.005.828c.424.35.534.954.26 1.43l-1.298 2.247a1.125 1.125 0 01-1.369.491l-1.217-.456c-.355-.133-.75-.072-1.076.124a6.57 6.57 0 01-.22.128c-.331.183-.581.495-.644.869l-.213 1.28c-.09.543-.56.941-1.11.941h-2.594c-.55 0-1.02-.398-1.11-.94l-.213-1.281c-.062-.374-.312-.686-.644-.87a6.52 6.52 0 01-.22-.127c-.325-.196-.72-.257-1.076-.124l-1.217.456a1.125 1.125 0 01-1.369-.49l-1.297-2.247a1.125 1.125 0 01.26-1.431l1.004-.827c.292-.24.437-.613.43-.992a6.932 6.932 0 010-.255c.007-.378-.138-.75-.43-.99l-1.004-.828a1.125 1.125 0 01-.26-1.43l1.297-2.247a1.125 1.125 0 011.37-.491l1.216.456c.356.133.751.072 1.076-.124.072-.044.146-.087.22-.128.332-.183.582-.495.644-.869l.214-1.281z M15 12a3 3 0 11-6 0 3 3 0 016 0z',
+/* Category icon map – Lucide React icons per trade */
+const categoryIconMap: Record<string, LucideIcon> = {
+    'formwork':        Layers,           // Layered form panels
+    'iron':            Link2,            // Connected steel bars
+    'steel':           Link2,            // Steel fixing / rebar
+    'mason':           BrickWall,        // Brick wall
+    'brick':           BrickWall,        // Bricklaying
+    'concrete':        FlaskConical,     // Concrete mixing
+    'carpenter':       Hammer,           // Hammer & woodwork
+    'survey':          Compass,          // Surveying instrument
+    'crane':           Construction,     // Crane / construction
+    'heavy':           Truck,            // Heavy equipment
+    'equipment':       Truck,            // Equipment operator
+    'electric':        Zap,              // Electrical / lightning
+    'plumb':           Wrench,           // Pipe wrench / plumbing
+    'weld':            Flame,            // Welding flame
+    'fabricat':        Flame,            // Metal fabrication
+    'paint':           PaintRoller,      // Paint roller
+    'decorator':       PaintRoller,      // Decorator
+    'scaffold':        Fence,            // Scaffolding structure
+    'site engineer':   HardHat,          // Hard hat / engineer
+    'waterproof':      Droplets,         // Water droplets
+    'road':            Route,            // Road / route
+    'asphalt':         Route,            // Asphalt road
+    'pile':            ArrowDownToLine,  // Driving piles down
+    'foundation':      ArrowDownToLine,  // Foundation work
+    'til':             Grid3x3,          // Tile grid pattern
+    'floor':           Grid3x3,          // Floor tiling
+    'plaster':         Shovel,           // Plastering trowel
+    'roof':            Home,             // Roofing / house
+    'excavat':         Shovel,           // Excavation / digging
+    'mep':             Settings,         // Mechanical engineering
 };
+
+const DefaultCategoryIcon = Construction;  // Fallback icon
 
 /* Rich accent color sets per trade for category cards */
 const categoryAccents: Record<string, { bg: string; iconBg: string; iconColor: string; hoverBorder: string; countBg: string; countText: string }> = {
@@ -97,6 +117,14 @@ const categoryAccents: Record<string, { bg: string; iconBg: string; iconColor: s
     'excavat':     { bg: 'hover:bg-amber-50/60', iconBg: 'bg-amber-100', iconColor: 'text-amber-700', hoverBorder: 'hover:border-amber-200', countBg: 'bg-amber-50', countText: 'text-amber-600' },
     'carpent':     { bg: 'hover:bg-yellow-50/60', iconBg: 'bg-yellow-100', iconColor: 'text-yellow-700', hoverBorder: 'hover:border-yellow-200', countBg: 'bg-yellow-50', countText: 'text-yellow-700' },
     'mep':         { bg: 'hover:bg-fuchsia-50/60', iconBg: 'bg-fuchsia-100', iconColor: 'text-fuchsia-600', hoverBorder: 'hover:border-fuchsia-200', countBg: 'bg-fuchsia-50', countText: 'text-fuchsia-600' },
+    'heavy':       { bg: 'hover:bg-zinc-50/60', iconBg: 'bg-zinc-100', iconColor: 'text-zinc-600', hoverBorder: 'hover:border-zinc-300', countBg: 'bg-zinc-50', countText: 'text-zinc-600' },
+    'equipment':   { bg: 'hover:bg-zinc-50/60', iconBg: 'bg-zinc-100', iconColor: 'text-zinc-600', hoverBorder: 'hover:border-zinc-300', countBg: 'bg-zinc-50', countText: 'text-zinc-600' },
+    'site eng':    { bg: 'hover:bg-blue-50/60', iconBg: 'bg-blue-100', iconColor: 'text-blue-600', hoverBorder: 'hover:border-blue-200', countBg: 'bg-blue-50', countText: 'text-blue-600' },
+    'waterproof':  { bg: 'hover:bg-teal-50/60', iconBg: 'bg-teal-100', iconColor: 'text-teal-600', hoverBorder: 'hover:border-teal-200', countBg: 'bg-teal-50', countText: 'text-teal-600' },
+    'road':        { bg: 'hover:bg-gray-50/60', iconBg: 'bg-gray-100', iconColor: 'text-gray-600', hoverBorder: 'hover:border-gray-300', countBg: 'bg-gray-50', countText: 'text-gray-600' },
+    'asphalt':     { bg: 'hover:bg-gray-50/60', iconBg: 'bg-gray-100', iconColor: 'text-gray-600', hoverBorder: 'hover:border-gray-300', countBg: 'bg-gray-50', countText: 'text-gray-600' },
+    'pile':        { bg: 'hover:bg-violet-50/60', iconBg: 'bg-violet-100', iconColor: 'text-violet-600', hoverBorder: 'hover:border-violet-200', countBg: 'bg-violet-50', countText: 'text-violet-600' },
+    'foundation':  { bg: 'hover:bg-violet-50/60', iconBg: 'bg-violet-100', iconColor: 'text-violet-600', hoverBorder: 'hover:border-violet-200', countBg: 'bg-violet-50', countText: 'text-violet-600' },
 };
 
 const defaultAccent = { bg: 'hover:bg-blue-50/60', iconBg: 'bg-blue-100', iconColor: 'text-blue-600', hoverBorder: 'hover:border-blue-200', countBg: 'bg-blue-50', countText: 'text-blue-600' };
@@ -109,11 +137,12 @@ const getCategoryAccent = (name: string) => {
     return defaultAccent;
 };
 
-const getCategoryIcon = (name: string): string => {
-    for (const [key, path] of Object.entries(categoryIcons)) {
-        if (name.toLowerCase().includes(key.toLowerCase())) return path;
+const getCategoryIcon = (name: string): LucideIcon => {
+    const lower = name.toLowerCase();
+    for (const [key, Icon] of Object.entries(categoryIconMap)) {
+        if (lower.includes(key)) return Icon;
     }
-    return 'M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4';
+    return DefaultCategoryIcon;
 };
 
 
@@ -488,11 +517,8 @@ export default function Welcome({ categories, stats, technicians, techFilters }:
                                         {/* Header */}
                                         <div className="flex items-center justify-between mb-8">
                                             <div className="flex items-center gap-3">
-                                                <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-amber-400 to-orange-500 flex items-center justify-center shadow-lg shadow-amber-500/30">
-                                                    <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" /></svg>
-                                                </div>
+                                                <img src="/images/logoNexJobs.png" alt="NexJobs" className="h-10 w-auto brightness-0 invert" />
                                                 <div>
-                                                    <p className="text-white font-bold text-sm">NexJobs</p>
                                                     <p className="text-slate-400 text-[11px]">Live Platform Stats</p>
                                                 </div>
                                             </div>
@@ -556,50 +582,6 @@ export default function Welcome({ categories, stats, technicians, techFilters }:
                                         </div>
                                     </div>
                                 </div>
-
-                                {/* Floating notification card */}
-                                <motion.div
-                                    initial={{ opacity: 0, x: 20 }}
-                                    animate={{ opacity: 1, x: 0 }}
-                                    transition={{ delay: 1, duration: 0.5 }}
-                                    className="absolute -left-8 top-12 z-10"
-                                >
-                                    <motion.div
-                                        animate={{ y: [0, -6, 0] }}
-                                        transition={{ duration: 4, repeat: Infinity, ease: 'easeInOut' }}
-                                        className="bg-white rounded-2xl shadow-xl shadow-black/10 p-3.5 flex items-center gap-3 border border-gray-100 max-w-[220px]"
-                                    >
-                                        <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-emerald-400 to-emerald-600 flex items-center justify-center flex-shrink-0 shadow-md">
-                                            <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4.5 12.75l6 6 9-13.5" /></svg>
-                                        </div>
-                                        <div>
-                                            <p className="text-gray-900 text-xs font-bold">New Worker Verified</p>
-                                            <p className="text-gray-400 text-[10px] mt-0.5">Just now · Douala</p>
-                                        </div>
-                                    </motion.div>
-                                </motion.div>
-
-                                {/* Floating hire card */}
-                                <motion.div
-                                    initial={{ opacity: 0, x: -20 }}
-                                    animate={{ opacity: 1, x: 0 }}
-                                    transition={{ delay: 1.3, duration: 0.5 }}
-                                    className="absolute -right-4 bottom-16 z-10"
-                                >
-                                    <motion.div
-                                        animate={{ y: [0, 6, 0] }}
-                                        transition={{ duration: 5, repeat: Infinity, ease: 'easeInOut', delay: 1 }}
-                                        className="bg-white rounded-2xl shadow-xl shadow-black/10 p-3.5 flex items-center gap-3 border border-gray-100 max-w-[200px]"
-                                    >
-                                        <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-amber-400 to-orange-500 flex items-center justify-center flex-shrink-0 shadow-md">
-                                            <svg className="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" /></svg>
-                                        </div>
-                                        <div>
-                                            <p className="text-gray-900 text-xs font-bold">5-Star Review</p>
-                                            <p className="text-gray-400 text-[10px] mt-0.5">"Excellent work!"</p>
-                                        </div>
-                                    </motion.div>
-                                </motion.div>
                             </motion.div>
                         </div>
                     </div>
@@ -702,7 +684,7 @@ export default function Welcome({ categories, stats, technicians, techFilters }:
                     </motion.div>
                     <motion.div variants={stagger} initial="hidden" whileInView="visible" viewport={{ once: true }} className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
                         {categories.slice(0, 12).map((cat, i) => {
-                            const iconPath = getCategoryIcon(cat.name);
+                            const IconComponent = getCategoryIcon(cat.name);
                             const accent = getCategoryAccent(cat.name);
                             const workerCount = cat.worker_profiles_count || 0;
                             return (
@@ -711,9 +693,7 @@ export default function Welcome({ categories, stats, technicians, techFilters }:
                                         className={`flex items-center gap-5 bg-white ${accent.bg} rounded-2xl px-6 py-5 border border-gray-100/80 ${accent.hoverBorder} transition-all duration-300 group hover:shadow-xl hover:shadow-slate-200/50 h-full`}>
                                         {/* Icon */}
                                         <div className={`w-14 h-14 ${accent.iconBg} rounded-xl flex items-center justify-center flex-shrink-0 transition-all duration-300 group-hover:scale-110 group-hover:shadow-lg`}>
-                                            <svg className={`w-7 h-7 ${accent.iconColor} transition-colors`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d={iconPath} />
-                                            </svg>
+                                            <IconComponent className={`w-7 h-7 ${accent.iconColor} transition-colors`} strokeWidth={1.5} />
                                         </div>
                                         {/* Text */}
                                         <div className="flex-1 min-w-0">

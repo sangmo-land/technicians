@@ -55,15 +55,8 @@ export default function Login({
                     <div className="relative z-10 flex flex-col justify-between p-10 xl:p-14 w-full">
                         {/* Logo */}
                         <motion.div initial={{ opacity: 0, y: -20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }}>
-                            <Link href="/" className="inline-flex items-center gap-3 group">
-                                <div className="w-11 h-11 bg-gradient-to-br from-amber-400 to-amber-600 rounded-xl flex items-center justify-center shadow-lg shadow-amber-500/20 group-hover:shadow-amber-500/40 transition-shadow">
-                                    <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
-                                    </svg>
-                                </div>
-                                <span className="text-2xl font-bold text-white tracking-tight">
-                                    Nex<span className="text-amber-400">Jobs</span>
-                                </span>
+                            <Link href="/" className="inline-flex items-center group">
+                                <img src="/images/logoNexJobs.png" alt="NexJobs" className="h-20 w-auto" />
                             </Link>
                         </motion.div>
 
@@ -140,15 +133,8 @@ export default function Login({
                     >
                         {/* Mobile logo */}
                         <div className="lg:hidden mb-8 text-center">
-                            <Link href="/" className="inline-flex items-center gap-2.5">
-                                <div className="w-10 h-10 bg-gradient-to-br from-amber-400 to-amber-600 rounded-xl flex items-center justify-center">
-                                    <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
-                                    </svg>
-                                </div>
-                                <span className="text-xl font-bold text-slate-800 tracking-tight">
-                                    Nex<span className="text-amber-500">Jobs</span>
-                                </span>
+                            <Link href="/" className="inline-flex items-center">
+                                <img src="/images/logoNexJobs.png" alt="NexJobs" className="h-16 w-auto" />
                             </Link>
                         </div>
 

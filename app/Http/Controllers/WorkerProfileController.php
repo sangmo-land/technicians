@@ -89,35 +89,42 @@ class WorkerProfileController extends Controller
 
     public function update(Request $request)
     {
+        // Convert comma-separated strings to arrays if needed
+        if (is_string($request->certifications)) {
+            $request->merge([
+                'certifications' => array_values(array_filter(array_map('trim', explode(',', $request->certifications)))),
+            ]);
+        }
+        if (is_string($request->languages)) {
+            $request->merge([
+                'languages' => array_values(array_filter(array_map('trim', explode(',', $request->languages)))),
+            ]);
+        }
+
         $request->validate([
-            'title' => 'nullable|string|max:255',
-            'bio' => 'nullable|string|max:5000',
-            'location' => 'nullable|string|max:255',
-            'city' => 'nullable|string|max:100',
-            'state' => 'nullable|string|max:100',
-            'years_experience' => 'integer|min:0',
-            'experience_level' => 'in:entry,intermediate,experienced,expert',
-            'hourly_rate' => 'nullable|numeric|min:0',
-            'daily_rate' => 'nullable|numeric|min:0',
-            'availability' => 'in:available,busy,not_available',
-            'willing_to_relocate' => 'boolean',
-            'max_travel_distance' => 'nullable|integer|min:0',
+            'title' => 'required|string|max:255',
+            'bio' => 'required|string|max:5000',
+            'city' => 'required|string|max:100',
+            'state' => 'required|string|max:100',
+            'years_experience' => 'required|integer|min:0',
+            'experience_level' => 'required|in:entry,intermediate,experienced,expert',
+            'hourly_rate' => 'required|numeric|min:0',
+            'daily_rate' => 'required|numeric|min:0',
+            'availability' => 'required|in:available,busy,not_available',
             'skills' => 'nullable|array',
             'skills.*' => 'exists:skills,id',
-            'categories' => 'nullable|array',
+            'categories' => 'required|array|min:1',
             'categories.*' => 'exists:job_categories,id',
-            'primary_category' => 'nullable|exists:job_categories,id',
             'certifications' => 'nullable|array',
-            'languages' => 'nullable|array',
+            'languages' => 'required|array|min:1',
         ]);
 
         $profile = auth()->user()->workerProfile;
 
         $profile->update($request->only([
-            'title', 'bio', 'location', 'city', 'state',
+            'title', 'bio', 'city', 'state',
             'years_experience', 'experience_level',
             'hourly_rate', 'daily_rate', 'availability',
-            'willing_to_relocate', 'max_travel_distance',
             'certifications', 'languages',
         ]));
 
@@ -128,13 +135,7 @@ class WorkerProfileController extends Controller
 
         // Sync categories
         if ($request->has('categories')) {
-            $categorySync = [];
-            foreach ($request->categories as $catId) {
-                $categorySync[$catId] = [
-                    'is_primary' => $catId == $request->primary_category,
-                ];
-            }
-            $profile->jobCategories()->sync($categorySync);
+            $profile->jobCategories()->sync($request->categories);
         }
 
         return back()->with('success', 'Profile updated successfully!');

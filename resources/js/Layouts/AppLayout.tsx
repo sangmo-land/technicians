@@ -21,13 +21,8 @@ export default function GuestLayout({ header, children }: Props) {
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                     <div className="flex justify-between h-16">
                         <div className="flex items-center">
-                            <Link href="/" className="flex items-center space-x-2">
-                                <div className="w-8 h-8 bg-slate-800 rounded-lg flex items-center justify-center">
-                                    <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
-                                    </svg>
-                                </div>
-                                <span className="text-xl font-bold text-slate-800">Nex<span className="text-blue-600">Jobs</span></span>
+                            <Link href="/" className="flex items-center">
+                                <img src="/images/logoNexJobs.png" alt="NexJobs" className="h-14 w-auto" />
                             </Link>
 
                             <div className="hidden md:flex items-center ml-10 space-x-8">
@@ -135,13 +130,8 @@ export default function GuestLayout({ header, children }: Props) {
             <footer className="bg-slate-900 text-slate-400">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
                     <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
-                        <Link href="/" className="flex items-center space-x-2">
-                            <div className="w-7 h-7 bg-slate-700 rounded-lg flex items-center justify-center">
-                                <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
-                                </svg>
-                            </div>
-                            <span className="text-sm font-bold text-white">Nex<span className="text-blue-400">Jobs</span></span>
+                        <Link href="/" className="flex items-center">
+                            <img src="/images/logoNexJobs.png" alt="NexJobs" className="h-8 w-auto brightness-0 invert" />
                         </Link>
                         <div className="flex items-center gap-6 text-sm">
                             <Link href="/workers" className="hover:text-white transition-colors">{t('footer.browseWorkers')}</Link>
