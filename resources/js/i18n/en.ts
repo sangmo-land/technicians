@@ -68,8 +68,25 @@ const en = {
         searchPlaceholderJob: 'Skill, trade, or worker name...',
         searchPlaceholderLocation: 'City or Region...',
         searchWorkers: 'Search Workers',
-        trending: 'Popular:',
-        trendingTerms: ['Formwork Maker', 'Iron Bender', 'Mason', 'Crane Operator', 'Welder'],
+        trending: 'Top trades:',
+        trendingTerms: ['Electrician', 'Plumber', 'Mason', 'Carpenter', 'Welder'],
+
+        // Hero rotating trades
+        heroRotatingTrades: ['Electricians', 'Plumbers', 'Welders', 'Masons', 'Carpenters'],
+        heroHeadingPrefix: 'Find Expert',
+        heroHeadingSuffix: 'For Your Next Project',
+        heroSubheading: 'The trusted marketplace connecting you with verified civil engineering professionals across Cameroon',
+
+        // Hero feature badges
+        heroBadgeVerified: 'Verified Profiles',
+        heroBadgeInstantHire: 'Instant Hire',
+        heroBadgeSecure: 'Secure Platform',
+
+        // Hero stats row
+        heroStatWorkers: 'Active Workers',
+        heroStatProjects: 'Projects Completed',
+        heroStatRating: 'Avg. Rating',
+        heroStatHires: 'Successful Hires',
 
         // Floating stats
         skilledWorkers: 'Skilled Workers',

@@ -68,8 +68,25 @@ const fr = {
         searchPlaceholderJob: 'Compétence, métier ou nom...',
         searchPlaceholderLocation: 'Ville ou Région...',
         searchWorkers: 'Rechercher',
-        trending: 'Populaire :',
-        trendingTerms: ['Coffreur', 'Ferrailleur', 'Maçon', 'Grutier', 'Soudeur'],
+        trending: 'Métiers principaux :',
+        trendingTerms: ['Électricien', 'Plombier', 'Maçon', 'Menuisier', 'Soudeur'],
+
+        // Hero rotating trades
+        heroRotatingTrades: ['Électriciens', 'Plombiers', 'Soudeurs', 'Maçons', 'Menuisiers'],
+        heroHeadingPrefix: 'Trouvez des',
+        heroHeadingSuffix: 'pour votre prochain projet',
+        heroSubheading: 'La plateforme de confiance qui vous connecte aux professionnels vérifiés du génie civil à travers le Cameroun',
+
+        // Hero feature badges
+        heroBadgeVerified: 'Profils vérifiés',
+        heroBadgeInstantHire: 'Embauche instantanée',
+        heroBadgeSecure: 'Plateforme sécurisée',
+
+        // Hero stats row
+        heroStatWorkers: 'Ouvriers actifs',
+        heroStatProjects: 'Projets réalisés',
+        heroStatRating: 'Note moyenne',
+        heroStatHires: 'Embauches réussies',
 
         // Floating stats
         skilledWorkers: 'Ouvriers qualifiés',

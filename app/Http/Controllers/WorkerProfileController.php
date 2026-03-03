@@ -20,7 +20,8 @@ class WorkerProfileController extends Controller
                 $q->where('title', 'like', "%{$search}%")
                     ->orWhere('location', 'like', "%{$search}%")
                     ->orWhereHas('user', fn ($q) => $q->where('name', 'like', "%{$search}%"))
-                    ->orWhereHas('skills', fn ($q) => $q->where('name', 'like', "%{$search}%"));
+                    ->orWhereHas('skills', fn ($q) => $q->where('name', 'like', "%{$search}%"))
+                    ->orWhereHas('jobCategories', fn ($q) => $q->where('name', 'like', "%{$search}%"));
             });
         }
 
