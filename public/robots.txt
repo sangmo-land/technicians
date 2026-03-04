@@ -1,7 +1,7 @@
 # ═══════════════════════════════════════════════════════════
 # NexJobs — robots.txt
 # Cameroon's leading platform for skilled construction workers
-# https://nexjobs.cm
+# https://nexjobs.org
 # ═══════════════════════════════════════════════════════════
 
 # ─── Default: All well-behaved crawlers ───────────────────
@@ -145,4 +145,4 @@ User-agent: Google-Extended
 Disallow: /
 
 # ─── Sitemap ──────────────────────────────────────────────
-Sitemap: https://nexjobs.cm/sitemap.xml
+Sitemap: https://nexjobs.org/sitemap.xml
