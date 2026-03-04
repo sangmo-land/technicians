@@ -69,8 +69,9 @@ export default function GuestLayout({ header, children }: Props) {
                             )}
                         </div>
 
-                        {/* Mobile menu button */}
-                        <div className="flex items-center md:hidden">
+                        {/* Mobile menu button + language switcher */}
+                        <div className="flex items-center gap-2 md:hidden">
+                            <LanguageSwitcher variant="light" />
                             <button
                                 onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
                                 className="text-gray-500 hover:text-gray-700 p-2"
@@ -109,7 +110,7 @@ export default function GuestLayout({ header, children }: Props) {
                                         <Link href="/register" className="block py-2 bg-slate-800 text-white rounded-lg text-center font-medium">{t('nav.signUp')}</Link>
                                     </>
                                 )}
-                                <div className="pt-2 border-t border-gray-100"><LanguageSwitcher variant="light" /></div>
+
                             </div>
                         </motion.div>
                     )}
