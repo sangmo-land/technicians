@@ -8,7 +8,7 @@
     },
     "devDependencies": {
         "@headlessui/react": "^2.2.9",
-        "@inertiajs/react": "^2.0.0",
+        "@inertiajs/react": "^2.3.17",
         "@tailwindcss/forms": "^0.5.3",
         "@tailwindcss/vite": "^4.0.0",
         "@types/node": "^18.13.0",
@@ -21,13 +21,14 @@
         "laravel-vite-plugin": "^2.0.0",
         "postcss": "^8.4.31",
         "react": "^18.2.0",
-        "react-dom": "^18.2.0",
+        "react-dom": "^18.3.1",
         "tailwindcss": "^3.2.1",
         "typescript": "^5.0.2",
         "vite": "^7.0.7"
     },
     "dependencies": {
         "@heroicons/react": "^2.2.0",
+        "@inertiajs/core": "^2.3.17",
         "framer-motion": "^12.34.3",
         "lucide-react": "^0.576.0"
     }
