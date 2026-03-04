@@ -61,6 +61,11 @@ const en = {
     // ─── Home / Welcome ──────────────────────────────────
     home: {
         pageTitle: 'Find Skilled Workers',
+        seoDescription: "NexJobs — Cameroon's #1 platform to find and hire skilled construction workers. Browse verified masons, electricians, plumbers, welders and more in Douala, Yaoundé and across Cameroon.",
+        seoOgTitle: 'NexJobs — Find Skilled Construction Workers in Cameroon',
+        seoOgDescription: 'Hire verified masons, electricians, plumbers, carpenters and more across Cameroon. Browse profiles, portfolios and reviews.',
+        seoJsonLdSiteDescription: 'Find and hire skilled construction workers in Cameroon',
+        seoJsonLdOrgDescription: "Cameroon's leading platform to find and hire skilled construction workers and technicians",
         heroStatPill: '{{workers}} Verified Workers · {{categories}} Trade Categories',
         heroHeading1: 'Find Skilled',
         heroHeading2: 'Workers Instantly.',
@@ -284,6 +289,9 @@ const en = {
 
     // ─── Workers Show ────────────────────────────────────
     workerShow: {
+        seoDescription: 'Hire {{name}} — {{title}} in {{location}}. {{experience}} View portfolio, reviews and contact directly on NexJobs.',
+        seoOgTitle: '{{name}} — {{title}} | NexJobs',
+        seoOgDescription: '{{title}} in {{location}}. {{bio}}',
         home: 'Home',
         workers: 'Workers',
         constructionPro: 'Construction Professional',
@@ -420,6 +428,9 @@ const en = {
     // ─── Workers Index (Search Page) ─────────────────────
     workersIndex: {
         pageTitle: 'Find Workers',
+        seoDescription: 'Browse skilled construction workers and technicians in Cameroon. Filter by category, experience and location. Find masons, electricians, plumbers, welders and more.',
+        seoOgTitle: 'Browse Workers — NexJobs Cameroon',
+        seoOgDescription: 'Find verified construction professionals across Cameroon. Browse profiles, check reviews and hire the best.',
         home: 'Home',
         workers: 'Workers',
         workerCount: '{{count}} professionals available',

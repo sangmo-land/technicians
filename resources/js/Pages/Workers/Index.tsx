@@ -305,7 +305,12 @@ export default function WorkersIndex({ workers, categories, filters }: Props) {
 
     return (
         <AppLayout>
-            <Head title={t('workersIndex.pageTitle')} />
+            <Head title={t('workersIndex.pageTitle')}>
+                <meta name="description" content={t('workersIndex.seoDescription')} />
+                <meta property="og:title" content={t('workersIndex.seoOgTitle')} />
+                <meta property="og:description" content={t('workersIndex.seoOgDescription')} />
+                <meta property="og:type" content="website" />
+            </Head>
 
             {/* Hero Section */}
             <section className="relative bg-gradient-to-br from-slate-900 via-slate-800 to-blue-950 overflow-hidden">

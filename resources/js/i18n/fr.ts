@@ -61,6 +61,11 @@ const fr = {
     // ─── Home / Welcome ──────────────────────────────────
     home: {
         pageTitle: 'Trouvez des ouvriers qualifiés',
+        seoDescription: "NexJobs — La plateforme n°1 au Cameroun pour trouver et embaucher des ouvriers qualifiés du bâtiment. Parcourez les maçons, électriciens, plombiers, soudeurs vérifiés et bien plus à Douala, Yaoundé et partout au Cameroun.",
+        seoOgTitle: 'NexJobs — Trouvez des ouvriers qualifiés au Cameroun',
+        seoOgDescription: 'Embauchez des maçons, électriciens, plombiers, menuisiers vérifiés et plus au Cameroun. Parcourez les profils, portfolios et avis.',
+        seoJsonLdSiteDescription: 'Trouvez et embauchez des ouvriers qualifiés du bâtiment au Cameroun',
+        seoJsonLdOrgDescription: 'La plateforme leader au Cameroun pour trouver et embaucher des ouvriers qualifiés et techniciens du bâtiment',
         heroStatPill: '{{workers}} ouvriers vérifiés · {{categories}} catégories de métiers',
         heroHeading1: 'Trouvez des ouvriers',
         heroHeading2: 'qualifiés instantanément.',
@@ -284,6 +289,9 @@ const fr = {
 
     // ─── Workers Show ────────────────────────────────────
     workerShow: {
+        seoDescription: 'Embauchez {{name}} — {{title}} à {{location}}. {{experience}} Consultez le portfolio, les avis et contactez directement sur NexJobs.',
+        seoOgTitle: '{{name}} — {{title}} | NexJobs',
+        seoOgDescription: '{{title}} à {{location}}. {{bio}}',
         home: 'Accueil',
         workers: 'Ouvriers',
         constructionPro: 'Professionnel de la construction',
@@ -420,6 +428,9 @@ const fr = {
     // ─── Workers Index (Page de recherche) ───────────────
     workersIndex: {
         pageTitle: 'Trouver des ouvriers',
+        seoDescription: 'Parcourez les ouvriers qualifiés du bâtiment et techniciens au Cameroun. Filtrez par catégorie, expérience et localisation. Trouvez maçons, électriciens, plombiers, soudeurs et plus.',
+        seoOgTitle: 'Parcourir les ouvriers — NexJobs Cameroun',
+        seoOgDescription: 'Trouvez des professionnels du bâtiment vérifiés au Cameroun. Parcourez les profils, consultez les avis et embauchez les meilleurs.',
         home: 'Accueil',
         workers: 'Ouvriers',
         workerCount: '{{count}} professionnels disponibles',

@@ -47,7 +47,42 @@ export default function WorkerShow({ worker }: Props) {
 
     return (
         <AppLayout>
-            <Head title={worker.user?.name || 'Worker'} />
+            <Head title={`${worker.user?.name || 'Worker'} — ${worker.title || 'Professional'}`}>
+                <meta name="description" content={t('workerShow.seoDescription', {
+                    name: worker.user?.name || 'Worker',
+                    title: worker.title || t('workerShow.constructionPro'),
+                    location: worker.state || 'Cameroon',
+                    experience: worker.years_experience ? worker.years_experience + ` ${t('workerShow.yearsValue', { count: worker.years_experience })}.` : '',
+                })} />
+                <meta property="og:title" content={t('workerShow.seoOgTitle', {
+                    name: worker.user?.name || 'Worker',
+                    title: worker.title || 'Professional',
+                })} />
+                <meta property="og:description" content={t('workerShow.seoOgDescription', {
+                    title: worker.title || 'Professional',
+                    location: worker.state || 'Cameroon',
+                    bio: worker.bio?.substring(0, 120) || '',
+                })} />
+                <meta property="og:type" content="profile" />
+                {worker.user?.avatar && <meta property="og:image" content={`/storage/${worker.user.avatar}`} />}
+                <script type="application/ld+json">{JSON.stringify({
+                    '@context': 'https://schema.org',
+                    '@type': 'Person',
+                    name: worker.user?.name || 'Worker',
+                    jobTitle: worker.title || 'Construction Professional',
+                    description: worker.bio?.substring(0, 200) || '',
+                    url: window.location.href,
+                    image: worker.user?.avatar ? `${window.location.origin}/storage/${worker.user.avatar}` : undefined,
+                    address: {
+                        '@type': 'PostalAddress',
+                        addressRegion: worker.state || '',
+                        addressLocality: worker.city || '',
+                        addressCountry: 'CM',
+                    },
+                    worksFor: { '@type': 'Organization', name: 'Independent / Self-employed' },
+                    knowsAbout: worker.job_categories?.map((c: any) => c.name) || [],
+                })}</script>
+            </Head>
 
             {/* ═══════ Hero Section ═══════ */}
             <div className="relative overflow-hidden bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900">

@@ -312,7 +312,34 @@ export default function Welcome({ categories, stats, technicians, techFilters }:
 
     return (
         <AppLayout>
-            <Head title={t('home.pageTitle')} />
+            <Head title={t('home.pageTitle')}>
+                <meta name="description" content={t('home.seoDescription')} />
+                <meta property="og:title" content={t('home.seoOgTitle')} />
+                <meta property="og:description" content={t('home.seoOgDescription')} />
+                <meta property="og:type" content="website" />
+                <script type="application/ld+json">{JSON.stringify({
+                    '@context': 'https://schema.org',
+                    '@type': 'WebSite',
+                    name: 'NexJobs',
+                    url: window.location.origin,
+                    description: t('home.seoJsonLdSiteDescription'),
+                    potentialAction: {
+                        '@type': 'SearchAction',
+                        target: `${window.location.origin}/workers?search={search_term_string}`,
+                        'query-input': 'required name=search_term_string',
+                    },
+                })}</script>
+                <script type="application/ld+json">{JSON.stringify({
+                    '@context': 'https://schema.org',
+                    '@type': 'Organization',
+                    name: 'NexJobs',
+                    url: window.location.origin,
+                    logo: `${window.location.origin}/images/logoNexJobs.png`,
+                    description: t('home.seoJsonLdOrgDescription'),
+                    areaServed: { '@type': 'Country', name: 'Cameroon' },
+                    sameAs: [],
+                })}</script>
+            </Head>
 
             {/* ═══════════════════════════════════════════════════════
                 HERO SECTION — Comprehensive Professional Design

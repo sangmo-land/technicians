@@ -1,2 +1,148 @@
+# ═══════════════════════════════════════════════════════════
+# NexJobs — robots.txt
+# Cameroon's leading platform for skilled construction workers
+# https://nexjobs.cm
+# ═══════════════════════════════════════════════════════════
+
+# ─── Default: All well-behaved crawlers ───────────────────
 User-agent: *
-Disallow:
+
+# Public pages (crawl these)
+Allow: /
+Allow: /workers
+Allow: /workers/*
+Allow: /login
+Allow: /register
+Allow: /sitemap.xml
+
+# Authenticated / private areas (block)
+Disallow: /dashboard
+Disallow: /profile
+Disallow: /worker/profile
+Disallow: /admin
+Disallow: /admin/*
+
+# Auth flows (no value to index)
+Disallow: /forgot-password
+Disallow: /reset-password
+Disallow: /reset-password/*
+Disallow: /verify-email
+Disallow: /verify-email/*
+Disallow: /confirm-password
+Disallow: /email/verification-notification
+Disallow: /logout
+
+# API / internal endpoints
+Disallow: /api/
+Disallow: /api/*
+Disallow: /_ignition
+Disallow: /_ignition/*
+
+# Static assets that don't need indexing
+Disallow: /build/
+Disallow: /build/*
+Disallow: /hot
+Disallow: /vendor/
+Disallow: /storage/framework/
+Disallow: /storage/logs/
+
+# Query-string heavy pages (avoid duplicate content)
+Disallow: /*?tech_search=
+Disallow: /*?tech_category=
+Disallow: /*?page=
+
+# ─── Crawl rate ───────────────────────────────────────────
+Crawl-delay: 2
+
+# ─── Google ───────────────────────────────────────────────
+User-agent: Googlebot
+Allow: /
+Allow: /workers
+Allow: /workers/*
+Disallow: /dashboard
+Disallow: /profile
+Disallow: /worker/profile
+Disallow: /admin
+Disallow: /admin/*
+Disallow: /forgot-password
+Disallow: /reset-password
+Disallow: /verify-email
+Disallow: /confirm-password
+Disallow: /build/
+Disallow: /*?page=
+
+# ─── Google Image Bot (allow portfolio images) ────────────
+User-agent: Googlebot-Image
+Allow: /storage/avatars/
+Allow: /storage/portfolio/
+Allow: /images/
+Disallow: /build/
+
+# ─── Bing ─────────────────────────────────────────────────
+User-agent: Bingbot
+Allow: /
+Allow: /workers
+Allow: /workers/*
+Disallow: /dashboard
+Disallow: /profile
+Disallow: /worker/profile
+Disallow: /admin
+Disallow: /admin/*
+Disallow: /forgot-password
+Disallow: /reset-password
+Disallow: /verify-email
+Disallow: /confirm-password
+Disallow: /build/
+Disallow: /*?page=
+Crawl-delay: 5
+
+# ─── Yandex ───────────────────────────────────────────────
+User-agent: Yandex
+Allow: /
+Allow: /workers
+Disallow: /dashboard
+Disallow: /profile
+Disallow: /worker/profile
+Disallow: /admin
+Disallow: /build/
+Crawl-delay: 10
+
+# ─── Block aggressive / unwanted bots ─────────────────────
+User-agent: AhrefsBot
+Disallow: /
+
+User-agent: SemrushBot
+Disallow: /
+
+User-agent: DotBot
+Disallow: /
+
+User-agent: MJ12bot
+Disallow: /
+
+User-agent: BLEXBot
+Disallow: /
+
+User-agent: PetalBot
+Disallow: /
+
+User-agent: Bytespider
+Disallow: /
+
+User-agent: GPTBot
+Disallow: /
+
+User-agent: CCBot
+Disallow: /
+
+User-agent: anthropic-ai
+Disallow: /
+
+User-agent: Claude-Web
+Disallow: /
+
+User-agent: Google-Extended
+Disallow: /
+
+# ─── Sitemap ──────────────────────────────────────────────
+Sitemap: https://nexjobs.cm/sitemap.xml
