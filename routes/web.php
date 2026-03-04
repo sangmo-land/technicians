@@ -13,7 +13,19 @@ Route::get('/workers/{worker}', [WorkerProfileController::class, 'show'])->name(
 
 // Dashboard
 Route::get('/dashboard', function () {
-    return Inertia::render('Dashboard');
+    $user = auth()->user();
+    $profile = $user->workerProfile?->load(['jobCategories', 'portfolioPhotos', 'workExperiences']);
+    $stats = [
+        'profileViews' => $profile->profile_views ?? 0,
+        'portfolioPhotos' => $profile?->portfolioPhotos?->count() ?? 0,
+        'workExperiences' => $profile?->workExperiences?->count() ?? 0,
+        'categories' => $profile?->jobCategories?->count() ?? 0,
+    ];
+
+    return Inertia::render('Dashboard', [
+        'profile' => $profile,
+        'stats' => $stats,
+    ]);
 })->middleware(['auth', 'verified'])->name('dashboard');
 
 // Authenticated routes

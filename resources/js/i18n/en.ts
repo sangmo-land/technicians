@@ -154,6 +154,37 @@ const en = {
         currentlyBusy: 'Currently Busy',
     },
 
+    // ─── Dashboard ───────────────────────────────────────
+    dashboard: {
+        title: 'Dashboard',
+        welcome: 'Welcome, {{name}}',
+        completeProfile: 'Complete your profile to get started',
+        editProfile: 'Edit Profile',
+        editProfileDesc: 'Update your skills, experience, and availability',
+        browseWorkers: 'Browse Workers',
+        browseWorkersDesc: 'Find skilled professionals for your projects',
+        accountSettings: 'Account Settings',
+        accountSettingsDesc: 'Manage your account and security',
+        profileStrength: 'Profile Strength',
+        completeProfileHint: 'Complete all items to boost your visibility to clients',
+        fix: 'Fix',
+        quickActions: 'Quick Actions',
+        tipTitle: 'Pro Tip',
+        tipDesc: 'Workers with complete profiles and portfolio photos get up to 5x more views from potential clients.',
+        checkBio: 'Add a professional bio',
+        checkPhone: 'Add your phone number',
+        checkPhoto: 'Upload a profile photo',
+        checkLocation: 'Set your location',
+        checkCategory: 'Select job categories',
+        checkExperience: 'Set experience level',
+        checkRate: 'Set your daily rate',
+        checkPortfolio: 'Upload portfolio photos',
+        statViews: 'Profile Views',
+        statPhotos: 'Portfolio Photos',
+        statExperience: 'Work Experiences',
+        statCategories: 'Categories',
+    },
+
     // ─── Experience Levels ───────────────────────────────
     levels: {
         entry: 'Entry Level',

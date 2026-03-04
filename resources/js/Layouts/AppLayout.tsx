@@ -15,7 +15,7 @@ export default function GuestLayout({ header, children }: Props) {
     const { t } = useTranslation();
 
     return (
-        <div className="min-h-screen bg-gray-50">
+        <div className="min-h-screen bg-gray-50 flex flex-col">
             {/* Navigation */}
             <nav className="bg-white shadow-sm border-b border-gray-100 sticky top-0 z-50">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -124,7 +124,7 @@ export default function GuestLayout({ header, children }: Props) {
                 </header>
             )}
 
-            <main>{children}</main>
+            <main className="flex-1">{children}</main>
 
             {/* Footer */}
             <footer className="bg-slate-900 text-slate-400">

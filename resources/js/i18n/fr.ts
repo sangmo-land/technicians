@@ -154,6 +154,37 @@ const fr = {
         currentlyBusy: 'Actuellement occupé',
     },
 
+    // ─── Dashboard ───────────────────────────────────────
+    dashboard: {
+        title: 'Tableau de bord',
+        welcome: 'Bienvenue, {{name}}',
+        completeProfile: 'Complétez votre profil pour commencer',
+        editProfile: 'Modifier le profil',
+        editProfileDesc: 'Mettez à jour vos compétences, expérience et disponibilité',
+        browseWorkers: 'Parcourir les ouvriers',
+        browseWorkersDesc: 'Trouvez des professionnels qualifiés pour vos projets',
+        accountSettings: 'Paramètres du compte',
+        accountSettingsDesc: 'Gérez votre compte et votre sécurité',
+        profileStrength: 'Solidité du profil',
+        completeProfileHint: 'Complétez tous les éléments pour augmenter votre visibilité auprès des clients',
+        fix: 'Corriger',
+        quickActions: 'Actions rapides',
+        tipTitle: 'Conseil pro',
+        tipDesc: 'Les ouvriers avec un profil complet et des photos de portfolio reçoivent jusqu\'à 5 fois plus de vues de clients potentiels.',
+        checkBio: 'Ajouter une biographie professionnelle',
+        checkPhone: 'Ajouter votre numéro de téléphone',
+        checkPhoto: 'Ajouter une photo de profil',
+        checkLocation: 'Définir votre localisation',
+        checkCategory: 'Sélectionner des catégories de métiers',
+        checkExperience: 'Définir le niveau d\'expérience',
+        checkRate: 'Définir votre tarif journalier',
+        checkPortfolio: 'Ajouter des photos de portfolio',
+        statViews: 'Vues du profil',
+        statPhotos: 'Photos portfolio',
+        statExperience: 'Expériences',
+        statCategories: 'Catégories',
+    },
+
     // ─── Experience Levels ───────────────────────────────
     levels: {
         entry: 'Débutant',
