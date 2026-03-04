@@ -6,6 +6,11 @@
 
         <title inertia>{{ config('app.name', 'NexJobs') }}</title>
 
+        <!-- Favicon -->
+        <link rel="icon" type="image/png" href="{{ asset('images/logoNexJobs.png') }}">
+        <link rel="shortcut icon" type="image/png" href="{{ asset('images/logoNexJobs.png') }}">
+        <link rel="apple-touch-icon" href="{{ asset('images/logoNexJobs.png') }}">
+
         <!-- SEO Global Meta -->
         @if(app()->getLocale() === 'fr')
         <meta name="description" content="NexJobs — La plateforme n°1 au Cameroun pour trouver et embaucher des ouvriers qualifiés du bâtiment. Parcourez les maçons, électriciens, plombiers, soudeurs vérifiés à Douala, Yaoundé et partout au Cameroun.">
