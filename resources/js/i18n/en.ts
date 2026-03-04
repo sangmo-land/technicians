@@ -8,6 +8,7 @@ const en = {
         save: 'Save',
         saved: 'Saved',
         share: 'Share',
+        copyLink: 'Copy Link',
         cancel: 'Cancel',
         edit: 'Edit',
         close: 'Close',

@@ -8,6 +8,7 @@ const fr = {
         save: 'Enregistrer',
         saved: 'Enregistré',
         share: 'Partager',
+        copyLink: 'Copier le lien',
         cancel: 'Annuler',
         edit: 'Modifier',
         close: 'Fermer',
