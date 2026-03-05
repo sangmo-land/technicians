@@ -9,10 +9,19 @@
     </url>
     @endforeach
 
-    {{-- Category-filtered worker pages --}}
+    {{-- Category pages (workers filtered by category) --}}
     @foreach($categories as $cat)
     <url>
         <loc>{{ url('/workers?category=' . $cat->id) }}</loc>
+        <changefreq>daily</changefreq>
+        <priority>0.8</priority>
+    </url>
+    @endforeach
+
+    {{-- Category pages (jobs filtered by category) --}}
+    @foreach($categories as $cat)
+    <url>
+        <loc>{{ url('/jobs?category=' . $cat->id) }}</loc>
         <changefreq>daily</changefreq>
         <priority>0.8</priority>
     </url>
@@ -24,6 +33,16 @@
         <loc>{{ url('/workers/' . $worker->id) }}</loc>
         <lastmod>{{ $worker->updated_at->toW3cString() }}</lastmod>
         <changefreq>weekly</changefreq>
+        <priority>0.7</priority>
+    </url>
+    @endforeach
+
+    {{-- Individual job listings --}}
+    @foreach($jobs as $job)
+    <url>
+        <loc>{{ url('/jobs/' . $job->id) }}</loc>
+        <lastmod>{{ $job->updated_at->toW3cString() }}</lastmod>
+        <changefreq>daily</changefreq>
         <priority>0.7</priority>
     </url>
     @endforeach

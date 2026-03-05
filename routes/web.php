@@ -1,8 +1,10 @@
 <?php
 
 use App\Http\Controllers\HomeController;
+use App\Http\Controllers\JobListingController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\WorkerProfileController;
+use App\Models\JobListing;
 use App\Models\WorkerProfile;
 use App\Models\JobCategory;
 use Illuminate\Support\Facades\Route;
@@ -12,16 +14,18 @@ use Inertia\Inertia;
 Route::get('/sitemap.xml', function () {
     $workers = WorkerProfile::with('user')->whereNotNull('title')->get();
     $categories = JobCategory::where('is_active', true)->get();
+    $jobs = JobListing::active()->get();
 
     $staticPages = [
         ['url' => '/', 'priority' => '1.0', 'changefreq' => 'daily'],
         ['url' => '/workers', 'priority' => '0.9', 'changefreq' => 'daily'],
+        ['url' => '/jobs', 'priority' => '0.9', 'changefreq' => 'daily'],
         ['url' => '/login', 'priority' => '0.5', 'changefreq' => 'monthly'],
         ['url' => '/register', 'priority' => '0.5', 'changefreq' => 'monthly'],
     ];
 
     return response()
-        ->view('sitemap', compact('workers', 'categories', 'staticPages'))
+        ->view('sitemap', compact('workers', 'categories', 'jobs', 'staticPages'))
         ->header('Content-Type', 'application/xml');
 })->name('sitemap');
 
@@ -29,6 +33,8 @@ Route::get('/sitemap.xml', function () {
 Route::get('/', [HomeController::class, 'index'])->name('home');
 Route::get('/workers', [WorkerProfileController::class, 'index'])->name('workers.index');
 Route::get('/workers/{worker}', [WorkerProfileController::class, 'show'])->name('workers.show');
+Route::get('/jobs', [JobListingController::class, 'index'])->name('jobs.index');
+Route::get('/jobs/{job}', [JobListingController::class, 'show'])->name('jobs.show');
 
 // Dashboard
 Route::get('/dashboard', function () {
