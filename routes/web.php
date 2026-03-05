@@ -13,10 +13,6 @@ Route::get('/sitemap.xml', function () {
     $workers = WorkerProfile::with('user')->whereNotNull('title')->get();
     $categories = JobCategory::where('is_active', true)->get();
 
-    $content = '<?xml version="1.0" encoding="UTF-8"?>' . "\n";
-    $content .= '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">' . "\n";
-
-    // Static pages
     $staticPages = [
         ['url' => '/', 'priority' => '1.0', 'changefreq' => 'daily'],
         ['url' => '/workers', 'priority' => '0.9', 'changefreq' => 'daily'],
@@ -24,36 +20,9 @@ Route::get('/sitemap.xml', function () {
         ['url' => '/register', 'priority' => '0.5', 'changefreq' => 'monthly'],
     ];
 
-    foreach ($staticPages as $page) {
-        $content .= '  <url>' . "\n";
-        $content .= '    <loc>' . url($page['url']) . '</loc>' . "\n";
-        $content .= '    <changefreq>' . $page['changefreq'] . '</changefreq>' . "\n";
-        $content .= '    <priority>' . $page['priority'] . '</priority>' . "\n";
-        $content .= '  </url>' . "\n";
-    }
-
-    // Category-filtered worker pages
-    foreach ($categories as $cat) {
-        $content .= '  <url>' . "\n";
-        $content .= '    <loc>' . url('/workers?category=' . $cat->id) . '</loc>' . "\n";
-        $content .= '    <changefreq>daily</changefreq>' . "\n";
-        $content .= '    <priority>0.8</priority>' . "\n";
-        $content .= '  </url>' . "\n";
-    }
-
-    // Individual worker profiles
-    foreach ($workers as $worker) {
-        $content .= '  <url>' . "\n";
-        $content .= '    <loc>' . url('/workers/' . $worker->id) . '</loc>' . "\n";
-        $content .= '    <lastmod>' . $worker->updated_at->toW3cString() . '</lastmod>' . "\n";
-        $content .= '    <changefreq>weekly</changefreq>' . "\n";
-        $content .= '    <priority>0.7</priority>' . "\n";
-        $content .= '  </url>' . "\n";
-    }
-
-    $content .= '</urlset>';
-
-    return response($content, 200, ['Content-Type' => 'application/xml']);
+    return response()
+        ->view('sitemap', compact('workers', 'categories', 'staticPages'))
+        ->header('Content-Type', 'application/xml');
 })->name('sitemap');
 
 // Public routes
