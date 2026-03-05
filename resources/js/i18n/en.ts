@@ -61,12 +61,12 @@ const en = {
 
     // ─── Home / Welcome ──────────────────────────────────
     home: {
-        pageTitle: 'Find Skilled Workers',
-        seoDescription: "NexJobs — Cameroon's #1 platform to find and hire skilled construction workers. Browse verified masons, electricians, plumbers, welders and more. Real estate, BTP and civil engineering jobs in Douala, Yaoundé and across Cameroon.",
-        seoOgTitle: 'NexJobs — Find Skilled Workers & Construction Jobs in Cameroon',
-        seoOgDescription: 'Hire verified masons, electricians, plumbers, carpenters and more. Browse construction jobs, real estate vacancies and skilled worker profiles across Cameroon.',
-        seoJsonLdSiteDescription: 'Find and hire skilled construction workers and browse real estate and civil engineering jobs in Cameroon',
-        seoJsonLdOrgDescription: "Cameroon's leading platform to find skilled construction workers, job opportunities in real estate, BTP and civil engineering",
+        pageTitle: 'Work in Cameroon — Find Jobs & Skilled Workers',
+        seoDescription: "NexJobs — Find work in Cameroon. Cameroon's #1 platform for jobs, employment and hiring skilled workers. Browse construction, real estate and civil engineering opportunities in Douala, Yaoundé and across Cameroon.",
+        seoOgTitle: 'NexJobs — Work in Cameroon | Jobs & Skilled Workers',
+        seoOgDescription: 'Find work in Cameroon. Browse job opportunities, hire verified workers and discover construction, real estate and BTP careers across Cameroon.',
+        seoJsonLdSiteDescription: 'Find work in Cameroon — jobs, employment opportunities and skilled workers for construction, real estate and civil engineering',
+        seoJsonLdOrgDescription: "Cameroon's leading platform for finding work, job opportunities and skilled construction workers across Douala, Yaoundé and all of Cameroon",
         heroStatPill: '{{workers}} Verified Workers · {{categories}} Trade Categories',
         heroHeading1: 'Find Skilled',
         heroHeading2: 'Workers Instantly.',
@@ -215,7 +215,7 @@ const en = {
 
     // ─── Jobs Index ──────────────────────────────────────
     jobs: {
-        pageTitle: 'Browse Jobs',
+        pageTitle: 'Jobs in Cameroon — Find Work',
         heroHeading: 'Find Your Next Job',
         heroSub: '{{count}} positions available in civil engineering',
         filtersHeading: 'Filters',
@@ -238,7 +238,7 @@ const en = {
         negotiable: 'Negotiable',
         noJobs: 'No jobs found',
         noJobsHint: 'Try adjusting your filters or search terms.',
-        seoDescription: 'Browse {{count}} construction, real estate and skilled trade jobs in Cameroon. Find full-time, part-time, contract and daily positions in civil engineering and BTP on NexJobs.',
+        seoDescription: 'Browse {{count}} jobs in Cameroon — construction, real estate, BTP and skilled trade positions. Find full-time, part-time, contract and daily work opportunities on NexJobs.',
     },
 
     // ─── Job Show ────────────────────────────────────────
@@ -429,7 +429,7 @@ const en = {
 
     // ─── Workers Index (Search Page) ─────────────────────
     workersIndex: {
-        pageTitle: 'Find Workers',
+        pageTitle: 'Hire Workers in Cameroon',
         seoDescription: 'Browse skilled construction workers, real estate professionals and technicians in Cameroon. Filter by category, experience and location. Find masons, electricians, plumbers, welders, civil engineers and more.',
         seoOgTitle: 'Browse Workers & Professionals — NexJobs Cameroon',
         seoOgDescription: 'Find verified construction and real estate professionals across Cameroon. Browse profiles, check reviews and hire the best skilled workers.',

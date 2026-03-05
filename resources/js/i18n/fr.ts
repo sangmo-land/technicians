@@ -61,12 +61,12 @@ const fr = {
 
     // ─── Home / Welcome ──────────────────────────────────
     home: {
-        pageTitle: 'Trouvez des ouvriers qualifiés',
-        seoDescription: "NexJobs — La plateforme n°1 au Cameroun pour trouver et embaucher des ouvriers qualifiés du bâtiment. Parcourez les maçons, électriciens, plombiers, soudeurs vérifiés. Emplois BTP, immobilier et génie civil à Douala, Yaoundé et partout au Cameroun.",
-        seoOgTitle: 'NexJobs — Ouvriers qualifiés et emplois BTP au Cameroun',
-        seoOgDescription: 'Embauchez des maçons, électriciens, plombiers, menuisiers vérifiés. Parcourez les offres d\'emploi construction, immobilier et BTP au Cameroun.',
-        seoJsonLdSiteDescription: 'Trouvez des ouvriers qualifiés et parcourez les emplois BTP, immobilier et génie civil au Cameroun',
-        seoJsonLdOrgDescription: 'La plateforme leader au Cameroun pour trouver des ouvriers qualifiés et des opportunités d\'emploi en BTP, immobilier et génie civil',
+        pageTitle: 'Travail au Cameroun — Emploi et ouvriers qualifiés',
+        seoDescription: "NexJobs — Trouvez du travail au Cameroun. La plateforme n°1 pour l'emploi, le recrutement et les ouvriers qualifiés. Offres d'emploi BTP, construction, immobilier et génie civil à Douala, Yaoundé et partout au Cameroun.",
+        seoOgTitle: 'NexJobs — Travail au Cameroun | Emploi et ouvriers qualifiés',
+        seoOgDescription: 'Trouvez du travail au Cameroun. Offres d\'emploi, recrutement et ouvriers qualifiés en BTP, construction et immobilier à Douala, Yaoundé et au Cameroun.',
+        seoJsonLdSiteDescription: 'Trouvez du travail au Cameroun — emplois, offres d\'emploi et ouvriers qualifiés pour le BTP, l\'immobilier et le génie civil',
+        seoJsonLdOrgDescription: 'La plateforme leader au Cameroun pour trouver du travail, des offres d\'emploi et des ouvriers qualifiés à Douala, Yaoundé et partout au Cameroun',
         heroStatPill: '{{workers}} ouvriers vérifiés · {{categories}} catégories de métiers',
         heroHeading1: 'Trouvez des ouvriers',
         heroHeading2: 'qualifiés instantanément.',
@@ -215,7 +215,7 @@ const fr = {
 
     // ─── Jobs Index ──────────────────────────────────────
     jobs: {
-        pageTitle: 'Parcourir les emplois',
+        pageTitle: 'Emploi au Cameroun — Trouver du travail',
         heroHeading: 'Trouvez votre prochain emploi',
         heroSub: '{{count}} postes disponibles en génie civil',
         filtersHeading: 'Filtres',
@@ -238,7 +238,7 @@ const fr = {
         negotiable: 'Négociable',
         noJobs: 'Aucun emploi trouvé',
         noJobsHint: 'Essayez de modifier vos filtres ou termes de recherche.',
-        seoDescription: 'Parcourez {{count}} offres d\'emploi BTP, immobilier et métiers qualifiés au Cameroun. Trouvez des postes à temps plein, partiel, contrat et journalier en génie civil sur NexJobs.',
+        seoDescription: 'Parcourez {{count}} offres d\'emploi au Cameroun — BTP, immobilier, construction et métiers qualifiés. Trouvez du travail à temps plein, partiel, contrat et journalier sur NexJobs.',
     },
 
     // ─── Job Show ────────────────────────────────────────
@@ -429,7 +429,7 @@ const fr = {
 
     // ─── Workers Index (Page de recherche) ───────────────
     workersIndex: {
-        pageTitle: 'Trouver des ouvriers',
+        pageTitle: 'Embaucher des ouvriers au Cameroun',
         seoDescription: 'Parcourez les ouvriers qualifiés du bâtiment, professionnels de l\'immobilier et techniciens au Cameroun. Filtrez par catégorie, expérience et localisation. Trouvez maçons, électriciens, plombiers, soudeurs, ingénieurs civils et plus.',
         seoOgTitle: 'Parcourir les ouvriers et professionnels — NexJobs Cameroun',
         seoOgDescription: 'Trouvez des professionnels du bâtiment et de l\'immobilier vérifiés au Cameroun. Parcourez les profils, consultez les avis et embauchez les meilleurs ouvriers.',
