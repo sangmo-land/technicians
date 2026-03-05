@@ -76,7 +76,7 @@ export default function WorkerShow({ worker }: Props) {
                     name: worker.user?.name || 'Worker',
                     jobTitle: worker.title || 'Construction Professional',
                     description: worker.bio?.substring(0, 200) || '',
-                    url: window.location.href,
+                    url: `${window.location.origin}/workers/${worker.id}`,
                     image: worker.user?.avatar ? `${window.location.origin}/storage/${worker.user.avatar}` : undefined,
                     address: {
                         '@type': 'PostalAddress',
