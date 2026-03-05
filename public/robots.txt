@@ -146,3 +146,6 @@ Disallow: /
 
 # ─── Sitemap ──────────────────────────────────────────────
 Sitemap: https://nexjobs.org/sitemap.xml
+
+# ─── Sitemap ──────────────────────────────────────────────
+Sitemap: https://nexjobs.org/sitemap.xml
