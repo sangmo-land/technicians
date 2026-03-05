@@ -329,11 +329,18 @@ export default function Welcome({ categories, stats, technicians, techFilters }:
                     name: 'NexJobs',
                     url: window.location.origin,
                     description: t('home.seoJsonLdSiteDescription'),
-                    potentialAction: {
-                        '@type': 'SearchAction',
-                        target: `${window.location.origin}/workers?search={search_term_string}`,
-                        'query-input': 'required name=search_term_string',
-                    },
+                    potentialAction: [
+                        {
+                            '@type': 'SearchAction',
+                            target: `${window.location.origin}/workers?search={search_term_string}`,
+                            'query-input': 'required name=search_term_string',
+                        },
+                        {
+                            '@type': 'SearchAction',
+                            target: `${window.location.origin}/jobs?search={search_term_string}`,
+                            'query-input': 'required name=search_term_string',
+                        },
+                    ],
                 })}</script>
                 <script type="application/ld+json">{JSON.stringify({
                     '@context': 'https://schema.org',

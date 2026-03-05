@@ -13,11 +13,11 @@
 
         <!-- SEO Global Meta -->
         @if(app()->getLocale() === 'fr')
-        <meta name="description" content="NexJobs — La plateforme n°1 au Cameroun pour trouver et embaucher des ouvriers qualifiés du bâtiment. Parcourez les maçons, électriciens, plombiers, soudeurs vérifiés à Douala, Yaoundé et partout au Cameroun.">
-        <meta name="keywords" content="embaucher ouvriers Cameroun, ouvriers bâtiment Douala, techniciens Yaoundé, trouver électricien Cameroun, plombier Cameroun, maçon Cameroun, NexJobs, recherche emploi Cameroun, ouvriers qualifiés, artisans, artisan Cameroun">
+        <meta name="description" content="NexJobs — La plateforme n°1 au Cameroun pour trouver et embaucher des ouvriers qualifiés du bâtiment. Parcourez les maçons, électriciens, plombiers, soudeurs vérifiés, offres d'emploi BTP et immobilier à Douala, Yaoundé et partout au Cameroun.">
+        <meta name="keywords" content="embaucher ouvriers Cameroun, ouvriers bâtiment Douala, techniciens Yaoundé, trouver électricien Cameroun, plombier Cameroun, maçon Cameroun, NexJobs, recherche emploi Cameroun, ouvriers qualifiés, artisans, artisan Cameroun, emploi BTP Cameroun, emploi construction Douala, immobilier Cameroun, offres emploi bâtiment, génie civil Cameroun, recrutement Cameroun, emploi Yaoundé, travail Cameroun">
         @else
-        <meta name="description" content="NexJobs — Cameroon's leading platform to find and hire skilled construction workers, technicians and tradespeople. Browse verified professionals in Douala, Yaoundé and across Cameroon.">
-        <meta name="keywords" content="hire workers Cameroon, construction workers Douala, technicians Yaoundé, find electrician Cameroon, plumber Cameroon, mason Cameroon, NexJobs, job search Cameroon, skilled workers, tradespeople, artisan Cameroun">
+        <meta name="description" content="NexJobs — Cameroon's leading platform to find and hire skilled construction workers, technicians and tradespeople. Browse verified professionals, real estate jobs and construction vacancies in Douala, Yaoundé and across Cameroon.">
+        <meta name="keywords" content="hire workers Cameroon, construction workers Douala, technicians Yaoundé, find electrician Cameroon, plumber Cameroon, mason Cameroon, NexJobs, job search Cameroon, skilled workers, tradespeople, artisan Cameroun, construction jobs Cameroon, real estate jobs Cameroon, building jobs Douala, BTP Cameroun, emploi bâtiment, immobilier Cameroun, civil engineering jobs, job vacancies Cameroon, employment Cameroon">
         @endif
         <meta name="author" content="NexJobs">
         <meta name="robots" content="index, follow">
@@ -32,22 +32,22 @@
         <meta property="og:type" content="website">
         <meta property="og:url" content="{{ url()->current() }}">
         @if(app()->getLocale() === 'fr')
-        <meta property="og:title" content="{{ config('app.name', 'NexJobs') }} — Trouvez des ouvriers qualifiés au Cameroun">
-        <meta property="og:description" content="Trouvez et embauchez des maçons, électriciens, plombiers, menuisiers vérifiés et techniciens du bâtiment partout au Cameroun.">
+        <meta property="og:title" content="{{ config('app.name', 'NexJobs') }} — Trouvez des ouvriers qualifiés et emplois BTP au Cameroun">
+        <meta property="og:description" content="Trouvez et embauchez des maçons, électriciens, plombiers, menuisiers vérifiés. Parcourez les offres d'emploi BTP, immobilier et génie civil au Cameroun.">
         @else
-        <meta property="og:title" content="{{ config('app.name', 'NexJobs') }} — Find Skilled Workers in Cameroon">
-        <meta property="og:description" content="Find and hire verified construction workers, technicians and tradespeople across Cameroon. Masons, electricians, plumbers, welders and more.">
+        <meta property="og:title" content="{{ config('app.name', 'NexJobs') }} — Find Skilled Workers & Jobs in Cameroon">
+        <meta property="og:description" content="Find and hire verified construction workers and browse real estate, BTP and civil engineering jobs across Cameroon.">
         @endif
         <meta property="og:image" content="{{ asset('images/logoNexJobs.png') }}">
 
         <!-- Twitter Card -->
         <meta name="twitter:card" content="summary_large_image">
         @if(app()->getLocale() === 'fr')
-        <meta name="twitter:title" content="{{ config('app.name', 'NexJobs') }} — Ouvriers qualifiés au Cameroun">
-        <meta name="twitter:description" content="Trouvez et embauchez des ouvriers du bâtiment vérifiés au Cameroun.">
+        <meta name="twitter:title" content="{{ config('app.name', 'NexJobs') }} — Ouvriers qualifiés et emplois BTP au Cameroun">
+        <meta name="twitter:description" content="Trouvez des ouvriers du bâtiment vérifiés et des emplois BTP et immobilier au Cameroun.">
         @else
-        <meta name="twitter:title" content="{{ config('app.name', 'NexJobs') }} — Skilled Workers in Cameroon">
-        <meta name="twitter:description" content="Find and hire verified construction workers across Cameroon.">
+        <meta name="twitter:title" content="{{ config('app.name', 'NexJobs') }} — Skilled Workers & Jobs in Cameroon">
+        <meta name="twitter:description" content="Find verified construction workers and browse real estate and BTP jobs across Cameroon.">
         @endif
         <meta name="twitter:image" content="{{ asset('images/logoNexJobs.png') }}">
 

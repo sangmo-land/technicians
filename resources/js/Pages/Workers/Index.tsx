@@ -316,6 +316,29 @@ export default function WorkersIndex({ workers, categories, filters }: Props) {
                 <meta name="twitter:title" content={t('workersIndex.seoOgTitle')} />
                 <meta name="twitter:description" content={t('workersIndex.seoOgDescription')} />
                 <meta name="twitter:image" content={`${window.location.origin}/images/logoNexJobs.png`} />
+                <script type="application/ld+json">{JSON.stringify({
+                    '@context': 'https://schema.org',
+                    '@type': 'ItemList',
+                    name: 'Skilled Construction & Real Estate Workers in Cameroon',
+                    description: t('workersIndex.seoDescription'),
+                    url: `${window.location.origin}/workers`,
+                    numberOfItems: workers.total || 0,
+                    itemListElement: workers.data.slice(0, 10).map((w, i) => ({
+                        '@type': 'ListItem',
+                        position: i + 1,
+                        item: {
+                            '@type': 'Person',
+                            name: w.user?.name || 'Worker',
+                            jobTitle: w.title || 'Construction Professional',
+                            url: `${window.location.origin}/workers/${w.id}`,
+                            address: {
+                                '@type': 'PostalAddress',
+                                addressLocality: w.location || '',
+                                addressCountry: 'CM',
+                            },
+                        },
+                    })),
+                })}</script>
             </Head>
 
             {/* Hero Section */}

@@ -11,6 +11,8 @@ User-agent: *
 Allow: /
 Allow: /workers
 Allow: /workers/*
+Allow: /jobs
+Allow: /jobs/*
 Allow: /login
 Allow: /register
 Allow: /sitemap.xml
@@ -59,6 +61,8 @@ User-agent: Googlebot
 Allow: /
 Allow: /workers
 Allow: /workers/*
+Allow: /jobs
+Allow: /jobs/*
 Disallow: /dashboard
 Disallow: /profile
 Disallow: /worker/profile
@@ -83,6 +87,8 @@ User-agent: Bingbot
 Allow: /
 Allow: /workers
 Allow: /workers/*
+Allow: /jobs
+Allow: /jobs/*
 Disallow: /dashboard
 Disallow: /profile
 Disallow: /worker/profile
@@ -100,6 +106,9 @@ Crawl-delay: 5
 User-agent: Yandex
 Allow: /
 Allow: /workers
+Allow: /workers/*
+Allow: /jobs
+Allow: /jobs/*
 Disallow: /dashboard
 Disallow: /profile
 Disallow: /worker/profile

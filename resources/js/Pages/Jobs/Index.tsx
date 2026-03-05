@@ -60,6 +60,38 @@ export default function JobsIndex({ jobs, categories, filters }: Props) {
                 <meta name="twitter:title" content={t('jobs.pageTitle')} />
                 <meta name="twitter:description" content={t('jobs.seoDescription', { count: jobs.total || 0 })} />
                 <meta name="twitter:image" content={`${window.location.origin}/images/logoNexJobs.png`} />
+                <script type="application/ld+json">{JSON.stringify({
+                    '@context': 'https://schema.org',
+                    '@type': 'ItemList',
+                    name: 'Construction & Real Estate Jobs in Cameroon',
+                    description: t('jobs.seoDescription', { count: jobs.total || 0 }),
+                    url: `${window.location.origin}/jobs`,
+                    numberOfItems: jobs.total || 0,
+                    itemListElement: jobs.data.slice(0, 10).map((job, i) => ({
+                        '@type': 'ListItem',
+                        position: i + 1,
+                        item: {
+                            '@type': 'JobPosting',
+                            title: job.title,
+                            datePosted: job.created_at,
+                            validThrough: job.application_deadline || undefined,
+                            employmentType: job.employment_type?.toUpperCase(),
+                            hiringOrganization: {
+                                '@type': 'Organization',
+                                name: job.company?.name || 'Employer',
+                            },
+                            jobLocation: {
+                                '@type': 'Place',
+                                address: {
+                                    '@type': 'PostalAddress',
+                                    addressLocality: job.location || '',
+                                    addressCountry: 'CM',
+                                },
+                            },
+                            url: `${window.location.origin}/jobs/${job.id}`,
+                        },
+                    })),
+                })}</script>
             </Head>
 
             {/* Hero */}
