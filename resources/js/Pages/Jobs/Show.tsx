@@ -79,7 +79,45 @@ export default function JobShow({ job, relatedJobs, isSaved, hasApplied }: Props
 
     return (
         <AppLayout>
-            <Head title={job.title} />
+            <Head title={job.title}>
+                <meta name="description" content={`${job.title} — ${job.company?.name || 'Employer'} in ${job.location || 'Cameroon'}. ${job.description?.substring(0, 140) || ''}`} />
+                <meta property="og:title" content={`${job.title} — ${job.company?.name || 'NexJobs'}`} />
+                <meta property="og:description" content={job.description?.substring(0, 200) || ''} />
+                <meta property="og:type" content="article" />
+                <meta property="og:url" content={window.location.href} />
+                <meta property="og:image" content={`${window.location.origin}/images/logoNexJobs.png`} />
+                <meta name="twitter:card" content="summary_large_image" />
+                <meta name="twitter:title" content={`${job.title} — ${job.company?.name || 'NexJobs'}`} />
+                <meta name="twitter:description" content={job.description?.substring(0, 200) || ''} />
+                <meta name="twitter:image" content={`${window.location.origin}/images/logoNexJobs.png`} />
+                <script type="application/ld+json">{JSON.stringify({
+                    '@context': 'https://schema.org',
+                    '@type': 'JobPosting',
+                    title: job.title,
+                    description: job.description,
+                    datePosted: job.created_at,
+                    validThrough: job.application_deadline || undefined,
+                    employmentType: job.employment_type?.toUpperCase(),
+                    hiringOrganization: {
+                        '@type': 'Organization',
+                        name: job.company?.name || 'Employer',
+                    },
+                    jobLocation: {
+                        '@type': 'Place',
+                        address: {
+                            '@type': 'PostalAddress',
+                            addressLocality: job.city || job.location || '',
+                            addressRegion: job.state || '',
+                            addressCountry: 'CM',
+                        },
+                    },
+                    ...(job.salary_min && { baseSalary: {
+                        '@type': 'MonetaryAmount',
+                        currency: 'XAF',
+                        value: { '@type': 'QuantitativeValue', minValue: job.salary_min, maxValue: job.salary_max || job.salary_min, unitText: job.salary_period || 'MONTH' },
+                    }}),
+                })}</script>
+            </Head>
 
             {/* ═══════ Hero Section ═══════ */}
             <div className="relative overflow-hidden bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900">

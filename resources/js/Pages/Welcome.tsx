@@ -317,6 +317,12 @@ export default function Welcome({ categories, stats, technicians, techFilters }:
                 <meta property="og:title" content={t('home.seoOgTitle')} />
                 <meta property="og:description" content={t('home.seoOgDescription')} />
                 <meta property="og:type" content="website" />
+                <meta property="og:url" content={window.location.href} />
+                <meta property="og:image" content={`${window.location.origin}/images/logoNexJobs.png`} />
+                <meta name="twitter:card" content="summary_large_image" />
+                <meta name="twitter:title" content={t('home.seoOgTitle')} />
+                <meta name="twitter:description" content={t('home.seoOgDescription')} />
+                <meta name="twitter:image" content={`${window.location.origin}/images/logoNexJobs.png`} />
                 <script type="application/ld+json">{JSON.stringify({
                     '@context': 'https://schema.org',
                     '@type': 'WebSite',

@@ -310,6 +310,12 @@ export default function WorkersIndex({ workers, categories, filters }: Props) {
                 <meta property="og:title" content={t('workersIndex.seoOgTitle')} />
                 <meta property="og:description" content={t('workersIndex.seoOgDescription')} />
                 <meta property="og:type" content="website" />
+                <meta property="og:url" content={window.location.href} />
+                <meta property="og:image" content={`${window.location.origin}/images/logoNexJobs.png`} />
+                <meta name="twitter:card" content="summary_large_image" />
+                <meta name="twitter:title" content={t('workersIndex.seoOgTitle')} />
+                <meta name="twitter:description" content={t('workersIndex.seoOgDescription')} />
+                <meta name="twitter:image" content={`${window.location.origin}/images/logoNexJobs.png`} />
             </Head>
 
             {/* Hero Section */}

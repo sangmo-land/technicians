@@ -49,7 +49,18 @@ export default function JobsIndex({ jobs, categories, filters }: Props) {
 
     return (
         <AppLayout>
-            <Head title={t('jobs.pageTitle')} />
+            <Head title={t('jobs.pageTitle')}>
+                <meta name="description" content={t('jobs.seoDescription', { count: jobs.total || 0 })} />
+                <meta property="og:title" content={t('jobs.pageTitle')} />
+                <meta property="og:description" content={t('jobs.seoDescription', { count: jobs.total || 0 })} />
+                <meta property="og:type" content="website" />
+                <meta property="og:url" content={window.location.href} />
+                <meta property="og:image" content={`${window.location.origin}/images/logoNexJobs.png`} />
+                <meta name="twitter:card" content="summary_large_image" />
+                <meta name="twitter:title" content={t('jobs.pageTitle')} />
+                <meta name="twitter:description" content={t('jobs.seoDescription', { count: jobs.total || 0 })} />
+                <meta name="twitter:image" content={`${window.location.origin}/images/logoNexJobs.png`} />
+            </Head>
 
             {/* Hero */}
             <div className="bg-slate-900 py-10">

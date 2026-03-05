@@ -238,6 +238,7 @@ const en = {
         negotiable: 'Negotiable',
         noJobs: 'No jobs found',
         noJobsHint: 'Try adjusting your filters or search terms.',
+        seoDescription: 'Browse {{count}} construction and skilled trade jobs in Cameroon. Find full-time, part-time and contract positions on NexJobs.',
     },
 
     // ─── Job Show ────────────────────────────────────────

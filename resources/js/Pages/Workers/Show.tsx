@@ -64,7 +64,12 @@ export default function WorkerShow({ worker }: Props) {
                     bio: worker.bio?.substring(0, 120) || '',
                 })} />
                 <meta property="og:type" content="profile" />
-                {worker.user?.avatar && <meta property="og:image" content={`/storage/${worker.user.avatar}`} />}
+                <meta property="og:url" content={window.location.href} />
+                <meta property="og:image" content={worker.user?.avatar ? `${window.location.origin}/storage/${worker.user.avatar}` : `${window.location.origin}/images/logoNexJobs.png`} />
+                <meta name="twitter:card" content="summary_large_image" />
+                <meta name="twitter:title" content={t('workerShow.seoOgTitle', { name: worker.user?.name || 'Worker', title: worker.title || 'Professional' })} />
+                <meta name="twitter:description" content={t('workerShow.seoOgDescription', { title: worker.title || 'Professional', location: worker.state || 'Cameroon', bio: worker.bio?.substring(0, 120) || '' })} />
+                <meta name="twitter:image" content={worker.user?.avatar ? `${window.location.origin}/storage/${worker.user.avatar}` : `${window.location.origin}/images/logoNexJobs.png`} />
                 <script type="application/ld+json">{JSON.stringify({
                     '@context': 'https://schema.org',
                     '@type': 'Person',

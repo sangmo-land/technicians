@@ -238,6 +238,7 @@ const fr = {
         negotiable: 'Négociable',
         noJobs: 'Aucun emploi trouvé',
         noJobsHint: 'Essayez de modifier vos filtres ou termes de recherche.',
+        seoDescription: 'Parcourez {{count}} offres d\'emploi dans le bâtiment et les métiers qualifiés au Cameroun. Trouvez des postes à temps plein, partiel et en contrat sur NexJobs.',
     },
 
     // ─── Job Show ────────────────────────────────────────
