@@ -12,9 +12,9 @@ use Inertia\Inertia;
 
 // Sitemap
 Route::get('/sitemap.xml', function () {
-    $workers = WorkerProfile::with('user')->whereNotNull('title')->get();
-    $categories = JobCategory::where('is_active', true)->get();
-    $jobs = JobListing::active()->get();
+    $workers = WorkerProfile::with('user')->whereNotNull('title')->latest()->take(10)->get();
+    $categories = JobCategory::where('is_active', true)->take(10)->get();
+    $jobs = JobListing::active()->latest()->take(10)->get();
 
     $staticPages = [
         ['url' => '/', 'priority' => '1.0', 'changefreq' => 'daily'],
