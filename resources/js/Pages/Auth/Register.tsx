@@ -9,7 +9,6 @@ export default function Register() {
         name: '',
         email: '',
         phone: '',
-        role: 'worker' as 'worker' | 'client',
         password: '',
         password_confirmation: '',
     });
@@ -27,39 +26,6 @@ export default function Register() {
     };
 
     const canProceedStep1 = data.name.trim().length > 0 && data.email.trim().length > 0;
-
-    const roleOptions = [
-        {
-            value: 'worker' as const,
-            title: t('register.roleWorker'),
-            subtitle: t('register.roleWorkerDesc'),
-            icon: (
-                <svg className="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M10.05 4.575a1.575 1.575 0 10-3.15 0v3m3.15-3v-1.5a1.575 1.575 0 013.15 0v1.5m-3.15 0l.075 5.925m3.075.75V4.575m0 0a1.575 1.575 0 013.15 0V15M6.9 7.575a1.575 1.575 0 10-3.15 0v8.175a6.75 6.75 0 006.75 6.75h2.018a5.25 5.25 0 003.712-1.538l1.732-1.732a5.25 5.25 0 001.538-3.712l.003-2.024a.668.668 0 01.198-.471 1.575 1.575 0 10-2.228-2.228 3.818 3.818 0 00-1.12 2.687M6.9 7.575V12m6.27 4.318A4.49 4.49 0 0116.35 15" />
-                </svg>
-            ),
-            features: [t('register.workerFeature1'), t('register.workerFeature2'), t('register.workerFeature3')],
-            gradient: 'from-blue-500 to-blue-600',
-            lightBg: 'bg-blue-50',
-            border: 'border-blue-500',
-            text: 'text-blue-700',
-        },
-        {
-            value: 'client' as const,
-            title: t('register.roleClient'),
-            subtitle: t('register.roleClientDesc'),
-            icon: (
-                <svg className="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z" />
-                </svg>
-            ),
-            features: [t('register.clientFeature1'), t('register.clientFeature2'), t('register.clientFeature3')],
-            gradient: 'from-amber-500 to-amber-600',
-            lightBg: 'bg-amber-50',
-            border: 'border-amber-500',
-            text: 'text-amber-700',
-        },
-    ];
 
     return (
         <>
@@ -224,47 +190,6 @@ export default function Register() {
                                         transition={{ duration: 0.3 }}
                                         className="space-y-5"
                                     >
-                                        {/* Role Selection */}
-                                        <div>
-                                            <label className="block text-sm font-semibold text-slate-700 mb-3">{t('register.joinAs')}</label>
-                                            <div className="grid grid-cols-2 gap-3">
-                                                {roleOptions.map((role) => (
-                                                    <button
-                                                        key={role.value}
-                                                        type="button"
-                                                        onClick={() => setData('role', role.value)}
-                                                        className={`relative p-5 rounded-2xl border-2 text-left transition-all group ${
-                                                            data.role === role.value
-                                                                ? `${role.border} ${role.lightBg}`
-                                                                : 'border-slate-200 bg-white hover:border-slate-300 hover:shadow-sm'
-                                                        }`}
-                                                    >
-                                                        {data.role === role.value && (
-                                                            <div className="absolute top-3 right-3">
-                                                                <div className={`w-5 h-5 rounded-full bg-gradient-to-r ${role.gradient} flex items-center justify-center`}>
-                                                                    <svg className="w-3 h-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={3}>
-                                                                        <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
-                                                                    </svg>
-                                                                </div>
-                                                            </div>
-                                                        )}
-                                                        <div className={`inline-flex p-2.5 rounded-xl mb-3 ${
-                                                            data.role === role.value ? role.lightBg : 'bg-slate-50 group-hover:bg-slate-100'
-                                                        } ${data.role === role.value ? role.text : 'text-slate-500'} transition-colors`}>
-                                                            {role.icon}
-                                                        </div>
-                                                        <h3 className={`font-bold text-base ${data.role === role.value ? role.text : 'text-slate-800'}`}>
-                                                            {role.title}
-                                                        </h3>
-                                                        <p className={`text-xs mt-1 ${data.role === role.value ? role.text + ' opacity-75' : 'text-slate-400'}`}>
-                                                            {role.subtitle}
-                                                        </p>
-                                                    </button>
-                                                ))}
-                                            </div>
-                                            <InputError message={errors.role} className="mt-2" />
-                                        </div>
-
                                         {/* Full Name */}
                                         <div>
                                             <label htmlFor="name" className="block text-sm font-semibold text-slate-700 mb-1.5">{t('register.fullName')}</label>
