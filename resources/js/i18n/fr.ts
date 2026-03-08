@@ -317,6 +317,7 @@ const fr = {
         present: 'Présent',
         projectName: 'Projet : {{name}}',
         portfolio: 'Portfolio',
+        viewGallery: 'Voir la galerie ({{count}} photos)',
         photoCount: '{{count}} photos',
         reviewsSection: 'Avis',
         signInToContact: 'Connectez-vous pour contacter cet ouvrier',

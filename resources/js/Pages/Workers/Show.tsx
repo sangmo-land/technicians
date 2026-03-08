@@ -200,6 +200,19 @@ export default function WorkerShow({ worker }: Props) {
                                     </div>
                                 )}
 
+                                {/* View Gallery button */}
+                                {worker.portfolio_photos && worker.portfolio_photos.length > 0 && (
+                                    <div className="mt-5">
+                                        <button
+                                            onClick={() => document.getElementById('portfolio')?.scrollIntoView({ behavior: 'smooth' })}
+                                            className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-semibold bg-white/10 backdrop-blur-sm border border-white/15 text-white hover:bg-white/20 transition-all duration-200"
+                                        >
+                                            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.25 15.75l5.159-5.159a2.25 2.25 0 013.182 0l5.159 5.159m-1.5-1.5l1.409-1.409a2.25 2.25 0 013.182 0l2.909 2.909M3.75 21h16.5A2.25 2.25 0 0022.5 18.75V5.25A2.25 2.25 0 0020.25 3H3.75A2.25 2.25 0 001.5 5.25v13.5A2.25 2.25 0 003.75 21z" /></svg>
+                                            {t('workerShow.viewGallery', { count: worker.portfolio_photos.length })}
+                                        </button>
+                                    </div>
+                                )}
+
                                 {/* Mobile Call & WhatsApp buttons */}
                                 {worker.user?.phone && (
                                     <div className="flex sm:hidden items-center justify-center gap-3 mt-5 w-full">
@@ -409,7 +422,7 @@ export default function WorkerShow({ worker }: Props) {
 
                             {/* Portfolio */}
                             {worker.portfolio_photos && worker.portfolio_photos.length > 0 && (
-                                <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
+                                <div id="portfolio" className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
                                     <div className="px-8 py-6 border-b border-gray-100">
                                         <div className="flex items-center gap-3">
                                             <div className="w-8 h-8 rounded-lg bg-rose-500 flex items-center justify-center">

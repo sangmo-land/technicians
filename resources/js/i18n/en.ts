@@ -317,6 +317,7 @@ const en = {
         present: 'Present',
         projectName: 'Project: {{name}}',
         portfolio: 'Portfolio',
+        viewGallery: 'View Gallery ({{count}} photos)',
         photoCount: '{{count}} photos',
         reviewsSection: 'Reviews',
         signInToContact: 'Sign in to contact this worker',
