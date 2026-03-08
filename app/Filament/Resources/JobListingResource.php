@@ -6,6 +6,7 @@ use App\Filament\Resources\JobListingResource\Pages;
 use App\Models\JobListing;
 use App\Models\JobCategory;
 use App\Models\Company;
+use Filament\Actions;
 use Filament\Forms;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
@@ -147,11 +148,11 @@ class JobListingResource extends Resource
                 Tables\Filters\TernaryFilter::make('is_urgent'),
             ])
             ->actions([
-                Tables\Actions\EditAction::make(),
-                Tables\Actions\DeleteAction::make(),
+                Actions\EditAction::make(),
+                Actions\DeleteAction::make(),
             ])
             ->bulkActions([
-                Tables\Actions\DeleteBulkAction::make(),
+                Actions\DeleteBulkAction::make(),
             ]);
     }
 
