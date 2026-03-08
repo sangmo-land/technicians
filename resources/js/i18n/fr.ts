@@ -150,6 +150,7 @@ const fr = {
         ctaDescription: "Que vous soyez un artisan qualifié souhaitant mettre en valeur votre travail ou quelqu'un à la recherche de talents vérifiés — nous sommes là pour vous.",
         getStartedFree: 'Commencer gratuitement',
         browseWorkers: 'Parcourir les ouvriers',
+        whatsappMessage: 'Bonjour ! J\'ai trouvé NexJobs et j\'aimerais en savoir plus sur vos services.',
     },
 
     // ─── Availability ────────────────────────────────────

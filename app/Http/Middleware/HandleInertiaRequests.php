@@ -3,6 +3,7 @@
 namespace App\Http\Middleware;
 
 use App\Models\SiteVisit;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Inertia\Middleware;
 
@@ -36,6 +37,7 @@ class HandleInertiaRequests extends Middleware
                 'user' => $request->user(),
             ],
             'siteVisits' => fn () => SiteVisit::count(),
+            'adminPhone' => fn () => User::where('email', 'admin@nexjobs.com')->value('phone'),
         ];
     }
 }

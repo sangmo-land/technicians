@@ -150,6 +150,7 @@ const en = {
         ctaDescription: "Whether you're a skilled tradesperson looking to showcase your work or someone seeking verified talent — we've got you covered.",
         getStartedFree: 'Get Started Free',
         browseWorkers: 'Browse Workers',
+        whatsappMessage: 'Hello! I found NexJobs and I would like to learn more about your services.',
     },
 
     // ─── Availability ────────────────────────────────────
