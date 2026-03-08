@@ -9,6 +9,7 @@ use App\Models\Company;
 use Filament\Actions;
 use Filament\Forms;
 use Filament\Resources\Resource;
+use Filament\Schemas;
 use Filament\Schemas\Schema;
 use Filament\Tables;
 use Filament\Tables\Table;
@@ -24,7 +25,7 @@ class JobListingResource extends Resource
     public static function form(Schema $schema): Schema
     {
         return $schema->schema([
-            Forms\Components\Section::make('Job Details')->schema([
+            Schemas\Components\Section::make('Job Details')->schema([
                 Forms\Components\TextInput::make('title')
                     ->required()
                     ->maxLength(255)
@@ -70,14 +71,14 @@ class JobListingResource extends Resource
                     ])->default('draft'),
             ])->columns(2),
 
-            Forms\Components\Section::make('Description')->schema([
+            Schemas\Components\Section::make('Description')->schema([
                 Forms\Components\RichEditor::make('description')->required(),
                 Forms\Components\RichEditor::make('requirements'),
                 Forms\Components\RichEditor::make('responsibilities'),
                 Forms\Components\RichEditor::make('benefits'),
             ]),
 
-            Forms\Components\Section::make('Location & Salary')->schema([
+            Schemas\Components\Section::make('Location & Salary')->schema([
                 Forms\Components\TextInput::make('location')->required(),
                 Forms\Components\TextInput::make('city'),
                 Forms\Components\TextInput::make('state'),
@@ -95,7 +96,7 @@ class JobListingResource extends Resource
                 Forms\Components\TextInput::make('positions_available')->numeric()->default(1),
             ])->columns(2),
 
-            Forms\Components\Section::make('Project & Dates')->schema([
+            Schemas\Components\Section::make('Project & Dates')->schema([
                 Forms\Components\TextInput::make('project_name'),
                 Forms\Components\TextInput::make('project_duration_months')->numeric(),
                 Forms\Components\DatePicker::make('application_deadline'),

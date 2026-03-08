@@ -7,6 +7,7 @@ use App\Models\JobApplication;
 use Filament\Actions;
 use Filament\Forms;
 use Filament\Resources\Resource;
+use Filament\Schemas;
 use Filament\Schemas\Schema;
 use Filament\Tables;
 use Filament\Tables\Table;
@@ -21,7 +22,7 @@ class JobApplicationResource extends Resource
     public static function form(Schema $schema): Schema
     {
         return $schema->schema([
-            Forms\Components\Section::make()->schema([
+            Schemas\Components\Section::make()->schema([
                 Forms\Components\Select::make('job_listing_id')
                     ->relationship('jobListing', 'title')
                     ->required()

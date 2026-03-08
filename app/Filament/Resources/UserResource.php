@@ -7,6 +7,7 @@ use App\Models\User;
 use Filament\Actions;
 use Filament\Forms;
 use Filament\Resources\Resource;
+use Filament\Schemas;
 use Filament\Schemas\Schema;
 use Filament\Tables;
 use Filament\Tables\Table;
@@ -21,7 +22,7 @@ class UserResource extends Resource
     public static function form(Schema $schema): Schema
     {
         return $schema->schema([
-            Forms\Components\Section::make('User Information')->schema([
+            Schemas\Components\Section::make('User Information')->schema([
                 Forms\Components\TextInput::make('name')->required()->maxLength(255),
                 Forms\Components\TextInput::make('email')->email()->required()->unique(ignoreRecord: true),
                 Forms\Components\TextInput::make('phone')->tel()->maxLength(20),

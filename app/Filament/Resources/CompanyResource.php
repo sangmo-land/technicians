@@ -7,6 +7,7 @@ use App\Models\Company;
 use Filament\Actions;
 use Filament\Forms;
 use Filament\Resources\Resource;
+use Filament\Schemas;
 use Filament\Schemas\Schema;
 use Filament\Tables;
 use Filament\Tables\Table;
@@ -22,7 +23,7 @@ class CompanyResource extends Resource
     public static function form(Schema $schema): Schema
     {
         return $schema->schema([
-            Forms\Components\Section::make('Company Info')->schema([
+            Schemas\Components\Section::make('Company Info')->schema([
                 Forms\Components\Select::make('user_id')
                     ->relationship('user', 'name')
                     ->required()
@@ -43,14 +44,14 @@ class CompanyResource extends Resource
                 Forms\Components\FileUpload::make('cover_image')->image()->directory('companies/covers'),
             ])->columns(2),
 
-            Forms\Components\Section::make('Location')->schema([
+            Schemas\Components\Section::make('Location')->schema([
                 Forms\Components\TextInput::make('address'),
                 Forms\Components\TextInput::make('city'),
                 Forms\Components\TextInput::make('state'),
                 Forms\Components\TextInput::make('country'),
             ])->columns(2),
 
-            Forms\Components\Section::make('Status')->schema([
+            Schemas\Components\Section::make('Status')->schema([
                 Forms\Components\Toggle::make('is_verified'),
                 Forms\Components\Toggle::make('is_featured'),
             ])->columns(2),
