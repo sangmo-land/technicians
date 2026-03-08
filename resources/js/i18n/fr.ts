@@ -57,6 +57,7 @@ const fr = {
         ironBender: 'Ferrailleur',
         mason: 'Maçon',
         concreteWorker: 'Bétonneur',
+        siteVisits: '👁 {{count}} visites du site',
     },
 
     // ─── Home / Welcome ──────────────────────────────────

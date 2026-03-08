@@ -57,6 +57,7 @@ const en = {
         ironBender: 'Iron Bender',
         mason: 'Mason',
         concreteWorker: 'Concrete Worker',
+        siteVisits: '👁 {{count}} site visits',
     },
 
     // ─── Home / Welcome ──────────────────────────────────

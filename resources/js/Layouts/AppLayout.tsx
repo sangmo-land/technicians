@@ -10,7 +10,7 @@ interface Props {
 }
 
 export default function GuestLayout({ header, children }: Props) {
-    const { auth } = usePage().props as any;
+    const { auth, siteVisits } = usePage().props as any;
     const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
     const { t } = useTranslation();
 
@@ -138,6 +138,7 @@ export default function GuestLayout({ header, children }: Props) {
                             <Link href="/workers" className="hover:text-white transition-colors">{t('footer.browseWorkers')}</Link>
                             <Link href="/register" className="hover:text-white transition-colors">{t('footer.createProfile')}</Link>
                         </div>
+                        <p className="text-xs text-slate-500">{t('footer.siteVisits', { count: siteVisits?.toLocaleString() ?? '0' })}</p>
                         <p className="text-xs text-slate-500">{t('common.copyright', { year: new Date().getFullYear() })}</p>
                     </div>
                 </div>
