@@ -148,6 +148,7 @@ const en = {
         ctaHeading1: 'Ready to build your',
         ctaHeading2: 'future?',
         ctaDescription: "Whether you're a skilled tradesperson looking to showcase your work or someone seeking verified talent — we've got you covered.",
+        heroCreateProfile: 'Create Profile',
         getStartedFree: 'Get Started Free',
         browseWorkers: 'Browse Workers',
         whatsappMessage: 'Hello! I found NexJobs and I would like to learn more about your services.',

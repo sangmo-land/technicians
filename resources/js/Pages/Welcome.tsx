@@ -459,6 +459,22 @@ export default function Welcome({ categories, stats, technicians, techFilters }:
                                 {t('home.heroSubheading')}
                             </motion.p>
 
+                            {/* Hero CTA buttons */}
+                            <motion.div
+                                initial={{ opacity: 0, y: 16 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                transition={{ duration: 0.5, delay: 0.3 }}
+                                className="mt-8 flex flex-wrap items-center justify-center lg:justify-start gap-4"
+                            >
+                                <Link href="/register" className="group inline-flex items-center justify-center gap-2 bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-white px-7 py-3.5 rounded-xl font-semibold transition-all shadow-lg shadow-amber-500/25 hover:shadow-amber-500/40 hover:scale-[1.02] active:scale-[0.98] text-sm">
+                                    {t('home.heroCreateProfile')}
+                                    <svg className="w-4 h-4 group-hover:translate-x-0.5 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" /></svg>
+                                </Link>
+                                <Link href="/workers" className="inline-flex items-center justify-center gap-2 border border-white/20 text-white px-7 py-3.5 rounded-xl font-semibold hover:bg-white/[0.06] transition-all text-sm backdrop-blur-sm">
+                                    {t('home.browseWorkers')}
+                                </Link>
+                            </motion.div>
+
                             {/* Feature badges */}
                             <motion.div
                                 initial={{ opacity: 0, y: 16 }}

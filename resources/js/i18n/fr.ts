@@ -148,6 +148,7 @@ const fr = {
         ctaHeading1: 'Prêt à construire votre',
         ctaHeading2: 'avenir ?',
         ctaDescription: "Que vous soyez un artisan qualifié souhaitant mettre en valeur votre travail ou quelqu'un à la recherche de talents vérifiés — nous sommes là pour vous.",
+        heroCreateProfile: 'Créer un profil',
         getStartedFree: 'Commencer gratuitement',
         browseWorkers: 'Parcourir les ouvriers',
         whatsappMessage: 'Bonjour ! J\'ai trouvé NexJobs et j\'aimerais en savoir plus sur vos services.',
