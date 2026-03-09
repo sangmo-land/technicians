@@ -60,6 +60,9 @@ export default function WorkerEdit({ profile, categories, allSkills }: Props) {
     const [step, setStep] = useState(0);
     const [touched, setTouched] = useState<Record<string, boolean>>({});
     const [visitedSteps, setVisitedSteps] = useState<Set<number>>(new Set([0]));
+    const [showErrorDialog, setShowErrorDialog] = useState(false);
+    const [errorMessages, setErrorMessages] = useState<string[]>([]);
+    const [errorStep, setErrorStep] = useState<number | null>(null);
 
     const goToStep = (i: number) => {
         setStep(i);
@@ -191,7 +194,25 @@ export default function WorkerEdit({ profile, categories, allSkills }: Props) {
             ...data,
             work_experiences: workExperiences,
         }));
-        form.put('/worker/profile');
+        form.put('/worker/profile', {
+            onError: (errors) => {
+                const fieldToStep: Record<string, number> = {
+                    title: 0, primary_category_id: 0, bio: 0, phone: 0,
+                    experience_level: 1, years_experience: 1,
+                    work_experiences: 2,
+                    hourly_rate: 3, daily_rate: 3,
+                    city: 4, state: 4,
+                    availability: 5, languages: 5, certifications: 5,
+                    skills: 6, categories: 6,
+                };
+                const msgs = Object.values(errors) as string[];
+                const firstErrorField = Object.keys(errors)[0];
+                const targetStep = fieldToStep[firstErrorField] ?? null;
+                setErrorMessages(msgs);
+                setErrorStep(targetStep);
+                setShowErrorDialog(true);
+            },
+        });
     };
 
     const markTouched = (field: string) => setTouched(prev => ({ ...prev, [field]: true }));
@@ -1200,6 +1221,70 @@ export default function WorkerEdit({ profile, categories, allSkills }: Props) {
                     </form>
                 </div>
             </div>
+
+            {/* ── Validation Error Dialog ──────────────────── */}
+            <AnimatePresence>
+                {showErrorDialog && (
+                    <motion.div
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        exit={{ opacity: 0 }}
+                        className="fixed inset-0 z-[100] flex items-center justify-center bg-black/50 backdrop-blur-sm px-4"
+                    >
+                        <motion.div
+                            initial={{ opacity: 0, scale: 0.9, y: 20 }}
+                            animate={{ opacity: 1, scale: 1, y: 0 }}
+                            exit={{ opacity: 0, scale: 0.9, y: 20 }}
+                            transition={{ type: 'spring', damping: 25, stiffness: 300 }}
+                            className="bg-white rounded-2xl shadow-2xl max-w-md w-full p-6 sm:p-8"
+                        >
+                            <div className="flex items-start gap-4">
+                                <div className="flex-shrink-0 w-12 h-12 rounded-full bg-red-100 flex items-center justify-center">
+                                    <AlertCircle className="w-6 h-6 text-red-600" />
+                                </div>
+                                <div className="flex-1 min-w-0">
+                                    <h3 className="text-lg font-bold text-gray-900 mb-1">
+                                        {t('workerEdit.errorDialogTitle')}
+                                    </h3>
+                                    <p className="text-sm text-gray-500 mb-4">
+                                        {t('workerEdit.errorDialogDesc')}
+                                    </p>
+                                    <ul className="space-y-2 mb-6 max-h-48 overflow-y-auto">
+                                        {errorMessages.map((msg, i) => (
+                                            <li key={i} className="flex items-start gap-2 text-sm text-red-600">
+                                                <span className="mt-1 w-1.5 h-1.5 rounded-full bg-red-400 flex-shrink-0" />
+                                                {msg}
+                                            </li>
+                                        ))}
+                                    </ul>
+                                    <div className="flex flex-col sm:flex-row gap-3">
+                                        {errorStep !== null && (
+                                            <button
+                                                type="button"
+                                                onClick={() => {
+                                                    setShowErrorDialog(false);
+                                                    goToStep(errorStep);
+                                                }}
+                                                className="inline-flex items-center justify-center gap-2 bg-amber-500 hover:bg-amber-600 text-white px-5 py-2.5 rounded-xl font-semibold transition-all text-sm shadow-sm"
+                                            >
+                                                {t('workerEdit.errorDialogGoToStep')}
+                                                <ChevronRight className="w-4 h-4" />
+                                            </button>
+                                        )}
+                                        <button
+                                            type="button"
+                                            onClick={() => setShowErrorDialog(false)}
+                                            className="inline-flex items-center justify-center text-gray-500 hover:text-gray-700 px-5 py-2.5 rounded-xl font-medium transition-colors text-sm border border-gray-200 hover:bg-gray-50"
+                                        >
+                                            {t('workerEdit.errorDialogDismiss')}
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </motion.div>
+                    </motion.div>
+                )}
+            </AnimatePresence>
         </AppLayout>
     );
 }
