@@ -163,6 +163,14 @@ const en = {
         currentlyBusy: 'Currently Busy',
     },
 
+    // ─── Profile Reminder ────────────────────────────────
+    profileReminder: {
+        title: 'Complete Your Profile',
+        message: 'Your profile is incomplete. A complete profile helps clients find you and increases your chances of getting hired. Add your bio, location, experience, and rates to get started.',
+        completeNow: 'Complete Profile',
+        later: 'Remind Me Later',
+    },
+
     // ─── Dashboard ───────────────────────────────────────
     dashboard: {
         title: 'Dashboard',

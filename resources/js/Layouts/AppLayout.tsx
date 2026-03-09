@@ -1,5 +1,5 @@
-import { Link, usePage } from '@inertiajs/react';
-import { PropsWithChildren, ReactNode, useState } from 'react';
+import { Link, usePage, router } from '@inertiajs/react';
+import { PropsWithChildren, ReactNode, useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import LanguageSwitcher from '@/Components/LanguageSwitcher';
 import { useTranslation } from '@/hooks/useTranslation';
@@ -10,9 +10,30 @@ interface Props {
 }
 
 export default function GuestLayout({ header, children }: Props) {
-    const { auth, siteVisits } = usePage().props as any;
+    const { auth, siteVisits, profileIncomplete } = usePage().props as any;
     const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+    const [showProfileReminder, setShowProfileReminder] = useState(false);
     const { t } = useTranslation();
+
+    useEffect(() => {
+        if (auth?.user && profileIncomplete) {
+            const dismissed = sessionStorage.getItem('profileReminderDismissed');
+            if (!dismissed) {
+                setShowProfileReminder(true);
+            }
+        }
+    }, [auth?.user, profileIncomplete]);
+
+    const handleProfileReminderOk = () => {
+        setShowProfileReminder(false);
+        sessionStorage.setItem('profileReminderDismissed', '1');
+        router.visit('/worker/profile');
+    };
+
+    const handleProfileReminderDismiss = () => {
+        setShowProfileReminder(false);
+        sessionStorage.setItem('profileReminderDismissed', '1');
+    };
 
     return (
         <div className="min-h-screen bg-gray-50 flex flex-col overflow-x-hidden">
@@ -126,6 +147,53 @@ export default function GuestLayout({ header, children }: Props) {
             )}
 
             <main className="flex-1">{children}</main>
+
+            {/* Incomplete Profile Reminder Dialog */}
+            <AnimatePresence>
+                {showProfileReminder && (
+                    <motion.div
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        exit={{ opacity: 0 }}
+                        className="fixed inset-0 z-[100] flex items-center justify-center bg-black/50 backdrop-blur-sm px-4"
+                    >
+                        <motion.div
+                            initial={{ opacity: 0, scale: 0.9, y: 20 }}
+                            animate={{ opacity: 1, scale: 1, y: 0 }}
+                            exit={{ opacity: 0, scale: 0.9, y: 20 }}
+                            transition={{ type: 'spring', damping: 25, stiffness: 300 }}
+                            className="bg-white rounded-2xl shadow-2xl max-w-md w-full p-6 sm:p-8 text-center"
+                        >
+                            <div className="mx-auto w-14 h-14 rounded-full bg-amber-100 flex items-center justify-center mb-5">
+                                <svg className="w-7 h-7 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z" />
+                                </svg>
+                            </div>
+                            <h3 className="text-xl font-bold text-gray-900 mb-2">
+                                {t('profileReminder.title')}
+                            </h3>
+                            <p className="text-gray-500 text-sm leading-relaxed mb-6">
+                                {t('profileReminder.message')}
+                            </p>
+                            <div className="flex flex-col sm:flex-row gap-3 justify-center">
+                                <button
+                                    onClick={handleProfileReminderOk}
+                                    className="inline-flex items-center justify-center gap-2 bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-white px-6 py-3 rounded-xl font-semibold transition-all shadow-lg shadow-amber-500/25 hover:shadow-amber-500/40 text-sm"
+                                >
+                                    {t('profileReminder.completeNow')}
+                                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" /></svg>
+                                </button>
+                                <button
+                                    onClick={handleProfileReminderDismiss}
+                                    className="inline-flex items-center justify-center text-gray-500 hover:text-gray-700 px-6 py-3 rounded-xl font-medium transition-colors text-sm border border-gray-200 hover:bg-gray-50"
+                                >
+                                    {t('profileReminder.later')}
+                                </button>
+                            </div>
+                        </motion.div>
+                    </motion.div>
+                )}
+            </AnimatePresence>
 
             {/* Footer */}
             <footer className="bg-slate-900 text-slate-400">
