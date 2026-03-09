@@ -374,7 +374,7 @@ export default function WorkerEdit({ profile, categories, allSkills }: Props) {
             <div className="relative overflow-hidden">
                 <div className="absolute inset-0 bg-gradient-to-br from-slate-900 via-slate-800 to-amber-900" />
                 <div className="absolute inset-0 opacity-[0.04]" style={{ backgroundImage: 'radial-gradient(circle at 1px 1px, white 1px, transparent 0)', backgroundSize: '32px 32px' }} />
-                <div className="relative max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-16">
+                <div className="relative max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12 lg:py-16">
                     <motion.div initial={{ opacity: 0, y: -16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}>
                         <div className="flex items-center gap-3 mb-4">
                             <div className="flex items-center justify-center w-12 h-12 rounded-2xl bg-amber-500/20 backdrop-blur-sm ring-1 ring-amber-400/30">
@@ -406,8 +406,8 @@ export default function WorkerEdit({ profile, categories, allSkills }: Props) {
             </div>
 
             {/* ── Main content ─────────────────────────────── */}
-            <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 -mt-6 pb-16">
-                <div className="flex flex-col lg:flex-row gap-6">
+            <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 pt-4 lg:-mt-6 pb-16">
+                <div className="flex flex-col lg:flex-row gap-4 lg:gap-6">
 
                     {/* ── Sidebar steps (desktop) ──────────────── */}
                     <motion.aside initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }}
