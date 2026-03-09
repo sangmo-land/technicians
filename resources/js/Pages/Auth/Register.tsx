@@ -256,7 +256,7 @@ export default function Register() {
                                                     value={data.phone}
                                                     autoComplete="tel"
                                                     placeholder={t('register.phonePlaceholder')}
-                                                    onChange={(e) => setData('phone', e.target.value)}
+                                                    onChange={(e) => setData('phone', e.target.value.replace(/[^0-9+]/g, ''))}
                                                     className={`w-full pl-11 pr-4 py-3 rounded-xl border bg-white text-slate-900 placeholder:text-slate-400 text-sm transition-all focus:outline-none focus:ring-2 focus:ring-amber-500/20 focus:border-amber-500 ${
                                                         errors.phone ? 'border-red-300 bg-red-50/50' : 'border-slate-200 hover:border-slate-300'
                                                     }`}
