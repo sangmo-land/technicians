@@ -25,7 +25,8 @@ export default function Register() {
         });
     };
 
-    const canProceedStep1 = data.name.trim().length > 0 && data.email.trim().length > 0;
+    const isValidEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(data.email.trim());
+    const canProceedStep1 = data.name.trim().length > 0 && isValidEmail;
 
     return (
         <>
@@ -227,6 +228,7 @@ export default function Register() {
                                                 <input
                                                     id="email"
                                                     type="email"
+                                                    required
                                                     value={data.email}
                                                     autoComplete="username"
                                                     placeholder={t('register.emailPlaceholder')}
@@ -235,6 +237,9 @@ export default function Register() {
                                                         errors.email ? 'border-red-300 bg-red-50/50' : 'border-slate-200 hover:border-slate-300'
                                                     }`}
                                                 />
+                                                {data.email.trim().length > 0 && !isValidEmail && (
+                                                    <p className="mt-1.5 text-xs text-red-500">{t('register.emailInvalid')}</p>
+                                                )}
                                             </div>
                                             <InputError message={errors.email} className="mt-1.5" />
                                         </div>

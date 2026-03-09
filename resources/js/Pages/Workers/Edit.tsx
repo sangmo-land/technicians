@@ -443,26 +443,28 @@ export default function WorkerEdit({ profile, categories, allSkills }: Props) {
                     </motion.aside>
 
                     {/* ── Mobile step tabs ──────────────────────── */}
-                    <div className="lg:hidden overflow-x-auto -mx-4 px-4 pb-2">
-                        <div className="flex gap-2 min-w-max">
-                            {STEPS.map((s, i) => {
-                                const Icon = s.icon;
-                                const isActive = step === i;
-                                const isDone = stepValid[i];
-                                return (
-                                    <button key={s.key} type="button" onClick={() => goToStep(i)}
-                                        className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs font-semibold whitespace-nowrap transition-all
-                                            ${isActive
-                                                ? 'bg-amber-500 text-white shadow-md'
-                                                : isDone
-                                                    ? 'bg-emerald-50 text-emerald-700 ring-1 ring-emerald-200'
-                                                    : 'bg-white text-gray-500 ring-1 ring-gray-200'
-                                            }`}>
-                                        {isDone && !isActive ? <Check className="w-3.5 h-3.5" /> : <Icon className="w-3.5 h-3.5" />}
-                                        {stepLabels[i]}
-                                    </button>
-                                );
-                            })}
+                    <div className="lg:hidden -mx-4 sm:-mx-6">
+                        <div className="overflow-x-auto px-4 sm:px-6 pb-3 scrollbar-hide">
+                            <div className="flex gap-2 w-max">
+                                {STEPS.map((s, i) => {
+                                    const Icon = s.icon;
+                                    const isActive = step === i;
+                                    const isDone = stepValid[i];
+                                    return (
+                                        <button key={s.key} type="button" onClick={() => goToStep(i)}
+                                            className={`flex items-center gap-1.5 px-3 py-2.5 rounded-xl text-xs font-semibold whitespace-nowrap transition-all
+                                                ${isActive
+                                                    ? 'bg-amber-500 text-white shadow-md'
+                                                    : isDone
+                                                        ? 'bg-emerald-50 text-emerald-700 ring-1 ring-emerald-200'
+                                                        : 'bg-white text-gray-500 ring-1 ring-gray-200'
+                                                }`}>
+                                            {isDone && !isActive ? <Check className="w-3.5 h-3.5" /> : <Icon className="w-3.5 h-3.5" />}
+                                            <span className="hidden sm:inline">{stepLabels[i]}</span>
+                                        </button>
+                                    );
+                                })}
+                            </div>
                         </div>
                     </div>
 
@@ -1141,14 +1143,14 @@ export default function WorkerEdit({ profile, categories, allSkills }: Props) {
                             </AnimatePresence>
 
                             {/* ── Navigation bar ────────────────────── */}
-                            <div className="flex items-center justify-between px-6 sm:px-8 py-5 bg-gray-50/80 border-t border-gray-100">
+                            <div className="flex flex-wrap items-center justify-between gap-3 px-4 sm:px-6 md:px-8 py-4 sm:py-5 bg-gray-50/80 border-t border-gray-100">
                                 <button type="button" onClick={() => goToStep(Math.max(0, step - 1))} disabled={step === 0}
-                                    className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-semibold text-gray-600 hover:bg-white hover:shadow-sm border border-transparent hover:border-gray-200 transition-all disabled:opacity-30 disabled:pointer-events-none">
+                                    className="inline-flex items-center gap-1.5 px-3 sm:px-5 py-2.5 rounded-xl text-sm font-semibold text-gray-600 hover:bg-white hover:shadow-sm border border-transparent hover:border-gray-200 transition-all disabled:opacity-30 disabled:pointer-events-none">
                                     <ChevronLeft className="w-4 h-4" />
-                                    {t('workerEdit.back') || 'Back'}
+                                    <span className="hidden sm:inline">{t('workerEdit.back') || 'Back'}</span>
                                 </button>
 
-                                <div className="flex items-center gap-1.5">
+                                <div className="flex items-center gap-1.5 order-last sm:order-none w-full sm:w-auto justify-center">
                                     {STEPS.map((_, i) => (
                                         <button key={i} type="button" onClick={() => goToStep(i)}
                                             className={`w-2 h-2 rounded-full transition-all duration-300
@@ -1158,13 +1160,13 @@ export default function WorkerEdit({ profile, categories, allSkills }: Props) {
 
                                 {step < STEPS.length - 1 ? (
                                     <button type="button" onClick={() => goToStep(step + 1)}
-                                        className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-semibold bg-slate-800 text-white hover:bg-slate-900 shadow-sm transition-all">
+                                        className="inline-flex items-center gap-1.5 px-3 sm:px-5 py-2.5 rounded-xl text-sm font-semibold bg-slate-800 text-white hover:bg-slate-900 shadow-sm transition-all">
                                         {t('workerEdit.next') || 'Next'}
                                         <ChevronRight className="w-4 h-4" />
                                     </button>
                                 ) : (
                                     <button type="submit" disabled={form.processing || !isFormValid}
-                                        className="inline-flex items-center gap-2 px-6 py-2.5 rounded-xl text-sm font-bold bg-amber-500 text-white hover:bg-amber-600 shadow-md hover:shadow-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:shadow-md">
+                                        className="inline-flex items-center gap-1.5 px-4 sm:px-6 py-2.5 rounded-xl text-sm font-bold bg-amber-500 text-white hover:bg-amber-600 shadow-md hover:shadow-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:shadow-md">
                                         {form.processing ? (
                                             <>
                                                 <svg className="animate-spin w-4 h-4" fill="none" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" /><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" /></svg>

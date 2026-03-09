@@ -416,6 +416,7 @@ const fr = {
         namePlaceholder: 'Jean Dupont',
         emailLabel: 'Adresse e-mail',
         emailPlaceholder: 'vous@exemple.com',
+        emailInvalid: 'Veuillez entrer une adresse e-mail valide',
         phoneLabel: 'Numéro de téléphone',
         phoneOptional: '(facultatif)',
         phonePlaceholder: '+237 6XX XXX XXX',

@@ -416,6 +416,7 @@ const en = {
         namePlaceholder: 'John Doe',
         emailLabel: 'Email address',
         emailPlaceholder: 'you@example.com',
+        emailInvalid: 'Please enter a valid email address',
         phoneLabel: 'Phone number',
         phoneOptional: '(optional)',
         phonePlaceholder: '+237 6XX XXX XXX',
