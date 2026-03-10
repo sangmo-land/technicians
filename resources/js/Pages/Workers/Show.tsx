@@ -198,9 +198,9 @@ export default function WorkerShow({ worker }: Props) {
                                             <span className="text-xs text-gray-400">{t('common.perDay')}</span>
                                         </div>
                                     )}
-                                    {worker.user?.can_add_users && (
+                                    {auth?.user && auth.user.id === worker.user_id && (auth.user.can_add_users || auth.user.role === 'admin') && (
                                         <Link
-                                            href={auth?.user ? '/users/add' : `/login?redirect=${encodeURIComponent('/users/add')}`}
+                                            href="/users/add"
                                             className="inline-flex items-center gap-2 bg-amber-500 hover:bg-amber-400 text-white rounded-xl px-4 py-2.5 text-sm font-semibold transition-colors"
                                         >
                                             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-6 0a4 4 0 100-8 4 4 0 000 8zm-7 9a7 7 0 0114 0H5z" /></svg>
