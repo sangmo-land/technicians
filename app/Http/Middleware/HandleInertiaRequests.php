@@ -37,6 +37,10 @@ class HandleInertiaRequests extends Middleware
             'auth' => [
                 'user' => $request->user(),
             ],
+            'flash' => [
+                'success' => fn () => $request->session()->get('success'),
+                'error' => fn () => $request->session()->get('error'),
+            ],
             'profileIncomplete' => fn () => $this->checkProfileIncomplete($request),
             'siteVisits' => fn () => SiteVisit::count(),
             'adminPhone' => fn () => User::where('email', 'admin@nexjobs.com')->value('phone'),
