@@ -455,7 +455,7 @@ export default function AddUser({ addedUsers, categories }: Props) {
                                 {/* Profile Photo */}
                                 <div>
                                     <label className="block text-sm font-medium text-gray-700 mb-2">
-                                        {t('addUser.profilePhoto')}
+                                        {t('addUser.profilePhoto')} <span className="text-gray-400 text-xs font-normal">({t('addUser.optional')})</span>
                                     </label>
                                     <div className="flex items-center gap-4">
                                         <div className="relative flex-shrink-0">
