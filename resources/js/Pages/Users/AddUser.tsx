@@ -1,4 +1,4 @@
-import { Head, useForm, usePage } from '@inertiajs/react';
+import { Head, useForm, usePage, router } from '@inertiajs/react';
 import { FormEventHandler, useCallback, useEffect, useRef, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import AppLayout from '@/Layouts/AppLayout';
@@ -235,31 +235,65 @@ export default function AddUser({ addedUsers, categories }: Props) {
                     </p>
                 </motion.div>
 
-                {/* Success Message */}
+                {/* Success Dialog */}
                 <AnimatePresence>
                     {flash?.success && showCredentials && (
                         <motion.div
-                            initial={{ opacity: 0, y: -10 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            exit={{ opacity: 0, y: -10 }}
-                            className="mb-6 bg-emerald-50 border border-emerald-200 rounded-xl p-4"
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                            exit={{ opacity: 0 }}
+                            className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4"
                         >
-                            <div className="flex items-start gap-3">
-                                <CheckCircle className="w-5 h-5 text-emerald-500 mt-0.5 flex-shrink-0" />
-                                <div className="flex-1">
-                                    <p className="text-emerald-800 font-medium text-sm">{t('addUser.successTitle')}</p>
-                                    <p className="text-emerald-700 text-sm mt-1">{flash.success}</p>
-                                    <p className="text-emerald-600 text-xs mt-2">
-                                        {t('addUser.successNote')}
-                                    </p>
+                            <motion.div
+                                initial={{ scale: 0.9, opacity: 0 }}
+                                animate={{ scale: 1, opacity: 1 }}
+                                exit={{ scale: 0.9, opacity: 0 }}
+                                className="bg-white rounded-2xl shadow-2xl max-w-md w-full overflow-hidden"
+                            >
+                                <div className="p-6 text-center">
+                                    <div className="mx-auto w-14 h-14 rounded-full bg-emerald-100 flex items-center justify-center mb-4">
+                                        <CheckCircle className="w-8 h-8 text-emerald-500" />
+                                    </div>
+                                    <h3 className="text-lg font-bold text-gray-900 mb-1">{t('addUser.successTitle')}</h3>
+                                    <p className="text-sm text-gray-500 mb-4">{t('addUser.successNote')}</p>
+
+                                    <div className="bg-gray-50 rounded-xl p-4 text-left space-y-2 mb-6">
+                                        <div className="flex items-center gap-2 text-sm">
+                                            <Mail className="w-4 h-4 text-gray-400 flex-shrink-0" />
+                                            <span className="text-gray-500">{t('addUser.email')}:</span>
+                                            <code className="bg-white px-2 py-0.5 rounded border text-gray-900 font-mono text-xs ml-auto">
+                                                {flash.success.match(/Email: (.+?) \|/)?.[1] ?? ''}
+                                            </code>
+                                        </div>
+                                        <div className="flex items-center gap-2 text-sm">
+                                            <Lock className="w-4 h-4 text-gray-400 flex-shrink-0" />
+                                            <span className="text-gray-500">{t('addUser.password')}:</span>
+                                            <code className="bg-white px-2 py-0.5 rounded border text-gray-900 font-mono text-xs ml-auto">
+                                                {flash.success.match(/Password: (.+)$/)?.[1] ?? ''}
+                                            </code>
+                                        </div>
+                                    </div>
+
+                                    <div className="flex flex-col sm:flex-row gap-3">
+                                        <button
+                                            type="button"
+                                            onClick={() => setShowCredentials(false)}
+                                            className="flex-1 inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold bg-amber-500 text-white hover:bg-amber-600 transition-colors shadow-sm"
+                                        >
+                                            <UserPlus className="w-4 h-4" />
+                                            {t('addUser.addAnother')}
+                                        </button>
+                                        <button
+                                            type="button"
+                                            onClick={() => router.visit('/workers')}
+                                            className="flex-1 inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold border border-gray-200 text-gray-700 hover:bg-gray-50 transition-colors"
+                                        >
+                                            <Users className="w-4 h-4" />
+                                            {t('addUser.goToWorkers')}
+                                        </button>
+                                    </div>
                                 </div>
-                                <button
-                                    onClick={() => setShowCredentials(false)}
-                                    className="text-emerald-400 hover:text-emerald-600 text-sm"
-                                >
-                                    ✕
-                                </button>
-                            </div>
+                            </motion.div>
                         </motion.div>
                     )}
                 </AnimatePresence>

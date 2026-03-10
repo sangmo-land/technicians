@@ -652,6 +652,8 @@ const fr = {
         addUserBtn: 'Ajouter l\'utilisateur',
         successTitle: 'Utilisateur créé avec succès',
         successNote: 'Partagez ces identifiants avec le nouvel utilisateur. Il pourra modifier son mot de passe après connexion.',
+        addAnother: 'Ajouter un autre',
+        goToWorkers: 'Voir les ouvriers',
         usersYouAdded: 'Utilisateurs ajoutés',
         noUsersYet: 'Aucun utilisateur ajouté',
         noUsersDesc: 'Les utilisateurs que vous ajoutez apparaîtront ici',

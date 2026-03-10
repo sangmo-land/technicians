@@ -652,6 +652,8 @@ const en = {
         addUserBtn: 'Add User',
         successTitle: 'User Created Successfully',
         successNote: 'Make sure to share these credentials with the new user. They can change their password after logging in.',
+        addAnother: 'Add Another',
+        goToWorkers: 'Go to Workers',
         usersYouAdded: 'Users You Added',
         noUsersYet: 'No users added yet',
         noUsersDesc: 'Users you add will appear here',
