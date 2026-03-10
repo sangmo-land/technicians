@@ -6,6 +6,7 @@ export interface User {
     role: 'worker' | 'employer' | 'admin';
     avatar?: string;
     is_active: boolean;
+    can_add_users: boolean;
     email_verified_at?: string;
     worker_profile?: WorkerProfile;
     company?: Company;

@@ -22,6 +22,8 @@ class User extends Authenticatable implements FilamentUser
         'avatar',
         'password',
         'is_active',
+        'can_add_users',
+        'added_by',
     ];
 
     protected $hidden = [
@@ -35,6 +37,7 @@ class User extends Authenticatable implements FilamentUser
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
             'is_active' => 'boolean',
+            'can_add_users' => 'boolean',
         ];
     }
 
@@ -106,6 +109,21 @@ class User extends Authenticatable implements FilamentUser
     public function savedWorkers(): HasMany
     {
         return $this->hasMany(SavedWorker::class);
+    }
+
+    public function canAddUsers(): bool
+    {
+        return $this->can_add_users || $this->role === 'admin';
+    }
+
+    public function addedBy(): \Illuminate\Database\Eloquent\Relations\BelongsTo
+    {
+        return $this->belongsTo(User::class, 'added_by');
+    }
+
+    public function addedUsers(): HasMany
+    {
+        return $this->hasMany(User::class, 'added_by');
     }
 
     public function averageRating(): float

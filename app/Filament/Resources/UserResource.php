@@ -37,6 +37,10 @@ class UserResource extends Resource
                     ->dehydrated(fn ($state) => filled($state))
                     ->required(fn (string $operation): bool => $operation === 'create'),
                 Forms\Components\Toggle::make('is_active')->default(true),
+                Forms\Components\Toggle::make('can_add_users')
+                    ->label('Can Add Users')
+                    ->helperText('Allow this user to add new users to the platform')
+                    ->default(false),
                 Forms\Components\FileUpload::make('avatar')->image()->directory('avatars'),
             ])->columns(2),
         ]);
@@ -57,6 +61,7 @@ class UserResource extends Resource
                         'info' => 'worker',
                     ]),
                 Tables\Columns\IconColumn::make('is_active')->boolean(),
+                Tables\Columns\IconColumn::make('can_add_users')->boolean()->label('Can Add'),
                 Tables\Columns\TextColumn::make('created_at')->dateTime()->sortable(),
             ])
             ->filters([

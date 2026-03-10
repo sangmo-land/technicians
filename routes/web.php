@@ -3,6 +3,7 @@
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\JobListingController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\UserInviteController;
 use App\Http\Controllers\WorkerProfileController;
 use App\Models\JobListing;
 use App\Models\WorkerProfile;
@@ -67,6 +68,10 @@ Route::middleware('auth')->group(function () {
     Route::post('/worker/profile/photos', [WorkerProfileController::class, 'uploadPhoto'])->name('worker.profile.photos.upload');
     Route::delete('/worker/profile/photos/{photo}', [WorkerProfileController::class, 'deletePhoto'])->name('worker.profile.photos.delete');
     Route::patch('/worker/profile/photos/{photo}/caption', [WorkerProfileController::class, 'updatePhotoCaption'])->name('worker.profile.photos.caption');
+
+    // Add users (only users with can_add_users permission)
+    Route::get('/users/add', [UserInviteController::class, 'index'])->name('users.add');
+    Route::post('/users/add', [UserInviteController::class, 'store'])->name('users.add.store');
 });
 
 require __DIR__.'/auth.php';

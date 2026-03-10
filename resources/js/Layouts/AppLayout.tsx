@@ -63,6 +63,14 @@ export default function GuestLayout({ header, children }: Props) {
                                     >
                                         {t('nav.dashboard')}
                                     </Link>
+                                    {(auth.user.can_add_users || auth.user.role === 'admin') && (
+                                        <Link
+                                            href="/users/add"
+                                            className="text-gray-600 hover:text-blue-600 font-medium transition-colors"
+                                        >
+                                            {t('nav.addUsers')}
+                                        </Link>
+                                    )}
                                     <Link
                                         href="/logout"
                                         method="post"
@@ -123,6 +131,9 @@ export default function GuestLayout({ header, children }: Props) {
                                 {auth?.user ? (
                                     <>
                                         <Link href="/dashboard" className="block py-2 text-gray-600 hover:text-blue-600 font-medium">{t('nav.dashboard')}</Link>
+                                        {(auth.user.can_add_users || auth.user.role === 'admin') && (
+                                            <Link href="/users/add" className="block py-2 text-gray-600 hover:text-blue-600 font-medium">{t('nav.addUsers')}</Link>
+                                        )}
                                         <Link href="/logout" method="post" as="button" className="block py-2 text-gray-600 hover:text-blue-600 font-medium">{t('nav.logOut')}</Link>
                                     </>
                                 ) : (

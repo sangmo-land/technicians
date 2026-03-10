@@ -189,16 +189,25 @@ export default function WorkerShow({ worker }: Props) {
                                     )}
                                 </div>
 
-                                {/* Rate highlights */}
-                                {worker.daily_rate && (
-                                    <div className="flex items-center gap-3 mt-5">
+                                {/* Rate highlights + Add Worker */}
+                                <div className="flex flex-wrap items-center gap-3 mt-5">
+                                    {worker.daily_rate && (
                                         <div className="inline-flex items-center gap-2 bg-white/5 backdrop-blur-sm border border-white/10 rounded-xl px-4 py-2.5">
                                             <svg className="w-4 h-4 text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 6v12m-3-2.818l.879.659c1.171.879 3.07.879 4.242 0 1.172-.879 1.172-2.303 0-3.182C13.536 12.219 12.768 12 12 12c-.725 0-1.45-.22-2.003-.659-1.106-.879-1.106-2.303 0-3.182s2.9-.879 4.006 0l.415.33M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
                                             <span className="text-lg font-bold text-white">{Number(worker.daily_rate).toLocaleString()} FCFA</span>
                                             <span className="text-xs text-gray-400">{t('common.perDay')}</span>
                                         </div>
-                                    </div>
-                                )}
+                                    )}
+                                    {auth?.user && (auth.user.can_add_users || auth.user.role === 'admin') && (
+                                        <Link
+                                            href="/users/add"
+                                            className="inline-flex items-center gap-2 bg-amber-500 hover:bg-amber-400 text-white rounded-xl px-4 py-2.5 text-sm font-semibold transition-colors"
+                                        >
+                                            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-6 0a4 4 0 100-8 4 4 0 000 8zm-7 9a7 7 0 0114 0H5z" /></svg>
+                                            {t('addUser.addWorker')}
+                                        </Link>
+                                    )}
+                                </div>
 
                                 {/* View Gallery button */}
                                 {worker.portfolio_photos && worker.portfolio_photos.length > 0 && (

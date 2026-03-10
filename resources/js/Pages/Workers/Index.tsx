@@ -1,4 +1,4 @@
-import { Head, Link, router } from '@inertiajs/react';
+import { Head, Link, router, usePage } from '@inertiajs/react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useState } from 'react';
 import AppLayout from '@/Layouts/AppLayout';
@@ -20,6 +20,7 @@ interface Props {
 
 export default function WorkersIndex({ workers, categories, filters }: Props) {
     const { t } = useTranslation();
+    const { auth } = usePage().props as any;
     const [search, setSearch] = useState(filters.search || '');
     const [location, setLocation] = useState(filters.location || '');
     const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false);
@@ -360,7 +361,7 @@ export default function WorkersIndex({ workers, categories, filters }: Props) {
                         <span className="text-slate-200">{t('workersIndex.workers')}</span>
                     </motion.div>
 
-                    <div className="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-6">
+                    <div className="flex flex-col gap-6">
                         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
                             <div className="inline-flex items-center gap-2 px-3 py-1 bg-amber-500/10 border border-amber-500/20 rounded-full text-xs font-semibold text-amber-400 mb-3">
                                 <span className="w-1.5 h-1.5 bg-amber-400 rounded-full animate-pulse" />
@@ -372,6 +373,15 @@ export default function WorkersIndex({ workers, categories, filters }: Props) {
                             <p className="text-slate-400 text-base lg:text-lg max-w-xl leading-relaxed">
                                 {t('workersIndex.subheading')}
                             </p>
+                            {auth?.user && (auth.user.can_add_users || auth.user.role === 'admin') && (
+                                <Link
+                                    href="/users/add"
+                                    className="inline-flex items-center gap-2 mt-4 px-4 py-2 bg-amber-500 hover:bg-amber-400 text-white text-sm font-semibold rounded-lg transition-colors"
+                                >
+                                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-6 0a4 4 0 100-8 4 4 0 000 8zm-7 9a7 7 0 0114 0H5z" /></svg>
+                                    {t('addUser.addNewWorker')}
+                                </Link>
+                            )}
                         </motion.div>
                     </div>
                 </div>

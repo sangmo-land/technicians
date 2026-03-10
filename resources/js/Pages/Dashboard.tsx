@@ -5,7 +5,7 @@ import { useTranslation } from '@/hooks/useTranslation';
 import {
     User, Search, Settings, Eye, Briefcase, Camera, Tag,
     ChevronRight, CheckCircle, AlertCircle, Clock, MapPin,
-    Star, TrendingUp, Shield, Edit3, ArrowRight,
+    Star, TrendingUp, Shield, Edit3, ArrowRight, UserPlus,
 } from 'lucide-react';
 
 interface Props {
@@ -43,12 +43,16 @@ export default function Dashboard({ profile, stats }: Props) {
         { href: '/worker/profile', icon: Edit3, label: t('dashboard.editProfile'), desc: t('dashboard.editProfileDesc'), color: 'amber' },
         { href: '/workers', icon: Search, label: t('dashboard.browseWorkers'), desc: t('dashboard.browseWorkersDesc'), color: 'blue' },
         { href: '/profile', icon: Settings, label: t('dashboard.accountSettings'), desc: t('dashboard.accountSettingsDesc'), color: 'slate' },
+        ...((user?.can_add_users || user?.role === 'admin')
+            ? [{ href: '/users/add', icon: UserPlus, label: t('addUser.addUsersQuickLink'), desc: t('addUser.addUsersQuickDesc'), color: 'emerald' }]
+            : []),
     ];
 
     const colorMap: Record<string, string> = {
         amber: 'bg-amber-50 text-amber-600 group-hover:bg-amber-100',
         blue: 'bg-blue-50 text-blue-600 group-hover:bg-blue-100',
         slate: 'bg-slate-100 text-slate-600 group-hover:bg-slate-200',
+        emerald: 'bg-emerald-50 text-emerald-600 group-hover:bg-emerald-100',
     };
 
     return (
