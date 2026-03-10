@@ -16,8 +16,16 @@ class AuthenticatedSessionController extends Controller
     /**
      * Display the login view.
      */
-    public function create(): Response
+    public function create(Request $request): Response
     {
+        if ($request->has('redirect')) {
+            $redirect = $request->input('redirect');
+            // Only allow local redirects
+            if (str_starts_with($redirect, '/')) {
+                redirect()->setIntendedUrl($redirect);
+            }
+        }
+
         return Inertia::render('Auth/Login', [
             'canResetPassword' => Route::has('password.request'),
             'status' => session('status'),
