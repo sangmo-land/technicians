@@ -549,7 +549,7 @@ export default function WorkersIndex({ workers, categories, filters }: Props) {
                                                     <div className="relative h-44 overflow-hidden">
                                                         {coverPhoto ? (
                                                             <img src={`/storage/${coverPhoto.path}`} alt={coverPhoto.caption || ''}
-                                                                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out" />
+                                                                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out" loading="lazy" />
                                                         ) : (
                                                             <div className="w-full h-full bg-gradient-to-br from-slate-700 via-blue-800 to-indigo-900">
                                                                 <div className="absolute inset-0 opacity-10" style={{
@@ -586,7 +586,7 @@ export default function WorkersIndex({ workers, categories, filters }: Props) {
                                                         <div className="flex items-start gap-3.5 -mt-11 relative z-10 mb-4">
                                                             <div className="w-[52px] h-[52px] rounded-xl overflow-hidden ring-[3px] ring-white shadow-lg flex-shrink-0">
                                                                 {worker.user?.avatar ? (
-                                                                    <img src={`/storage/${worker.user.avatar}`} alt="" className="w-full h-full object-cover" />
+                                                                    <img src={`/storage/${worker.user.avatar}`} alt="" className="w-full h-full object-cover" loading="lazy" />
                                                                 ) : (
                                                                     <div className="w-full h-full bg-gradient-to-br from-slate-700 to-slate-900 flex items-center justify-center">
                                                                         <span className="text-white font-bold text-lg">{worker.user?.name?.charAt(0)}</span>

@@ -2,6 +2,7 @@ import { Head, useForm, usePage, router } from '@inertiajs/react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useState, useRef, useEffect, useMemo } from 'react';
 import { cameroonRegions } from '@/data/cameroonLocations';
+import { compressImage } from '@/utils/compressImage';
 import AppLayout from '@/Layouts/AppLayout';
 import { WorkerProfile, JobCategory, Skill, WorkExperience, PortfolioPhoto } from '@/types';
 import { useTranslation } from '@/hooks/useTranslation';
@@ -297,12 +298,14 @@ export default function WorkerEdit({ profile, categories, allSkills }: Props) {
     ];
 
     /* ── Avatar upload handler ────────────────────── */
-    const handleAvatarUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const handleAvatarUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0];
         if (!file) return;
 
+        const compressed = await compressImage(file, 800, 800, 0.85);
+
         const formData = new FormData();
-        formData.append('avatar', file);
+        formData.append('avatar', compressed);
 
         setUploadingAvatar(true);
         router.post('/worker/profile/avatar', formData, {
@@ -320,12 +323,16 @@ export default function WorkerEdit({ profile, categories, allSkills }: Props) {
     };
 
     /* ── Portfolio handlers ───────────────────────── */
-    const handlePhotoUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const handlePhotoUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
         const files = e.target.files;
         if (!files || files.length === 0) return;
 
+        const compressed = await Promise.all(
+            Array.from(files).map((f) => compressImage(f, 1200, 1200, 0.8))
+        );
+
         const formData = new FormData();
-        Array.from(files).forEach(file => formData.append('photos[]', file));
+        compressed.forEach(file => formData.append('photos[]', file));
 
         setUploading(true);
         router.post('/worker/profile/photos', formData, {

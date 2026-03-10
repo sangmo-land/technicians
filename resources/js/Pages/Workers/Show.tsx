@@ -444,7 +444,7 @@ export default function WorkerShow({ worker }: Props) {
                                                     onClick={() => setLightboxPhoto(`/storage/${photo.path}`)}
                                                     className="group relative aspect-[4/3] rounded-xl overflow-hidden bg-gray-100 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:ring-offset-2"
                                                 >
-                                                    <img src={`/storage/${photo.path}`} alt={photo.caption || 'Portfolio'} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
+                                                    <img src={`/storage/${photo.path}`} alt={photo.caption || 'Portfolio'} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" loading="lazy" />
                                                     <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-200" />
                                                     {photo.caption && (
                                                         <div className="absolute bottom-0 left-0 right-0 p-3 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
@@ -493,7 +493,7 @@ export default function WorkerShow({ worker }: Props) {
                                                 <div className="flex items-start gap-4">
                                                     <div className="w-10 h-10 rounded-xl bg-gray-100 flex items-center justify-center flex-shrink-0">
                                                         {review.reviewer?.avatar ? (
-                                                            <img src={`/storage/${review.reviewer.avatar}`} alt="" className="w-10 h-10 rounded-xl object-cover" />
+                                                            <img src={`/storage/${review.reviewer.avatar}`} alt="" className="w-10 h-10 rounded-xl object-cover" loading="lazy" />
                                                         ) : (
                                                             <span className="text-sm font-bold text-gray-500">{review.reviewer?.name?.charAt(0) || '?'}</span>
                                                         )}

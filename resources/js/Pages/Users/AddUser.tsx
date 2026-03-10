@@ -6,6 +6,7 @@ import InputError from '@/Components/InputError';
 import { UserPlus, Users, CheckCircle, Mail, Lock, Phone, Briefcase, MapPin, Clock, Banknote, Languages, ChevronDown, Camera, Upload, ImagePlus, X, User, SwitchCamera } from 'lucide-react';
 import { useTranslation } from '@/hooks/useTranslation';
 import { cameroonRegions } from '@/data/cameroonLocations';
+import { compressImage } from '@/utils/compressImage';
 
 interface AddedUser {
     id: number;
@@ -78,12 +79,13 @@ export default function AddUser({ addedUsers, categories }: Props) {
         );
     };
 
-    const handleAvatarFile = (file: File | undefined) => {
+    const handleAvatarFile = async (file: File | undefined) => {
         if (!file) return;
-        setData('avatar', file);
+        const compressed = await compressImage(file, 800, 800, 0.85);
+        setData('avatar', compressed);
         const reader = new FileReader();
         reader.onload = (e) => setAvatarPreview(e.target?.result as string);
-        reader.readAsDataURL(file);
+        reader.readAsDataURL(compressed);
     };
 
     const removeAvatar = () => {
@@ -184,13 +186,16 @@ export default function AddUser({ addedUsers, categories }: Props) {
         };
     }, []);
 
-    const handlePortfolioFiles = (files: FileList | null) => {
+    const handlePortfolioFiles = async (files: FileList | null) => {
         if (!files || files.length === 0) return;
-        const newFiles = Array.from(files);
-        const combined = [...data.portfolio_photos, ...newFiles].slice(0, 10);
+        const rawFiles = Array.from(files);
+        const compressed = await Promise.all(
+            rawFiles.map((f) => compressImage(f, 1200, 1200, 0.8))
+        );
+        const combined = [...data.portfolio_photos, ...compressed].slice(0, 10);
         setData('portfolio_photos', combined);
 
-        newFiles.forEach((file) => {
+        compressed.forEach((file) => {
             const reader = new FileReader();
             reader.onload = (e) => {
                 setPortfolioPreviews((prev) => [...prev, e.target?.result as string].slice(0, 10));
