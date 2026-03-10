@@ -198,7 +198,7 @@ export default function WorkerShow({ worker }: Props) {
                                             <span className="text-xs text-gray-400">{t('common.perDay')}</span>
                                         </div>
                                     )}
-                                    {auth?.user && (auth.user.can_add_users || auth.user.role === 'admin') && (
+                                    {auth?.user && auth.user.id === worker.user_id && (auth.user.can_add_users || auth.user.role === 'admin') && (
                                         <Link
                                             href="/users/add"
                                             className="inline-flex items-center gap-2 bg-amber-500 hover:bg-amber-400 text-white rounded-xl px-4 py-2.5 text-sm font-semibold transition-colors"
