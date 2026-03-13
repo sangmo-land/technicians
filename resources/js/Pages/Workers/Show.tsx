@@ -599,7 +599,9 @@ export default function WorkerShow({ worker, isOwnProfile, dashboardStats }: Pro
                                                         <span className={`text-xs ${check.done ? 'text-gray-500 line-through' : 'text-gray-700 font-medium'}`}>
                                                             {check.label}
                                                         </span>
-                                                        <ChevronRight className={`w-3 h-3 ml-auto flex-shrink-0 ${check.done ? 'text-gray-300' : 'text-amber-600'}`} />
+                                                        <span className={`ml-auto text-xs font-semibold flex items-center gap-0.5 ${check.done ? 'text-gray-400' : 'text-amber-600'}`}>
+                                                            {check.done ? t('dashboard.edit') : t('dashboard.fix')} <ChevronRight className="w-3 h-3" />
+                                                        </span>
                                                     </Link>
                                                 ))}
                                             </div>

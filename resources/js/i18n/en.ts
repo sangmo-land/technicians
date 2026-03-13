@@ -187,6 +187,7 @@ const en = {
         profileStrength: 'Profile Strength',
         completeProfileHint: 'Complete all items to boost your visibility to clients',
         fix: 'Fix',
+        edit: 'Edit',
         quickActions: 'Quick Actions',
         tipTitle: 'Pro Tip',
         tipDesc: 'Workers with complete profiles and portfolio photos get up to 5x more views from potential clients.',

@@ -187,6 +187,7 @@ const fr = {
         profileStrength: 'Solidité du profil',
         completeProfileHint: 'Complétez tous les éléments pour augmenter votre visibilité auprès des clients',
         fix: 'Corriger',
+        edit: 'Modifier',
         quickActions: 'Actions rapides',
         tipTitle: 'Conseil pro',
         tipDesc: 'Les ouvriers avec un profil complet et des photos de portfolio reçoivent jusqu\'à 5 fois plus de vues de clients potentiels.',
