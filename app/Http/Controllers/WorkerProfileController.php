@@ -59,12 +59,28 @@ class WorkerProfileController extends Controller
 
     public function show(WorkerProfile $worker)
     {
-        $worker->increment('profile_views');
+        $user = auth()->user();
+        $isOwnProfile = $user && $user->id === $worker->user_id;
+
+        if (!$isOwnProfile) {
+            $worker->increment('profile_views');
+        }
+
         $worker->load(['user.reviewsReceived.reviewer', 'skills', 'jobCategories', 'workExperiences', 'portfolioPhotos']);
 
-        return Inertia::render('Workers/Show', [
-            'worker' => $worker,
-        ]);
+        $data = ['worker' => $worker];
+
+        if ($isOwnProfile) {
+            $data['isOwnProfile'] = true;
+            $data['dashboardStats'] = [
+                'profileViews' => $worker->profile_views ?? 0,
+                'portfolioPhotos' => $worker->portfolioPhotos?->count() ?? 0,
+                'workExperiences' => $worker->workExperiences?->count() ?? 0,
+                'categories' => $worker->jobCategories?->count() ?? 0,
+            ];
+        }
+
+        return Inertia::render('Workers/Show', $data);
     }
 
     public function edit()

@@ -41,6 +41,7 @@ const en = {
     nav: {
         findWorkers: 'Find Workers',
         dashboard: 'Dashboard',
+        myProfile: 'My Profile',
         addUsers: 'Add Users',
         logOut: 'Log Out',
         logIn: 'Log In',

@@ -41,6 +41,7 @@ const fr = {
     nav: {
         findWorkers: 'Trouver des ouvriers',
         dashboard: 'Tableau de bord',
+        myProfile: 'Mon Profil',
         addUsers: 'Ajouter des utilisateurs',
         logOut: 'Déconnexion',
         logIn: 'Connexion',

@@ -4,9 +4,15 @@ import { useState } from 'react';
 import AppLayout from '@/Layouts/AppLayout';
 import { WorkerProfile } from '@/types';
 import { useTranslation } from '@/hooks/useTranslation';
+import {
+    Eye, Briefcase, Camera, Tag, ChevronRight, CheckCircle, AlertCircle,
+    Shield, Edit3, Search, Settings, TrendingUp, ArrowRight, UserPlus,
+} from 'lucide-react';
 
 interface Props {
     worker: WorkerProfile;
+    isOwnProfile?: boolean;
+    dashboardStats?: { profileViews: number; portfolioPhotos: number; workExperiences: number; categories: number };
 }
 
 const expColors: Record<string, string> = {
@@ -16,7 +22,7 @@ const expColors: Record<string, string> = {
     expert: 'bg-purple-50 text-purple-700 ring-purple-600/20',
 };
 
-export default function WorkerShow({ worker }: Props) {
+export default function WorkerShow({ worker, isOwnProfile, dashboardStats }: Props) {
     const { auth } = usePage().props as any;
     const [lightboxPhoto, setLightboxPhoto] = useState<string | null>(null);
     const { t } = useTranslation();
@@ -527,7 +533,128 @@ export default function WorkerShow({ worker }: Props) {
                         {/* ─── Right Sidebar ─── */}
                         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4, delay: 0.25 }} className="lg:w-[360px] flex-shrink-0 space-y-6">
 
-                            {/* Contact / Hire card */}
+                            {/* ── Own Profile: Dashboard panels ── */}
+                            {isOwnProfile && dashboardStats ? (() => {
+                                const user = auth.user;
+                                const profile = worker;
+                                const checks = [
+                                    { label: t('dashboard.checkBio'), done: !!profile?.bio },
+                                    { label: t('dashboard.checkPhone'), done: !!user?.phone },
+                                    { label: t('dashboard.checkPhoto'), done: !!user?.avatar },
+                                    { label: t('dashboard.checkLocation'), done: !!profile?.state },
+                                    { label: t('dashboard.checkCategory'), done: dashboardStats.categories > 0 },
+                                    { label: t('dashboard.checkExperience'), done: !!profile?.experience_level },
+                                    { label: t('dashboard.checkRate'), done: !!profile?.daily_rate && Number(profile.daily_rate) > 0 },
+                                    { label: t('dashboard.checkPortfolio'), done: dashboardStats.portfolioPhotos > 0 },
+                                ];
+                                const completedCount = checks.filter(c => c.done).length;
+                                const completionPct = Math.round((completedCount / checks.length) * 100);
+
+                                const quickLinks = [
+                                    { href: '/worker/profile', icon: Edit3, label: t('dashboard.editProfile'), desc: t('dashboard.editProfileDesc'), color: 'amber' },
+                                    { href: '/workers', icon: Search, label: t('dashboard.browseWorkers'), desc: t('dashboard.browseWorkersDesc'), color: 'blue' },
+                                    { href: '/profile', icon: Settings, label: t('dashboard.accountSettings'), desc: t('dashboard.accountSettingsDesc'), color: 'slate' },
+                                    ...((user?.can_add_users || user?.role === 'admin')
+                                        ? [{ href: '/users/add', icon: UserPlus, label: t('addUser.addUsersQuickLink'), desc: t('addUser.addUsersQuickDesc'), color: 'emerald' }]
+                                        : []),
+                                ];
+                                const colorMap: Record<string, string> = {
+                                    amber: 'bg-amber-50 text-amber-600 group-hover:bg-amber-100',
+                                    blue: 'bg-blue-50 text-blue-600 group-hover:bg-blue-100',
+                                    slate: 'bg-slate-100 text-slate-600 group-hover:bg-slate-200',
+                                    emerald: 'bg-emerald-50 text-emerald-600 group-hover:bg-emerald-100',
+                                };
+
+                                return (
+                                    <>
+                                        {/* Stats */}
+                                        <div className="grid grid-cols-2 gap-3">
+                                            {[
+                                                { icon: Eye, value: dashboardStats.profileViews, label: t('dashboard.statViews'), color: 'text-blue-600 bg-blue-50' },
+                                                { icon: Camera, value: dashboardStats.portfolioPhotos, label: t('dashboard.statPhotos'), color: 'text-purple-600 bg-purple-50' },
+                                                { icon: Briefcase, value: dashboardStats.workExperiences, label: t('dashboard.statExperience'), color: 'text-emerald-600 bg-emerald-50' },
+                                                { icon: Tag, value: dashboardStats.categories, label: t('dashboard.statCategories'), color: 'text-amber-600 bg-amber-50' },
+                                            ].map((stat) => (
+                                                <div key={stat.label} className="bg-white rounded-xl border border-gray-100 p-4 shadow-sm">
+                                                    <div className="flex items-center gap-3">
+                                                        <div className={`w-9 h-9 rounded-lg flex items-center justify-center ${stat.color}`}>
+                                                            <stat.icon className="w-4 h-4" />
+                                                        </div>
+                                                        <div>
+                                                            <p className="text-xl font-bold text-gray-900">{stat.value}</p>
+                                                            <p className="text-xs text-gray-500">{stat.label}</p>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            ))}
+                                        </div>
+
+                                        {/* Profile Completion */}
+                                        <div className="bg-white rounded-xl border border-gray-100 shadow-sm overflow-hidden">
+                                            <div className="p-5 border-b border-gray-100">
+                                                <div className="flex items-center justify-between mb-3">
+                                                    <h3 className="text-sm font-bold text-gray-900 flex items-center gap-2">
+                                                        <Shield className="w-4 h-4 text-amber-500" />
+                                                        {t('dashboard.profileStrength')}
+                                                    </h3>
+                                                    <span className={`text-sm font-bold ${completionPct === 100 ? 'text-emerald-600' : completionPct >= 60 ? 'text-amber-600' : 'text-red-500'}`}>
+                                                        {completionPct}%
+                                                    </span>
+                                                </div>
+                                                <div className="w-full bg-gray-100 rounded-full h-2 overflow-hidden">
+                                                    <motion.div
+                                                        initial={{ width: 0 }}
+                                                        animate={{ width: `${completionPct}%` }}
+                                                        transition={{ duration: 0.8, ease: 'easeOut' }}
+                                                        className={`h-full rounded-full ${completionPct === 100 ? 'bg-emerald-500' : completionPct >= 60 ? 'bg-amber-500' : 'bg-red-400'}`}
+                                                    />
+                                                </div>
+                                            </div>
+                                            <div className="divide-y divide-gray-50">
+                                                {checks.map((check, i) => (
+                                                    <div key={i} className={`flex items-center gap-3 px-5 py-2.5 ${check.done ? '' : 'bg-amber-50/30'}`}>
+                                                        {check.done ? (
+                                                            <CheckCircle className="w-4 h-4 text-emerald-500 flex-shrink-0" />
+                                                        ) : (
+                                                            <AlertCircle className="w-4 h-4 text-amber-400 flex-shrink-0" />
+                                                        )}
+                                                        <span className={`text-xs ${check.done ? 'text-gray-500 line-through' : 'text-gray-700 font-medium'}`}>
+                                                            {check.label}
+                                                        </span>
+                                                        {!check.done && (
+                                                            <Link href="/worker/profile" className="ml-auto text-xs text-amber-600 hover:text-amber-700 font-semibold flex items-center gap-0.5">
+                                                                {t('dashboard.fix')} <ChevronRight className="w-3 h-3" />
+                                                            </Link>
+                                                        )}
+                                                    </div>
+                                                ))}
+                                            </div>
+                                        </div>
+
+                                        {/* Quick Actions */}
+                                        <div className="space-y-3">
+                                            <h3 className="text-sm font-bold text-gray-900 flex items-center gap-2">
+                                                <TrendingUp className="w-4 h-4 text-gray-400" />
+                                                {t('dashboard.quickActions')}
+                                            </h3>
+                                            {quickLinks.map((link) => (
+                                                <Link key={link.href} href={link.href}
+                                                    className="flex items-center gap-3 bg-white rounded-xl border border-gray-100 p-3.5 hover:shadow-md hover:border-gray-200 transition-all group">
+                                                    <div className={`w-10 h-10 rounded-lg flex items-center justify-center transition-colors ${colorMap[link.color]}`}>
+                                                        <link.icon className="w-4 h-4" />
+                                                    </div>
+                                                    <div className="flex-1 min-w-0">
+                                                        <h4 className="font-semibold text-gray-900 text-sm">{link.label}</h4>
+                                                        <p className="text-xs text-gray-500 truncate">{link.desc}</p>
+                                                    </div>
+                                                    <ArrowRight className="w-4 h-4 text-gray-300 group-hover:text-gray-500 transition-colors flex-shrink-0" />
+                                                </Link>
+                                            ))}
+                                        </div>
+                                    </>
+                                );
+                            })() : (
+                            /* ── Normal visitor sidebar ── */
                             <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden sticky top-24">
                                 <div className="p-6 space-y-3">
                                     {/* Call & WhatsApp — always visible when phone exists */}
@@ -666,6 +793,7 @@ export default function WorkerShow({ worker }: Props) {
                                     </div>
                                 )}
                             </div>
+                            )}
                         </motion.div>
                     </div>
                 </div>

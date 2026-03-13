@@ -57,12 +57,14 @@ export default function GuestLayout({ header, children }: Props) {
                             <LanguageSwitcher variant="light" />
                             {auth?.user ? (
                                 <>
-                                    <Link
-                                        href="/dashboard"
-                                        className="text-gray-600 hover:text-blue-600 font-medium transition-colors"
-                                    >
-                                        {t('nav.dashboard')}
-                                    </Link>
+                                    {auth.worker_profile_id && (
+                                        <Link
+                                            href={`/workers/${auth.worker_profile_id}`}
+                                            className="text-gray-600 hover:text-blue-600 font-medium transition-colors"
+                                        >
+                                            {t('nav.myProfile')}
+                                        </Link>
+                                    )}
                                     {(auth.user.can_add_users || auth.user.role === 'admin') && (
                                         <Link
                                             href="/users/add"
@@ -130,7 +132,9 @@ export default function GuestLayout({ header, children }: Props) {
                                 <Link href="/workers" className="block py-2 text-gray-600 hover:text-blue-600 font-medium">{t('nav.findWorkers')}</Link>
                                 {auth?.user ? (
                                     <>
-                                        <Link href="/dashboard" className="block py-2 text-gray-600 hover:text-blue-600 font-medium">{t('nav.dashboard')}</Link>
+                                        {auth.worker_profile_id && (
+                                            <Link href={`/workers/${auth.worker_profile_id}`} className="block py-2 text-gray-600 hover:text-blue-600 font-medium">{t('nav.myProfile')}</Link>
+                                        )}
                                         {(auth.user.can_add_users || auth.user.role === 'admin') && (
                                             <Link href="/users/add" className="block py-2 text-gray-600 hover:text-blue-600 font-medium">{t('nav.addUsers')}</Link>
                                         )}

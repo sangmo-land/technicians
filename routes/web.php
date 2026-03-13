@@ -37,21 +37,18 @@ Route::get('/workers/{worker}', [WorkerProfileController::class, 'show'])->name(
 Route::get('/jobs', [JobListingController::class, 'index'])->name('jobs.index');
 Route::get('/jobs/{job}', [JobListingController::class, 'show'])->name('jobs.show');
 
-// Dashboard
+// Dashboard — redirect to own worker profile
 Route::get('/dashboard', function () {
     $user = auth()->user();
-    $profile = $user->workerProfile?->load(['jobCategories', 'portfolioPhotos', 'workExperiences']);
-    $stats = [
-        'profileViews' => $profile->profile_views ?? 0,
-        'portfolioPhotos' => $profile?->portfolioPhotos?->count() ?? 0,
-        'workExperiences' => $profile?->workExperiences?->count() ?? 0,
-        'categories' => $profile?->jobCategories?->count() ?? 0,
-    ];
+    $profile = $user->workerProfile;
 
-    return Inertia::render('Dashboard', [
-        'profile' => $profile,
-        'stats' => $stats,
-    ]);
+    if ($profile) {
+        return redirect()->route('workers.show', $profile);
+    }
+
+    // No profile yet — create one and redirect
+    $profile = \App\Models\WorkerProfile::create(['user_id' => $user->id]);
+    return redirect()->route('workers.show', $profile);
 })->middleware(['auth', 'verified'])->name('dashboard');
 
 // Authenticated routes
