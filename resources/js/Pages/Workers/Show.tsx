@@ -538,14 +538,14 @@ export default function WorkerShow({ worker, isOwnProfile, dashboardStats }: Pro
                                 const user = auth.user;
                                 const profile = worker;
                                 const checks = [
-                                    { label: t('dashboard.checkBio'), done: !!profile?.bio },
-                                    { label: t('dashboard.checkPhone'), done: !!user?.phone },
-                                    { label: t('dashboard.checkPhoto'), done: !!user?.avatar },
-                                    { label: t('dashboard.checkLocation'), done: !!profile?.state },
-                                    { label: t('dashboard.checkCategory'), done: dashboardStats.categories > 0 },
-                                    { label: t('dashboard.checkExperience'), done: !!profile?.experience_level },
-                                    { label: t('dashboard.checkRate'), done: !!profile?.daily_rate && Number(profile.daily_rate) > 0 },
-                                    { label: t('dashboard.checkPortfolio'), done: dashboardStats.portfolioPhotos > 0 },
+                                    { label: t('dashboard.checkBio'), done: !!profile?.bio, fixHref: '/worker/profile?step=0' },
+                                    { label: t('dashboard.checkPhone'), done: !!user?.phone, fixHref: '/worker/profile?step=0' },
+                                    { label: t('dashboard.checkPhoto'), done: !!user?.avatar, fixHref: '/worker/profile?step=0' },
+                                    { label: t('dashboard.checkLocation'), done: !!profile?.state, fixHref: '/worker/profile?step=4' },
+                                    { label: t('dashboard.checkCategory'), done: dashboardStats.categories > 0, fixHref: '/worker/profile?step=6' },
+                                    { label: t('dashboard.checkExperience'), done: !!profile?.experience_level, fixHref: '/worker/profile?step=1' },
+                                    { label: t('dashboard.checkRate'), done: !!profile?.daily_rate && Number(profile.daily_rate) > 0, fixHref: '/worker/profile?step=3' },
+                                    { label: t('dashboard.checkPortfolio'), done: dashboardStats.portfolioPhotos > 0, fixHref: '/worker/profile?step=7' },
                                 ];
                                 const completedCount = checks.filter(c => c.done).length;
                                 const completionPct = Math.round((completedCount / checks.length) * 100);
@@ -600,7 +600,7 @@ export default function WorkerShow({ worker, isOwnProfile, dashboardStats }: Pro
                                                             {check.label}
                                                         </span>
                                                         {!check.done && (
-                                                            <Link href="/worker/profile" className="ml-auto text-xs text-amber-600 hover:text-amber-700 font-semibold flex items-center gap-0.5">
+                                                            <Link href={check.fixHref} className="ml-auto text-xs text-amber-600 hover:text-amber-700 font-semibold flex items-center gap-0.5">
                                                                 {t('dashboard.fix')} <ChevronRight className="w-3 h-3" />
                                                             </Link>
                                                         )}

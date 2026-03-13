@@ -58,9 +58,12 @@ const fadeSlide = {
 
 export default function WorkerEdit({ profile, categories, allSkills }: Props) {
     const { t } = useTranslation();
-    const [step, setStep] = useState(0);
+    const initialStep = typeof window !== 'undefined'
+        ? Math.min(Math.max(Number(new URLSearchParams(window.location.search).get('step')) || 0, 0), STEPS.length - 1)
+        : 0;
+    const [step, setStep] = useState(initialStep);
     const [touched, setTouched] = useState<Record<string, boolean>>({});
-    const [visitedSteps, setVisitedSteps] = useState<Set<number>>(new Set([0]));
+    const [visitedSteps, setVisitedSteps] = useState<Set<number>>(new Set([0, initialStep]));
     const [showErrorDialog, setShowErrorDialog] = useState(false);
     const [errorMessages, setErrorMessages] = useState<string[]>([]);
     const [errorStep, setErrorStep] = useState<number | null>(null);
