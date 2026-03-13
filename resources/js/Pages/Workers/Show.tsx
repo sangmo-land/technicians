@@ -590,7 +590,7 @@ export default function WorkerShow({ worker, isOwnProfile, dashboardStats }: Pro
                                             </div>
                                             <div className="divide-y divide-gray-50">
                                                 {checks.map((check, i) => (
-                                                    <div key={i} className={`flex items-center gap-3 px-5 py-2.5 ${check.done ? '' : 'bg-amber-50/30'}`}>
+                                                    <Link key={i} href={check.fixHref} className={`flex items-center gap-3 px-5 py-2.5 hover:bg-gray-50 transition-colors ${check.done ? '' : 'bg-amber-50/30'}`}>
                                                         {check.done ? (
                                                             <CheckCircle className="w-4 h-4 text-emerald-500 flex-shrink-0" />
                                                         ) : (
@@ -599,12 +599,8 @@ export default function WorkerShow({ worker, isOwnProfile, dashboardStats }: Pro
                                                         <span className={`text-xs ${check.done ? 'text-gray-500 line-through' : 'text-gray-700 font-medium'}`}>
                                                             {check.label}
                                                         </span>
-                                                        {!check.done && (
-                                                            <Link href={check.fixHref} className="ml-auto text-xs text-amber-600 hover:text-amber-700 font-semibold flex items-center gap-0.5">
-                                                                {t('dashboard.fix')} <ChevronRight className="w-3 h-3" />
-                                                            </Link>
-                                                        )}
-                                                    </div>
+                                                        <ChevronRight className={`w-3 h-3 ml-auto flex-shrink-0 ${check.done ? 'text-gray-300' : 'text-amber-600'}`} />
+                                                    </Link>
                                                 ))}
                                             </div>
                                         </div>
