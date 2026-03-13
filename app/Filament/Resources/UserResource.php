@@ -41,7 +41,7 @@ class UserResource extends Resource
                     ->label('Can Add Users')
                     ->helperText('Allow this user to add new users to the platform')
                     ->default(false),
-                Forms\Components\FileUpload::make('avatar')->image()->directory('avatars'),
+                Forms\Components\FileUpload::make('avatar')->image()->disk('public')->directory('avatars'),
             ])->columns(2),
         ]);
     }
