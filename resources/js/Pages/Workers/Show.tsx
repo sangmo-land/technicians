@@ -567,28 +567,6 @@ export default function WorkerShow({ worker, isOwnProfile, dashboardStats }: Pro
 
                                 return (
                                     <>
-                                        {/* Stats */}
-                                        <div className="grid grid-cols-2 gap-3">
-                                            {[
-                                                { icon: Eye, value: dashboardStats.profileViews, label: t('dashboard.statViews'), color: 'text-blue-600 bg-blue-50' },
-                                                { icon: Camera, value: dashboardStats.portfolioPhotos, label: t('dashboard.statPhotos'), color: 'text-purple-600 bg-purple-50' },
-                                                { icon: Briefcase, value: dashboardStats.workExperiences, label: t('dashboard.statExperience'), color: 'text-emerald-600 bg-emerald-50' },
-                                                { icon: Tag, value: dashboardStats.categories, label: t('dashboard.statCategories'), color: 'text-amber-600 bg-amber-50' },
-                                            ].map((stat) => (
-                                                <div key={stat.label} className="bg-white rounded-xl border border-gray-100 p-4 shadow-sm">
-                                                    <div className="flex items-center gap-3">
-                                                        <div className={`w-9 h-9 rounded-lg flex items-center justify-center ${stat.color}`}>
-                                                            <stat.icon className="w-4 h-4" />
-                                                        </div>
-                                                        <div>
-                                                            <p className="text-xl font-bold text-gray-900">{stat.value}</p>
-                                                            <p className="text-xs text-gray-500">{stat.label}</p>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            ))}
-                                        </div>
-
                                         {/* Profile Completion */}
                                         <div className="bg-white rounded-xl border border-gray-100 shadow-sm overflow-hidden">
                                             <div className="p-5 border-b border-gray-100">
