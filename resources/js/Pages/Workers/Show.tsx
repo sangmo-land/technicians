@@ -540,7 +540,7 @@ export default function WorkerShow({ worker, isOwnProfile, dashboardStats }: Pro
                                 const checks = [
                                     { label: t('dashboard.checkBio'), done: !!profile?.bio, fixHref: '/worker/profile?step=0' },
                                     { label: t('dashboard.checkPhone'), done: !!user?.phone, fixHref: '/worker/profile?step=0' },
-                                    { label: t('dashboard.checkPhoto'), done: !!user?.avatar, fixHref: '/worker/profile?step=0' },
+                                    { label: t('dashboard.checkPhoto'), done: !!user?.avatar, fixHref: '/worker/profile?step=7' },
                                     { label: t('dashboard.checkLocation'), done: !!profile?.state, fixHref: '/worker/profile?step=4' },
                                     { label: t('dashboard.checkCategory'), done: dashboardStats.categories > 0, fixHref: '/worker/profile?step=6' },
                                     { label: t('dashboard.checkExperience'), done: !!profile?.experience_level, fixHref: '/worker/profile?step=1' },
