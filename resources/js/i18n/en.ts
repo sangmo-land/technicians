@@ -119,7 +119,7 @@ const en = {
         // Categories
         exploreLabel: 'Explore',
         categoriesHeading: 'Browse by Trade Category',
-        categoriesDescription: 'Browse skilled workers by their area of expertise across all civil engineering trades.',
+        categoriesDescription: 'Tap a trade below to see its available workers, or scroll down to browse them all.',
         viewAllCategories: 'View all categories',
         availableWorker: 'worker',
         availableWorkers: 'workers',

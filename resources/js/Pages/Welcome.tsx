@@ -704,20 +704,20 @@ export default function Welcome({ categories, stats, technicians, techFilters }:
             </section>
 
             {/* Categories */}
-            <section className="py-24 bg-gradient-to-b from-gray-50/80 to-white">
+            <section className="py-12 md:py-14 bg-gradient-to-b from-gray-50/80 to-white">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                    <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="flex flex-col md:flex-row md:items-end md:justify-between gap-4 mb-14">
+                    <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="flex flex-col md:flex-row md:items-end md:justify-between gap-3 mb-6">
                         <div>
-                            <p className="text-sm font-bold text-blue-600 uppercase tracking-widest mb-3">{t('home.exploreLabel')}</p>
-                            <h2 className="text-3xl md:text-4xl font-extrabold text-slate-900 tracking-tight">{t('home.categoriesHeading')}</h2>
-                            <p className="text-slate-500 mt-3 max-w-lg text-base leading-relaxed">{t('home.categoriesDescription')}</p>
+                            <p className="text-sm font-bold text-blue-600 uppercase tracking-widest mb-2">{t('home.exploreLabel')}</p>
+                            <h2 className="text-2xl md:text-3xl font-extrabold text-slate-900 tracking-tight">{t('home.categoriesHeading')}</h2>
+                            <p className="text-slate-500 mt-2 max-w-lg text-sm leading-relaxed">{t('home.categoriesDescription')}</p>
                         </div>
                         <Link href="/workers" className="inline-flex items-center gap-2 text-sm font-semibold text-blue-600 hover:text-blue-700 transition-colors group">
                             {t('home.viewAllCategories')}
                             <svg className="w-4 h-4 group-hover:translate-x-0.5 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" /></svg>
                         </Link>
                     </motion.div>
-                    <motion.div variants={stagger} initial="hidden" whileInView="visible" viewport={{ once: true }} className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
+                    <motion.div variants={stagger} initial="hidden" whileInView="visible" viewport={{ once: true }} className="flex flex-wrap gap-2.5">
                         {categories.slice(0, 12).map((cat, i) => {
                             const IconComponent = getCategoryIcon(cat.name);
                             const accent = getCategoryAccent(cat.name);
@@ -725,25 +725,12 @@ export default function Welcome({ categories, stats, technicians, techFilters }:
                             return (
                                 <motion.div key={cat.id} custom={i} variants={fadeUp}>
                                     <Link href={`/workers?category=${cat.id}`}
-                                        className={`flex items-center gap-5 bg-white ${accent.bg} rounded-2xl px-6 py-5 border border-gray-100/80 ${accent.hoverBorder} transition-all duration-300 group hover:shadow-xl hover:shadow-slate-200/50 h-full`}>
-                                        {/* Icon */}
-                                        <div className={`w-14 h-14 ${accent.iconBg} rounded-xl flex items-center justify-center flex-shrink-0 transition-all duration-300 group-hover:scale-110 group-hover:shadow-lg`}>
-                                            <IconComponent className={`w-7 h-7 ${accent.iconColor} transition-colors`} strokeWidth={1.5} />
-                                        </div>
-                                        {/* Text */}
-                                        <div className="flex-1 min-w-0">
-                                            <h3 className="font-bold text-slate-800 text-[15px] leading-snug group-hover:text-slate-900 transition-colors truncate">{t(`categories.${cat.name}`) !== `categories.${cat.name}` ? t(`categories.${cat.name}`) : cat.name}</h3>
-                                            <div className="flex items-center gap-2 mt-1.5">
-                                                <span className={`inline-flex items-center px-2.5 py-0.5 ${accent.countBg} ${accent.countText} text-xs font-bold rounded-full`}>
-                                                    {workerCount}
-                                                </span>
-                                                <span className="text-xs text-slate-400 font-medium">{workerCount === 1 ? t('home.availableWorker') : t('home.availableWorkers')}</span>
-                                            </div>
-                                        </div>
-                                        {/* Arrow */}
-                                        <div className="flex-shrink-0 opacity-0 group-hover:opacity-100 -translate-x-2 group-hover:translate-x-0 transition-all duration-300">
-                                            <svg className="w-5 h-5 text-slate-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" /></svg>
-                                        </div>
+                                        className={`inline-flex items-center gap-2 bg-white ${accent.bg} border border-gray-200 ${accent.hoverBorder} rounded-full pl-1.5 pr-3 py-1.5 shadow-sm hover:shadow transition-all duration-200 group`}>
+                                        <span className={`w-7 h-7 ${accent.iconBg} rounded-full flex items-center justify-center flex-shrink-0`}>
+                                            <IconComponent className={`w-4 h-4 ${accent.iconColor}`} strokeWidth={1.75} />
+                                        </span>
+                                        <span className="text-sm font-semibold text-slate-700 group-hover:text-slate-900 transition-colors">{t(`categories.${cat.name}`) !== `categories.${cat.name}` ? t(`categories.${cat.name}`) : cat.name}</span>
+                                        <span className={`${accent.countBg} ${accent.countText} text-xs font-bold px-2 py-0.5 rounded-full`}>{workerCount}</span>
                                     </Link>
                                 </motion.div>
                             );

@@ -119,7 +119,7 @@ const fr = {
         // Categories
         exploreLabel: 'Explorer',
         categoriesHeading: 'Parcourir par catégorie de métier',
-        categoriesDescription: 'Parcourez les ouvriers qualifiés par domaine d\'expertise dans tous les métiers du génie civil.',
+        categoriesDescription: 'Touchez un métier ci-dessous pour voir ses ouvriers disponibles, ou faites défiler pour tous les parcourir.',
         viewAllCategories: 'Voir toutes les catégories',
         availableWorker: 'ouvrier',
         availableWorkers: 'ouvriers',
