@@ -97,6 +97,8 @@ const en = {
         heroStatProjects: 'Projects Completed',
         heroStatRating: 'Avg. Rating',
         heroStatHires: 'Successful Hires',
+        heroLiveStats: 'Live platform stats',
+        heroTopTrades: 'Most in-demand trades',
 
         // Floating stats
         skilledWorkers: 'Skilled Workers',

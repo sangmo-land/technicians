@@ -97,6 +97,8 @@ const fr = {
         heroStatProjects: 'Projets réalisés',
         heroStatRating: 'Note moyenne',
         heroStatHires: 'Embauches réussies',
+        heroLiveStats: 'Statistiques en direct',
+        heroTopTrades: 'Métiers les plus demandés',
 
         // Floating stats
         skilledWorkers: 'Ouvriers qualifiés',
