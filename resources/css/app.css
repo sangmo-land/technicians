@@ -1,3 +1,176 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/*
+ * ─── Dark mode ────────────────────────────────────────────────────────────
+ * The app is styled with light-only utilities throughout, so dark mode is
+ * applied by remapping those utilities under the `.dark` root class
+ * (toggled by <DarkModeToggle /> and persisted in localStorage.theme).
+ * Palette: slate-900 pages, slate-800 cards, slate-700 borders.
+ */
+
+.dark {
+    color-scheme: dark;
+}
+
+/* Surfaces */
+.dark .bg-gray-50,
+.dark .bg-gray-100,
+.dark .bg-slate-50 {
+    background-color: #0f172a;
+}
+
+.dark .bg-white {
+    background-color: #1e293b;
+}
+
+.dark .bg-gray-200 {
+    background-color: #334155;
+}
+
+/* Tinted chips / callouts */
+.dark .bg-blue-50 {
+    background-color: rgba(59, 130, 246, 0.12);
+}
+
+.dark .bg-blue-100 {
+    background-color: rgba(59, 130, 246, 0.2);
+}
+
+.dark .bg-amber-50 {
+    background-color: rgba(245, 158, 11, 0.12);
+}
+
+.dark .bg-amber-100 {
+    background-color: rgba(245, 158, 11, 0.2);
+}
+
+.dark .bg-green-50 {
+    background-color: rgba(34, 197, 94, 0.12);
+}
+
+.dark .bg-green-100 {
+    background-color: rgba(34, 197, 94, 0.2);
+}
+
+.dark .bg-red-50 {
+    background-color: rgba(239, 68, 68, 0.12);
+}
+
+.dark .bg-red-100 {
+    background-color: rgba(239, 68, 68, 0.2);
+}
+
+/* Text */
+.dark .text-gray-900,
+.dark .text-slate-900 {
+    color: #f1f5f9;
+}
+
+.dark .text-gray-800,
+.dark .text-slate-800 {
+    color: #e2e8f0;
+}
+
+.dark .text-gray-700,
+.dark .text-slate-700 {
+    color: #cbd5e1;
+}
+
+.dark .text-gray-600,
+.dark .text-gray-500,
+.dark .text-slate-600,
+.dark .text-slate-500 {
+    color: #94a3b8;
+}
+
+/* Accent text that is too dark against slate surfaces */
+.dark .text-blue-600 {
+    color: #60a5fa;
+}
+
+.dark .text-blue-700,
+.dark .text-blue-800 {
+    color: #93c5fd;
+}
+
+.dark .text-amber-600 {
+    color: #fbbf24;
+}
+
+.dark .text-amber-700,
+.dark .text-amber-800 {
+    color: #fcd34d;
+}
+
+.dark .text-green-600 {
+    color: #4ade80;
+}
+
+.dark .text-green-700,
+.dark .text-green-800 {
+    color: #86efac;
+}
+
+.dark .text-red-600 {
+    color: #f87171;
+}
+
+.dark .text-red-700,
+.dark .text-red-800 {
+    color: #fca5a5;
+}
+
+/* Borders & dividers */
+.dark .border-gray-100,
+.dark .border-gray-200,
+.dark .border-slate-100,
+.dark .border-slate-200 {
+    border-color: #334155;
+}
+
+.dark .border-gray-300 {
+    border-color: #475569;
+}
+
+.dark .divide-gray-100 > :not([hidden]) ~ :not([hidden]),
+.dark .divide-gray-200 > :not([hidden]) ~ :not([hidden]) {
+    border-color: #334155;
+}
+
+/* Hover states (must be re-declared so they still win in dark mode) */
+.dark .hover\:bg-gray-50:hover,
+.dark .hover\:bg-gray-100:hover {
+    background-color: #334155;
+}
+
+.dark .hover\:bg-blue-50:hover {
+    background-color: rgba(59, 130, 246, 0.15);
+}
+
+.dark .hover\:text-gray-900:hover {
+    color: #ffffff;
+}
+
+.dark .hover\:text-gray-700:hover {
+    color: #e2e8f0;
+}
+
+.dark .hover\:text-blue-600:hover {
+    color: #60a5fa;
+}
+
+/* Form controls (@tailwindcss/forms gives them a white background) */
+.dark input:not([type='checkbox']):not([type='radio']),
+.dark select,
+.dark textarea {
+    background-color: #1e293b;
+    border-color: #475569;
+    color: #f1f5f9;
+}
+
+.dark input::placeholder,
+.dark textarea::placeholder {
+    color: #64748b;
+}

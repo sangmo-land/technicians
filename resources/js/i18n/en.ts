@@ -46,6 +46,7 @@ const en = {
         logOut: 'Log Out',
         logIn: 'Log In',
         signUp: 'Sign Up',
+        toggleTheme: 'Toggle dark mode',
     },
 
     // ─── Footer ──────────────────────────────────────────

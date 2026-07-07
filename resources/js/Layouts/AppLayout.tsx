@@ -2,6 +2,7 @@ import { Link, usePage, router } from '@inertiajs/react';
 import { PropsWithChildren, ReactNode, useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import LanguageSwitcher from '@/Components/LanguageSwitcher';
+import DarkModeToggle from '@/Components/DarkModeToggle';
 import { useTranslation } from '@/hooks/useTranslation';
 
 interface Props {
@@ -54,6 +55,7 @@ export default function GuestLayout({ header, children }: Props) {
                         </div>
 
                         <div className="hidden md:flex items-center space-x-4">
+                            <DarkModeToggle />
                             <LanguageSwitcher variant="light" />
                             {auth?.user ? (
                                 <>
@@ -102,6 +104,7 @@ export default function GuestLayout({ header, children }: Props) {
 
                         {/* Mobile menu button + language switcher */}
                         <div className="flex items-center gap-2 md:hidden">
+                            <DarkModeToggle />
                             <LanguageSwitcher variant="light" />
                             <button
                                 onClick={() => setMobileMenuOpen(!mobileMenuOpen)}

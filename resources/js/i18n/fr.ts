@@ -46,6 +46,7 @@ const fr = {
         logOut: 'Déconnexion',
         logIn: 'Connexion',
         signUp: "S'inscrire",
+        toggleTheme: 'Basculer le mode sombre',
     },
 
     // ─── Footer ──────────────────────────────────────────
