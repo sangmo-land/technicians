@@ -604,7 +604,7 @@ export default function WorkersIndex({ workers, categories, filters }: Props) {
                                                             {(worker.city || worker.state) && (
                                                                 <span className="flex items-center gap-1.5 truncate">
                                                                     <svg className="w-3.5 h-3.5 text-gray-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M15 10.5a3 3 0 11-6 0 3 3 0 016 0z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1115 0z" /></svg>
-                                                                    {worker.city || worker.location}{worker.state ? `, ${worker.state}` : ''}
+                                                                    {[worker.city || worker.location, worker.state].filter(Boolean).join(', ')}
                                                                 </span>
                                                             )}
                                                             {worker.years_experience > 0 && (
