@@ -111,6 +111,16 @@ class User extends Authenticatable implements FilamentUser
         return $this->hasMany(SavedWorker::class);
     }
 
+    public function workPosts(): HasMany
+    {
+        return $this->hasMany(WorkPost::class);
+    }
+
+    public function workPostInterests(): HasMany
+    {
+        return $this->hasMany(WorkPostInterest::class);
+    }
+
     public function canAddUsers(): bool
     {
         return $this->can_add_users || $this->role === 'admin';

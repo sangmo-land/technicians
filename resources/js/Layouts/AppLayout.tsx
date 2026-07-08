@@ -51,6 +51,9 @@ export default function GuestLayout({ header, children }: Props) {
                                 <Link href="/workers" className="text-gray-600 hover:text-blue-600 font-medium transition-colors">
                                     {t('nav.findWorkers')}
                                 </Link>
+                                <Link href="/feed" className="text-gray-600 hover:text-blue-600 font-medium transition-colors">
+                                    {t('nav.feed')}
+                                </Link>
                             </div>
                         </div>
 
@@ -133,6 +136,7 @@ export default function GuestLayout({ header, children }: Props) {
                         >
                             <div className="px-4 py-3 space-y-2">
                                 <Link href="/workers" className="block py-2 text-gray-600 hover:text-blue-600 font-medium">{t('nav.findWorkers')}</Link>
+                                <Link href="/feed" className="block py-2 text-gray-600 hover:text-blue-600 font-medium">{t('nav.feed')}</Link>
                                 {auth?.user ? (
                                     <>
                                         {auth.worker_profile_id && (

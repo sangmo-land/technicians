@@ -5,6 +5,7 @@ use App\Http\Controllers\JobListingController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\UserInviteController;
 use App\Http\Controllers\WorkerProfileController;
+use App\Http\Controllers\WorkPostController;
 use App\Models\JobListing;
 use App\Models\WorkerProfile;
 use App\Models\JobCategory;
@@ -36,6 +37,7 @@ Route::get('/workers', [WorkerProfileController::class, 'index'])->name('workers
 Route::get('/workers/{worker}', [WorkerProfileController::class, 'show'])->name('workers.show');
 Route::get('/jobs', [JobListingController::class, 'index'])->name('jobs.index');
 Route::get('/jobs/{job}', [JobListingController::class, 'show'])->name('jobs.show');
+Route::get('/feed', [WorkPostController::class, 'index'])->name('feed');
 
 // Dashboard — redirect to own worker profile
 Route::get('/dashboard', function () {
@@ -69,6 +71,12 @@ Route::middleware('auth')->group(function () {
     // Add users (only users with can_add_users permission)
     Route::get('/users/add', [UserInviteController::class, 'index'])->name('users.add');
     Route::post('/users/add', [UserInviteController::class, 'store'])->name('users.add.store');
+
+    // Work feed (community posts)
+    Route::post('/feed', [WorkPostController::class, 'store'])->name('feed.store');
+    Route::post('/feed/{post}/interest', [WorkPostController::class, 'toggleInterest'])->name('feed.interest');
+    Route::patch('/feed/{post}/status', [WorkPostController::class, 'updateStatus'])->name('feed.status');
+    Route::delete('/feed/{post}', [WorkPostController::class, 'destroy'])->name('feed.destroy');
 });
 
 require __DIR__.'/auth.php';
