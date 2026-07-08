@@ -89,6 +89,7 @@ const en = {
         emptyFeed: 'No posts yet',
         emptyFeedHint: 'Be the first to post what you need done.',
         onlyTechnicians: 'Only technicians can show interest',
+        notified: '{{n}} technicians notified',
     },
 
     // ─── Footer ──────────────────────────────────────────

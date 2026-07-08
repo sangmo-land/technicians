@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Jobs\NotifyTechniciansOfWorkPost;
 use App\Models\JobCategory;
 use App\Models\WorkPost;
 use App\Models\WorkPostInterest;
@@ -20,7 +21,7 @@ class WorkPostController extends Controller
                 'user:id,name,phone,avatar',
                 'user.workerProfile:id,user_id',
             ]),
-        ])->withCount('interests');
+        ])->withCount(['interests', 'notifications as notified_count' => fn ($q) => $q->whereIn('status', ['sent', 'delivered', 'read'])]);
 
         if ($request->filled('category')) {
             $postsQuery->where('category_id', $request->category);
@@ -57,7 +58,9 @@ class WorkPostController extends Controller
             'budget' => 'nullable|string|max:100',
         ]);
 
-        $request->user()->workPosts()->create($validated);
+        $post = $request->user()->workPosts()->create($validated);
+
+        NotifyTechniciansOfWorkPost::dispatch($post);
 
         return back()->with('success', 'post_created');
     }

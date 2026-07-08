@@ -89,6 +89,7 @@ const fr = {
         emptyFeed: 'Aucune annonce pour le moment',
         emptyFeedHint: 'Soyez le premier à publier votre besoin.',
         onlyTechnicians: 'Seuls les techniciens peuvent manifester leur intérêt',
+        notified: '{{n}} techniciens notifiés',
     },
 
     // ─── Footer ──────────────────────────────────────────

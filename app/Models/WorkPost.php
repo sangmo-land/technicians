@@ -45,6 +45,11 @@ class WorkPost extends Model
         return $this->hasMany(WorkPostInterest::class);
     }
 
+    public function notifications(): HasMany
+    {
+        return $this->hasMany(WorkPostNotification::class);
+    }
+
     public function scopeOpen(Builder $query): Builder
     {
         return $query->where('status', 'open');

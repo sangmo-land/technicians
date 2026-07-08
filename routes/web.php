@@ -5,6 +5,7 @@ use App\Http\Controllers\JobListingController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\UserInviteController;
 use App\Http\Controllers\WorkerProfileController;
+use App\Http\Controllers\WhatsAppWebhookController;
 use App\Http\Controllers\WorkPostController;
 use App\Models\JobListing;
 use App\Models\WorkerProfile;
@@ -38,6 +39,10 @@ Route::get('/workers/{worker}', [WorkerProfileController::class, 'show'])->name(
 Route::get('/jobs', [JobListingController::class, 'index'])->name('jobs.index');
 Route::get('/jobs/{job}', [JobListingController::class, 'show'])->name('jobs.show');
 Route::get('/feed', [WorkPostController::class, 'index'])->name('feed');
+
+// WhatsApp Cloud API webhook (Meta server-to-server)
+Route::get('/webhooks/whatsapp', [WhatsAppWebhookController::class, 'verify'])->name('webhooks.whatsapp.verify');
+Route::post('/webhooks/whatsapp', [WhatsAppWebhookController::class, 'handle'])->name('webhooks.whatsapp');
 
 // Dashboard — redirect to own worker profile
 Route::get('/dashboard', function () {
