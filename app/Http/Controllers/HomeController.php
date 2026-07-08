@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\JobCategory;
 use App\Models\WorkerProfile;
+use App\Models\WorkPost;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 
@@ -11,6 +12,11 @@ class HomeController extends Controller
 {
     public function index(Request $request)
     {
+        // Social-first: the feed is home for logged-in users
+        if ($request->user()) {
+            return redirect()->route('feed');
+        }
+
         $categories = JobCategory::withCount(['workerProfiles'])
             ->where('is_active', true)
             ->get();
@@ -48,6 +54,12 @@ class HomeController extends Controller
             'stats' => $stats,
             'technicians' => $technicians,
             'techFilters' => $request->only(['tech_search', 'tech_category']),
+            'recentPosts' => WorkPost::open()
+                ->with(['user:id,name,avatar', 'category:id,name'])
+                ->withCount('interests')
+                ->latest()
+                ->take(6)
+                ->get(),
         ]);
     }
 }

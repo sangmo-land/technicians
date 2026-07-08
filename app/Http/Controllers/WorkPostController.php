@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Jobs\NotifyTechniciansOfWorkPost;
 use App\Models\JobCategory;
+use App\Models\WorkerProfile;
 use App\Models\WorkPost;
 use App\Models\WorkPostInterest;
 use Illuminate\Http\Request;
@@ -44,6 +45,11 @@ class WorkPostController extends Controller
             'posts' => $posts,
             'categories' => JobCategory::where('is_active', true)->orderBy('name')->get(['id', 'name']),
             'filters' => $request->only(['category', 'region', 'status']),
+            'suggestedWorkers' => WorkerProfile::with(['user:id,name,avatar', 'jobCategories:id,name'])
+                ->where('availability', '!=', 'not_available')
+                ->latest()
+                ->take(5)
+                ->get(['id', 'user_id', 'title', 'city', 'state']),
         ]);
     }
 

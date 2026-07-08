@@ -40,10 +40,21 @@ interface Post {
     category?: { id: number; name: string } | null;
 }
 
+interface SuggestedWorker {
+    id: number;
+    user_id: number;
+    title?: string | null;
+    city?: string | null;
+    state?: string | null;
+    user: FeedUser;
+    job_categories?: { id: number; name: string }[];
+}
+
 interface Props {
     posts: PaginatedData<Post>;
     categories: JobCategory[];
     filters: { category?: string; region?: string; status?: string };
+    suggestedWorkers: SuggestedWorker[];
 }
 
 function Avatar({ user, size = 'w-10 h-10' }: { user: FeedUser; size?: string }) {
@@ -58,7 +69,7 @@ function Avatar({ user, size = 'w-10 h-10' }: { user: FeedUser; size?: string })
     );
 }
 
-export default function FeedIndex({ posts, categories, filters }: Props) {
+export default function FeedIndex({ posts, categories, filters, suggestedWorkers }: Props) {
     const { auth } = usePage().props as any;
     const { t } = useTranslation();
 
@@ -113,10 +124,52 @@ export default function FeedIndex({ posts, categories, filters }: Props) {
         <AppLayout>
             <Head title={t('feed.pageTitle')} />
 
-            <div className="min-h-screen bg-gray-50 py-8 md:py-12">
-                <div className="max-w-2xl mx-auto px-4 sm:px-6">
+            <div className="min-h-screen bg-gray-50 py-8 md:py-10">
+                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                    <div className="lg:grid lg:grid-cols-12 lg:gap-6 lg:items-start">
+
+                    {/* ── Left rail: profile card ─────────────────── */}
+                    <aside className="hidden lg:block lg:col-span-3 lg:sticky lg:top-24">
+                        {auth?.user ? (
+                            <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
+                                <div className="h-16 bg-gradient-to-r from-slate-800 to-blue-900" />
+                                <div className="px-5 pb-5 -mt-7">
+                                    <Avatar user={auth.user} size="w-14 h-14" />
+                                    <p className="font-bold text-gray-900 mt-3">{auth.user.name}</p>
+                                    <p className="text-xs text-gray-400 mt-0.5">{auth.user.email}</p>
+                                    <div className="mt-4 pt-4 border-t border-gray-100 space-y-1">
+                                        {auth.worker_profile_id && (
+                                            <Link href={`/workers/${auth.worker_profile_id}`} className="block px-2 py-1.5 -mx-2 rounded-lg text-sm font-medium text-gray-600 hover:text-blue-600 hover:bg-blue-50/60 transition-colors">
+                                                {t('nav.myProfile')}
+                                            </Link>
+                                        )}
+                                        <Link href="/notifications" className="block px-2 py-1.5 -mx-2 rounded-lg text-sm font-medium text-gray-600 hover:text-blue-600 hover:bg-blue-50/60 transition-colors">
+                                            {t('nav.notifications')}
+                                        </Link>
+                                        <Link href="/workers" className="block px-2 py-1.5 -mx-2 rounded-lg text-sm font-medium text-gray-600 hover:text-blue-600 hover:bg-blue-50/60 transition-colors">
+                                            {t('nav.findWorkers')}
+                                        </Link>
+                                    </div>
+                                </div>
+                            </div>
+                        ) : (
+                            <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5">
+                                <p className="font-bold text-gray-900">{t('feed.heading')}</p>
+                                <p className="text-sm text-gray-500 mt-1">{t('feed.loginToPost')}</p>
+                                <Link href="/register" className="mt-4 block text-center bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-xl text-sm font-semibold transition-colors">
+                                    {t('nav.signUp')}
+                                </Link>
+                                <Link href="/login" className="mt-2 block text-center border border-gray-200 hover:bg-gray-50 text-gray-700 px-4 py-2 rounded-xl text-sm font-semibold transition-colors">
+                                    {t('nav.logIn')}
+                                </Link>
+                            </div>
+                        )}
+                    </aside>
+
+                    {/* ── Center: the feed ────────────────────────── */}
+                    <div className="lg:col-span-6 max-w-2xl mx-auto lg:mx-0 lg:max-w-none">
                     {/* Header */}
-                    <div className="mb-6">
+                    <div className="mb-6 lg:hidden">
                         <h1 className="text-2xl md:text-3xl font-extrabold text-gray-900">{t('feed.heading')}</h1>
                         <p className="text-gray-500 mt-1 text-sm">{t('feed.subheading')}</p>
                     </div>
@@ -296,6 +349,37 @@ export default function FeedIndex({ posts, categories, filters }: Props) {
                             ))}
                         </div>
                     )}
+                    </div>
+
+                    {/* ── Right rail: technician discovery ────────── */}
+                    <aside className="hidden lg:block lg:col-span-3 lg:sticky lg:top-24">
+                        {suggestedWorkers.length > 0 && (
+                            <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5">
+                                <p className="text-[11px] font-bold uppercase tracking-wider text-gray-400 mb-4">{t('feed.suggestedTechnicians')}</p>
+                                <div className="space-y-3">
+                                    {suggestedWorkers.map((worker) => (
+                                        <Link key={worker.id} href={`/workers/${worker.id}`} className="flex items-center gap-3 group">
+                                            <Avatar user={worker.user} size="w-9 h-9" />
+                                            <div className="min-w-0">
+                                                <p className="text-sm font-semibold text-gray-800 group-hover:text-blue-600 truncate transition-colors">{worker.user.name}</p>
+                                                <p className="text-[11px] text-gray-400 truncate">
+                                                    {worker.title
+                                                        || (worker.job_categories?.[0] && translateCategory(worker.job_categories[0].name))
+                                                        || [worker.city, worker.state].filter(Boolean).join(', ')}
+                                                </p>
+                                            </div>
+                                        </Link>
+                                    ))}
+                                </div>
+                                <Link href="/workers" className="mt-4 pt-4 border-t border-gray-100 flex items-center gap-1.5 text-sm font-semibold text-blue-600 hover:text-blue-700 transition-colors">
+                                    {t('home.viewAllWorkers')}
+                                    <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" /></svg>
+                                </Link>
+                            </div>
+                        )}
+                    </aside>
+
+                    </div>
                 </div>
             </div>
         </AppLayout>

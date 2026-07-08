@@ -101,6 +101,7 @@ const fr = {
         emptyFeedHint: 'Soyez le premier à publier votre besoin.',
         onlyTechnicians: 'Seuls les techniciens peuvent manifester leur intérêt',
         notified: '{{n}} techniciens notifiés',
+        suggestedTechnicians: 'Techniciens disponibles',
     },
 
     // ─── Footer ──────────────────────────────────────────
@@ -153,6 +154,12 @@ const fr = {
         heroStatHires: 'Embauches réussies',
         heroLiveStats: 'Statistiques en direct',
         heroTopTrades: 'Métiers les plus demandés',
+
+        // Latest work requests (guest landing)
+        latestPostsLabel: 'En direct du fil',
+        latestPostsHeading: 'Dernières demandes de travaux',
+        latestPostsDescription: 'De vrais travaux publiés par des personnes qui cherchent des techniciens maintenant. Connectez-vous pour manifester votre intérêt.',
+        openFeed: 'Ouvrir le fil',
 
         // Floating stats
         skilledWorkers: 'Ouvriers qualifiés',

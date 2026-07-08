@@ -33,7 +33,8 @@ class AuthenticatedSessionController extends Controller
 
         $request->session()->regenerate();
 
-        return redirect()->intended(route('dashboard', absolute: false));
+        // Social-first: land on the work feed after logging in
+        return redirect()->intended(route('feed', absolute: false));
     }
 
     /**

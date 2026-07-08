@@ -38,6 +38,19 @@ function useCountUp(target: number, duration = 2000) {
     return { count, start };
 }
 
+interface RecentPost {
+    id: number;
+    description: string;
+    city?: string | null;
+    state?: string | null;
+    technicians_needed?: number | null;
+    budget?: string | null;
+    created_at: string;
+    interests_count: number;
+    user: { id: number; name: string; avatar?: string | null };
+    category?: { id: number; name: string } | null;
+}
+
 interface Props {
     categories: JobCategory[];
     stats: {
@@ -49,6 +62,7 @@ interface Props {
         tech_search?: string;
         tech_category?: string;
     };
+    recentPosts: RecentPost[];
 }
 
 const fadeUp = {
@@ -278,7 +292,7 @@ function TechnicianCard({ worker, index }: { worker: WorkerProfile; index: numbe
     );
 }
 
-export default function Welcome({ categories, stats, technicians, techFilters }: Props) {
+export default function Welcome({ categories, stats, technicians, techFilters, recentPosts }: Props) {
     const { t } = useTranslation();
     const { adminPhone } = usePage().props as any;
     const [searchQuery, setSearchQuery] = useState('');
@@ -583,6 +597,73 @@ export default function Welcome({ categories, stats, technicians, techFilters }:
                     </motion.div>
                 </div>
             </section>
+
+            {/* Latest work requests — the social feed comes first */}
+            {recentPosts.length > 0 && (
+                <section className="py-14 md:py-16 bg-white border-b border-gray-100">
+                    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                        <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="flex flex-col md:flex-row md:items-end md:justify-between gap-3 mb-8">
+                            <div>
+                                <p className="text-sm font-bold text-blue-600 uppercase tracking-widest mb-2 inline-flex items-center gap-2">
+                                    <span className="relative flex h-2 w-2">
+                                        <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
+                                        <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-400" />
+                                    </span>
+                                    {t('home.latestPostsLabel')}
+                                </p>
+                                <h2 className="text-2xl md:text-3xl font-extrabold text-slate-900 tracking-tight">{t('home.latestPostsHeading')}</h2>
+                                <p className="text-slate-500 mt-2 max-w-lg text-sm leading-relaxed">{t('home.latestPostsDescription')}</p>
+                            </div>
+                            <Link href="/feed" className="inline-flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-5 py-2.5 rounded-xl text-sm font-semibold transition-colors flex-shrink-0">
+                                {t('home.openFeed')}
+                                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" /></svg>
+                            </Link>
+                        </motion.div>
+
+                        <motion.div variants={stagger} initial="hidden" whileInView="visible" viewport={{ once: true }} className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
+                            {recentPosts.map((post, i) => {
+                                const daysAgo = Math.floor((Date.now() - new Date(post.created_at).getTime()) / 86400000);
+                                const timeLabel = daysAgo === 0 ? t('common.today') : daysAgo === 1 ? t('common.yesterday') : daysAgo < 7 ? t('common.daysAgo', { n: daysAgo }) : new Date(post.created_at).toLocaleDateString();
+                                return (
+                                    <motion.div key={post.id} custom={i} variants={fadeUp}>
+                                        <Link href="/feed" className="flex flex-col h-full bg-gray-50/60 hover:bg-white rounded-2xl border border-gray-100 hover:border-blue-200 hover:shadow-lg hover:shadow-slate-200/50 p-5 transition-all duration-300">
+                                            <div className="flex items-center gap-3">
+                                                <div className="w-9 h-9 rounded-full bg-gradient-to-br from-blue-500 to-blue-600 flex items-center justify-center flex-shrink-0 overflow-hidden">
+                                                    {post.user.avatar ? (
+                                                        <img src={`/storage/${post.user.avatar}`} alt="" className="w-full h-full object-cover" loading="lazy" />
+                                                    ) : (
+                                                        <span className="text-white font-bold text-xs">{post.user.name?.charAt(0).toUpperCase()}</span>
+                                                    )}
+                                                </div>
+                                                <div className="min-w-0">
+                                                    <p className="text-sm font-bold text-gray-900 truncate">{post.user.name}</p>
+                                                    <p className="text-[11px] text-gray-400">{timeLabel}</p>
+                                                </div>
+                                            </div>
+                                            <p className="text-sm text-gray-600 leading-relaxed mt-3 line-clamp-3 flex-1">{post.description}</p>
+                                            <div className="flex flex-wrap items-center gap-2 mt-4">
+                                                {post.category && (
+                                                    <span className="px-2 py-0.5 bg-blue-50 text-blue-700 rounded-full text-[11px] font-semibold">
+                                                        {t(`categories.${post.category.name}`) !== `categories.${post.category.name}` ? t(`categories.${post.category.name}`) : post.category.name}
+                                                    </span>
+                                                )}
+                                                {(post.city || post.state) && (
+                                                    <span className="px-2 py-0.5 bg-gray-100 text-gray-600 rounded-full text-[11px] font-medium">
+                                                        {[post.city, post.state].filter(Boolean).join(', ')}
+                                                    </span>
+                                                )}
+                                                <span className="ml-auto text-[11px] font-semibold text-gray-400">
+                                                    {t('feed.interestedCount', { n: post.interests_count })}
+                                                </span>
+                                            </div>
+                                        </Link>
+                                    </motion.div>
+                                );
+                            })}
+                        </motion.div>
+                    </div>
+                </section>
+            )}
 
             {/* Trusted By / Social Proof Bar */}
             <section className="py-8 border-b border-gray-100 bg-white">

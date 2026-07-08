@@ -101,6 +101,7 @@ const en = {
         emptyFeedHint: 'Be the first to post what you need done.',
         onlyTechnicians: 'Only technicians can show interest',
         notified: '{{n}} technicians notified',
+        suggestedTechnicians: 'Available technicians',
     },
 
     // ─── Footer ──────────────────────────────────────────
@@ -153,6 +154,12 @@ const en = {
         heroStatHires: 'Successful Hires',
         heroLiveStats: 'Live platform stats',
         heroTopTrades: 'Most in-demand trades',
+
+        // Latest work requests (guest landing)
+        latestPostsLabel: 'Live from the feed',
+        latestPostsHeading: 'Latest work requests',
+        latestPostsDescription: 'Real jobs posted by people who need technicians right now. Log in to show interest.',
+        openFeed: 'Open the feed',
 
         // Floating stats
         skilledWorkers: 'Skilled Workers',
