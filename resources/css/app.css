@@ -3,6 +3,80 @@
 @tailwind utilities;
 
 /*
+ * ─── Construction-sector design accents ──────────────────────────────────
+ * Reusable motifs: safety-tape hazard stripes, blueprint grids, and gentle
+ * site animations (crane sway, hook bob). All motion is disabled for users
+ * with prefers-reduced-motion.
+ */
+
+/* Safety-tape stripes (amber / steel) */
+.hazard-stripes {
+    background-image: repeating-linear-gradient(
+        -45deg,
+        #f59e0b 0 12px,
+        #1e293b 12px 24px
+    );
+    background-size: 34px 34px;
+}
+
+/* Blueprint drafting grid (fine + coarse lines) */
+.blueprint-grid {
+    background-image:
+        linear-gradient(rgba(147, 197, 253, 0.09) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(147, 197, 253, 0.09) 1px, transparent 1px),
+        linear-gradient(rgba(147, 197, 253, 0.04) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(147, 197, 253, 0.04) 1px, transparent 1px);
+    background-size: 96px 96px, 96px 96px, 24px 24px, 24px 24px;
+}
+
+/* Post cards lift slightly, like a plan sheet being picked up */
+.post-card {
+    transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+
+.post-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 12px 32px -14px rgba(15, 23, 42, 0.22);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+    .hazard-stripes--animated {
+        animation: hazard-scroll 16s linear infinite;
+    }
+
+    .crane-sway {
+        transform-origin: 27% 100%;
+        animation: crane-sway 10s ease-in-out infinite;
+    }
+
+    .hook-bob {
+        animation: hook-bob 5.5s ease-in-out infinite;
+    }
+
+    .gear-spin {
+        animation: gear-spin 2.4s linear infinite;
+    }
+}
+
+@keyframes hazard-scroll {
+    to { background-position: 34px 0; }
+}
+
+@keyframes crane-sway {
+    0%, 100% { transform: rotate(-0.5deg); }
+    50% { transform: rotate(0.7deg); }
+}
+
+@keyframes hook-bob {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(9px); }
+}
+
+@keyframes gear-spin {
+    to { transform: rotate(360deg); }
+}
+
+/*
  * ─── Dark mode ────────────────────────────────────────────────────────────
  * The app is styled with light-only utilities throughout, so dark mode is
  * applied by remapping those utilities under the `.dark` root class

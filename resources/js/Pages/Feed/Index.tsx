@@ -147,9 +147,9 @@ function WorkerSearch() {
                     className="w-full py-3.5 px-3 border-0 focus:ring-0 text-sm text-gray-900 placeholder-slate-400 bg-transparent"
                 />
                 {loading && (
-                    <svg className="w-4 h-4 text-slate-300 animate-spin flex-shrink-0" fill="none" viewBox="0 0 24 24">
-                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
-                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
+                    <svg className="w-4 h-4 text-amber-500 gear-spin flex-shrink-0" fill="none" stroke="currentColor" strokeWidth={1.8} viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M9.594 3.94c.09-.542.56-.94 1.11-.94h2.593c.55 0 1.02.398 1.11.94l.213 1.281c.063.374.313.686.645.87.074.04.147.083.22.127.324.196.72.257 1.075.124l1.217-.456a1.125 1.125 0 011.37.49l1.296 2.247a1.125 1.125 0 01-.26 1.431l-1.003.827c-.293.24-.438.613-.431.992a6.759 6.759 0 010 .255c-.007.378.138.75.43.99l1.005.828c.424.35.534.954.26 1.43l-1.298 2.247a1.125 1.125 0 01-1.369.491l-1.217-.456c-.355-.133-.75-.072-1.076.124a6.57 6.57 0 01-.22.128c-.331.183-.581.495-.644.869l-.213 1.28c-.09.543-.56.941-1.11.941h-2.594c-.55 0-1.02-.398-1.11-.94l-.213-1.281c-.062-.374-.312-.686-.644-.87a6.52 6.52 0 01-.22-.127c-.325-.196-.72-.257-1.076-.124l-1.217.456a1.125 1.125 0 01-1.369-.49l-1.297-2.247a1.125 1.125 0 01.26-1.431l1.004-.827c.292-.24.437-.613.43-.992a6.932 6.932 0 010-.255c.007-.378-.138-.75-.43-.99l-1.004-.828a1.125 1.125 0 01-.26-1.43l1.297-2.247a1.125 1.125 0 011.37-.491l1.216.456c.356.133.751.072 1.076-.124.072-.044.146-.087.22-.128.332-.183.582-.495.644-.869l.214-1.281z" />
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
                     </svg>
                 )}
             </div>
@@ -246,17 +246,49 @@ export default function FeedIndex({ posts, categories, filters, suggestedWorkers
                 <meta name="description" content={t('home.seoDescription')} />
             </Head>
 
-            {/* ── Hero banner: tagline + live technician search ── */}
+            {/* ── Hero banner: blueprint + crane + live search ─── */}
             <div className="relative bg-gradient-to-br from-slate-950 via-slate-900 to-blue-950 overflow-hidden">
                 <div className="absolute inset-0 pointer-events-none">
+                    <div className="absolute inset-0 blueprint-grid" />
                     <div className="absolute -top-24 -left-24 w-[480px] h-[480px] bg-blue-600/[0.08] rounded-full blur-[100px]" />
                     <div className="absolute -bottom-32 -right-24 w-[420px] h-[420px] bg-amber-500/[0.06] rounded-full blur-[90px]" />
                 </div>
+
+                {/* Tower crane silhouette, gently swaying */}
+                <svg
+                    viewBox="0 0 220 170"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="3"
+                    strokeLinecap="round"
+                    className="crane-sway hidden md:block absolute right-6 lg:right-16 bottom-0 h-[170px] lg:h-[200px] w-auto text-white/[0.09] pointer-events-none select-none"
+                    aria-hidden="true"
+                >
+                    {/* base + mast */}
+                    <path d="M42 170v-6h36v6M52 164V34M68 164V34M52 148h16M52 128h16M52 108h16M52 88h16M52 68h16M52 48h16" />
+                    <path d="M52 148l16-20M68 128l-16-20M52 88l16-20M68 68l-16-20" strokeWidth="2" />
+                    {/* cab + apex */}
+                    <path d="M46 34h28v-12H46zM60 22V8" />
+                    {/* jib, counter-jib, ties, counterweight */}
+                    <path d="M74 30h138M74 38h130M12 30h34M60 8l84 22M60 8l150 22M60 8L20 30M12 30v14h14V30" />
+                    {/* trolley cable + hook */}
+                    <g className="hook-bob">
+                        <path d="M158 38v40" strokeWidth="2" />
+                        <path d="M166 78c0 6-8 6-8 0m4 0v-2a5 5 0 015-5" strokeWidth="2.5" />
+                    </g>
+                </svg>
+
                 <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 md:py-14 text-center">
                     <motion.h1 initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} className="text-2xl md:text-4xl font-extrabold text-white tracking-tight">
                         {t('feed.homeHeading')}
                     </motion.h1>
-                    <motion.p initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }} className="text-slate-400 mt-2 text-sm md:text-base max-w-xl mx-auto">
+                    <motion.span
+                        initial={{ scaleX: 0 }}
+                        animate={{ scaleX: 1 }}
+                        transition={{ delay: 0.25, duration: 0.5, ease: 'easeOut' }}
+                        className="block mx-auto mt-3 h-1.5 w-24 rounded-full hazard-stripes hazard-stripes--animated opacity-90"
+                    />
+                    <motion.p initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }} className="text-slate-400 mt-3 text-sm md:text-base max-w-xl mx-auto">
                         {t('feed.homeTagline')}
                     </motion.p>
                     <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }} className="mt-6">
@@ -273,6 +305,9 @@ export default function FeedIndex({ posts, categories, filters, suggestedWorkers
                         </motion.div>
                     )}
                 </div>
+
+                {/* Safety-tape divider into the feed */}
+                <div className="relative h-1.5 hazard-stripes hazard-stripes--animated opacity-70" />
             </div>
 
             <div className="min-h-screen bg-gray-50 py-8">
@@ -283,7 +318,7 @@ export default function FeedIndex({ posts, categories, filters, suggestedWorkers
                     <aside className="hidden lg:block lg:col-span-3 lg:sticky lg:top-24">
                         {auth?.user ? (
                             <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
-                                <div className="h-16 bg-gradient-to-r from-slate-800 to-blue-900" />
+                                <div className="h-16 bg-gradient-to-r from-slate-800 to-blue-900 blueprint-grid" />
                                 <div className="px-5 pb-5 -mt-7">
                                     <Avatar user={auth.user} size="w-14 h-14" />
                                     <p className="font-bold text-gray-900 mt-3">{auth.user.name}</p>
@@ -442,9 +477,9 @@ export default function FeedIndex({ posts, categories, filters, suggestedWorkers
                     {/* Feed */}
                     {posts.data.length === 0 ? (
                         <div className="bg-white rounded-2xl border border-gray-100 p-12 text-center">
-                            <div className="w-14 h-14 mx-auto rounded-full bg-blue-50 flex items-center justify-center mb-4">
-                                <svg className="w-7 h-7 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M7.5 8.25h9m-9 3H12m-9.75 1.51c0 1.6 1.123 2.994 2.707 3.227 1.087.16 2.185.283 3.293.369V21l4.184-4.183a1.14 1.14 0 01.778-.332 48.294 48.294 0 005.83-.498c1.585-.233 2.708-1.626 2.708-3.228V6.741c0-1.602-1.123-2.995-2.707-3.228A48.394 48.394 0 0012 3c-2.392 0-4.744.175-7.043.513C3.373 3.746 2.25 5.14 2.25 6.741v6.018z" />
+                            <div className="w-14 h-14 mx-auto rounded-full bg-amber-50 flex items-center justify-center mb-4">
+                                <svg className="w-7 h-7 text-amber-500" fill="none" stroke="currentColor" strokeWidth={1.8} viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" d="M2 18a1 1 0 001 1h18a1 1 0 001-1v-2a1 1 0 00-1-1H3a1 1 0 00-1 1v2zM10 10V5a1 1 0 011-1h2a1 1 0 011 1v5M4 15v-3a6 6 0 016-6M14 6a6 6 0 016 6v3" />
                                 </svg>
                             </div>
                             <h3 className="font-bold text-gray-900">{t('feed.emptyFeed')}</h3>
@@ -494,7 +529,10 @@ export default function FeedIndex({ posts, categories, filters, suggestedWorkers
                     <aside className="hidden lg:block lg:col-span-3 lg:sticky lg:top-24">
                         {suggestedWorkers.length > 0 && (
                             <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5">
-                                <p className="text-[11px] font-bold uppercase tracking-wider text-gray-400 mb-4">{t('feed.suggestedTechnicians')}</p>
+                                <p className="flex items-center gap-1.5 text-[11px] font-bold uppercase tracking-wider text-gray-400 mb-4">
+                                    <svg className="w-4 h-4 text-amber-500" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M2 18a1 1 0 001 1h18a1 1 0 001-1v-2a1 1 0 00-1-1H3a1 1 0 00-1 1v2zM10 10V5a1 1 0 011-1h2a1 1 0 011 1v5M4 15v-3a6 6 0 016-6M14 6a6 6 0 016 6v3" /></svg>
+                                    {t('feed.suggestedTechnicians')}
+                                </p>
                                 <div className="space-y-3">
                                     {suggestedWorkers.map((worker) => (
                                         <Link key={worker.id} href={`/workers/${worker.id}`} className="flex items-center gap-3 group">
@@ -596,9 +634,10 @@ function PostCard({
 
     return (
         <motion.article
-            initial={{ opacity: 0, y: 12 }}
+            initial={{ opacity: 0, y: 24 }}
             animate={{ opacity: 1, y: 0 }}
-            className="bg-white rounded-2xl border border-gray-100 shadow-sm"
+            transition={{ type: 'spring', stiffness: 260, damping: 24 }}
+            className="post-card bg-white rounded-2xl border border-gray-100 shadow-sm"
         >
             <div className="p-5 pb-0">
                 {/* Header */}
@@ -628,7 +667,10 @@ function PostCard({
                         </div>
                     </div>
                     <div className="flex items-center gap-2 flex-shrink-0">
-                        <span className={`px-2.5 py-1 rounded-full text-[11px] font-bold ${statusStyles[post.status]}`}>{statusLabel}</span>
+                        <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-bold ${statusStyles[post.status]}`}>
+                            {post.status === 'open' && <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />}
+                            {statusLabel}
+                        </span>
                         {isOwner && (
                             <button onClick={deletePost} aria-label={t('feed.delete')} title={t('feed.delete')} className="p-1.5 rounded-lg text-gray-300 hover:text-red-500 hover:bg-red-50 transition-colors">
                                 <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0" /></svg>
@@ -700,11 +742,30 @@ function PostCard({
                         )}
                     </div>
                 )}
+
+                {/* Job-site progress: positions filled */}
+                {post.technicians_needed ? (
+                    <div className="mt-3 pb-4">
+                        <div className="h-1.5 rounded-full bg-gray-100 overflow-hidden">
+                            <motion.div
+                                initial={{ width: 0 }}
+                                animate={{ width: `${Math.min(100, Math.round((post.interests_count / post.technicians_needed) * 100))}%` }}
+                                transition={{ duration: 0.8, ease: 'easeOut' }}
+                                className={`h-full rounded-full ${
+                                    post.interests_count >= post.technicians_needed
+                                        ? 'hazard-stripes hazard-stripes--animated'
+                                        : 'bg-amber-400'
+                                }`}
+                            />
+                        </div>
+                    </div>
+                ) : null}
             </div>
 
             {/* Action bar */}
             <div className="flex items-stretch border-t border-gray-100 px-2 py-1">
-                <button
+                <motion.button
+                    whileTap={{ scale: 0.92 }}
                     onClick={toggleLike}
                     className={`flex-1 inline-flex items-center justify-center gap-2 py-2 rounded-xl text-[13px] font-semibold transition-colors ${
                         post.liked_by_me ? 'text-blue-600 hover:bg-blue-50' : 'text-gray-500 hover:bg-gray-50 hover:text-gray-700'
@@ -714,7 +775,7 @@ function PostCard({
                         <path strokeLinecap="round" strokeLinejoin="round" d="M6.633 10.25c.806 0 1.533-.446 2.031-1.08a9.041 9.041 0 012.861-2.4c.723-.384 1.35-.956 1.653-1.715a4.498 4.498 0 00.322-1.672V2.75a.75.75 0 01.75-.75 2.25 2.25 0 012.25 2.25c0 1.152-.26 2.243-.723 3.218-.266.558.107 1.282.725 1.282h3.126c1.026 0 1.945.694 2.054 1.715.045.422.068.85.068 1.285a11.95 11.95 0 01-2.649 7.521c-.388.482-.987.729-1.605.729H13.48c-.483 0-.964-.078-1.423-.23l-3.114-1.04a4.501 4.501 0 00-1.423-.23H5.904M14.25 9h2.25M5.904 18.5c.083.205.173.405.27.602.197.4-.078.898-.523.898h-.908c-.889 0-1.713-.518-1.972-1.368a12 12 0 01-.521-3.507c0-1.553.295-3.036.831-4.398.306-.774 1.086-1.227 1.918-1.227h1.053c.472 0 .745.556.5.96a8.958 8.958 0 00-1.302 4.665c0 1.194.232 2.333.654 3.375z" />
                     </svg>
                     {post.liked_by_me ? t('feed.liked') : t('feed.like')}
-                </button>
+                </motion.button>
 
                 <button
                     onClick={() => setShowComments(!showComments)}
@@ -739,24 +800,25 @@ function PostCard({
                         </button>
                     )
                 ) : !auth?.user ? (
-                    <Link href="/login" className="flex-1 inline-flex items-center justify-center gap-2 py-2 rounded-xl text-[13px] font-semibold text-amber-600 hover:bg-amber-50 transition-colors">
-                        <svg className="w-[18px] h-[18px]" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M7 11.5V14m0-2.5v-6a1.5 1.5 0 113 0m-3 6a1.5 1.5 0 00-3 0v2a7.5 7.5 0 0015 0v-5a1.5 1.5 0 00-3 0m-6-3V11m0-5.5v-1a1.5 1.5 0 013 0v1m0 0V11m0-5.5a1.5 1.5 0 013 0v3m0 0V11" /></svg>
+                    <Link href="/login" className="group flex-1 inline-flex items-center justify-center gap-2 py-2 rounded-xl text-[13px] font-semibold text-amber-600 hover:bg-amber-50 transition-colors">
+                        <svg className="w-[18px] h-[18px] group-hover:rotate-12 transition-transform" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M21.75 6.75a4.5 4.5 0 01-4.884 4.484c-1.076-.091-2.264.071-2.95.904l-7.152 8.684a2.548 2.548 0 11-3.586-3.586l8.684-7.152c.833-.686.995-1.874.904-2.95a4.5 4.5 0 016.336-4.486l-3.276 3.276a3.004 3.004 0 002.25 2.25l3.276-3.276c.256.565.398 1.192.398 1.852z" /></svg>
                         {t('feed.imInterested')}
                     </Link>
                 ) : isTechnician && (myInterest || post.status === 'open') ? (
-                    <button
+                    <motion.button
+                        whileTap={{ scale: 0.92 }}
                         onClick={toggleInterest}
-                        className={`flex-1 inline-flex items-center justify-center gap-2 py-2 rounded-xl text-[13px] font-semibold transition-colors ${
+                        className={`group flex-1 inline-flex items-center justify-center gap-2 py-2 rounded-xl text-[13px] font-semibold transition-colors ${
                             myInterest ? 'text-emerald-600 hover:bg-emerald-50' : 'text-amber-600 hover:bg-amber-50'
                         }`}
                     >
                         {myInterest ? (
                             <svg className="w-[18px] h-[18px]" fill="none" stroke="currentColor" strokeWidth={2.5} viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" /></svg>
                         ) : (
-                            <svg className="w-[18px] h-[18px]" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M7 11.5V14m0-2.5v-6a1.5 1.5 0 113 0m-3 6a1.5 1.5 0 00-3 0v2a7.5 7.5 0 0015 0v-5a1.5 1.5 0 00-3 0m-6-3V11m0-5.5v-1a1.5 1.5 0 013 0v1m0 0V11m0-5.5a1.5 1.5 0 013 0v3m0 0V11" /></svg>
+                            <svg className="w-[18px] h-[18px] group-hover:rotate-12 transition-transform" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M21.75 6.75a4.5 4.5 0 01-4.884 4.484c-1.076-.091-2.264.071-2.95.904l-7.152 8.684a2.548 2.548 0 11-3.586-3.586l8.684-7.152c.833-.686.995-1.874.904-2.95a4.5 4.5 0 016.336-4.486l-3.276 3.276a3.004 3.004 0 002.25 2.25l3.276-3.276c.256.565.398 1.192.398 1.852z" /></svg>
                         )}
                         {myInterest ? t('feed.interested') : t('feed.imInterested')}
-                    </button>
+                    </motion.button>
                 ) : null}
             </div>
 

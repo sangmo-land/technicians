@@ -173,6 +173,9 @@ export default function GuestLayout({ header, children }: Props) {
                         </motion.div>
                     )}
                 </AnimatePresence>
+
+                {/* Site-tape accent */}
+                <div className="h-[3px] hazard-stripes opacity-60" />
             </nav>
 
             {header && (
@@ -234,6 +237,7 @@ export default function GuestLayout({ header, children }: Props) {
 
             {/* Footer */}
             <footer className="bg-slate-900 text-slate-400">
+                <div className="h-1 hazard-stripes opacity-50" />
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
                     <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
                         <Link href="/" className="flex items-center">
