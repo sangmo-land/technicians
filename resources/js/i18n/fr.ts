@@ -117,6 +117,7 @@ const fr = {
         writeComment: 'Écrire un commentaire…',
         send: 'Envoyer',
         loginToComment: 'Connectez-vous pour commenter',
+        post: 'Publier',
     },
 
     // ─── Footer ──────────────────────────────────────────

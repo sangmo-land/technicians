@@ -117,6 +117,7 @@ const en = {
         writeComment: 'Write a comment…',
         send: 'Send',
         loginToComment: 'Log in to comment',
+        post: 'Post',
     },
 
     // ─── Footer ──────────────────────────────────────────

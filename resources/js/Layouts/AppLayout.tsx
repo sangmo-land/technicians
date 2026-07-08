@@ -69,7 +69,7 @@ export default function GuestLayout({ header, children }: Props) {
 
                         <div className="hidden md:flex items-center space-x-4">
                             <Link href="/workers" className="inline-flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white pl-3.5 pr-4 py-2 rounded-full text-sm font-semibold transition-colors shadow-sm">
-                                <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M2 18a1 1 0 001 1h18a1 1 0 001-1v-2a1 1 0 00-1-1H3a1 1 0 00-1 1v2zM10 10V5a1 1 0 011-1h2a1 1 0 011 1v5M4 15v-3a6 6 0 016-6M14 6a6 6 0 016 6v3" /></svg>
+                                <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M15 19.128a9.38 9.38 0 002.625.372 9.337 9.337 0 004.121-.952 4.125 4.125 0 00-7.533-2.493M15 19.128v-.003c0-1.113-.285-2.16-.786-3.07M15 19.128v.106A12.318 12.318 0 018.624 21c-2.331 0-4.512-.645-6.374-1.766l-.001-.109a6.375 6.375 0 0111.964-3.07M12 6.375a3.375 3.375 0 11-6.75 0 3.375 3.375 0 016.75 0zm8.25 2.25a2.625 2.625 0 11-5.25 0 2.625 2.625 0 015.25 0z" /></svg>
                                 {t('nav.findWorkers')}
                             </Link>
                             {notificationBell}
@@ -123,7 +123,7 @@ export default function GuestLayout({ header, children }: Props) {
                         {/* Mobile menu button + language switcher */}
                         <div className="flex items-center gap-2 md:hidden">
                             <Link href="/workers" aria-label={t('nav.findWorkers')} title={t('nav.findWorkers')} className="p-2 rounded-full bg-blue-600 text-white">
-                                <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M2 18a1 1 0 001 1h18a1 1 0 001-1v-2a1 1 0 00-1-1H3a1 1 0 00-1 1v2zM10 10V5a1 1 0 011-1h2a1 1 0 011 1v5M4 15v-3a6 6 0 016-6M14 6a6 6 0 016 6v3" /></svg>
+                                <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M15 19.128a9.38 9.38 0 002.625.372 9.337 9.337 0 004.121-.952 4.125 4.125 0 00-7.533-2.493M15 19.128v-.003c0-1.113-.285-2.16-.786-3.07M15 19.128v.106A12.318 12.318 0 018.624 21c-2.331 0-4.512-.645-6.374-1.766l-.001-.109a6.375 6.375 0 0111.964-3.07M12 6.375a3.375 3.375 0 11-6.75 0 3.375 3.375 0 016.75 0zm8.25 2.25a2.625 2.625 0 11-5.25 0 2.625 2.625 0 015.25 0z" /></svg>
                             </Link>
                             {notificationBell}
                             <DarkModeToggle />
@@ -177,9 +177,6 @@ export default function GuestLayout({ header, children }: Props) {
                         </motion.div>
                     )}
                 </AnimatePresence>
-
-                {/* Site-tape accent */}
-                <div className="h-[3px] hazard-stripes opacity-60" />
             </nav>
 
             {header && (
@@ -241,7 +238,6 @@ export default function GuestLayout({ header, children }: Props) {
 
             {/* Footer */}
             <footer className="bg-slate-900 text-slate-400">
-                <div className="h-1 hazard-stripes opacity-50" />
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
                     <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
                         <Link href="/" className="flex items-center">
