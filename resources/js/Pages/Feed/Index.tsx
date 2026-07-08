@@ -132,9 +132,9 @@ function WorkerSearch() {
     };
 
     return (
-        <div ref={ref} className="relative w-full max-w-xl mx-auto">
-            <div className="flex items-center bg-white rounded-2xl shadow-2xl shadow-black/25 px-4">
-                <svg className="w-5 h-5 text-slate-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <div ref={ref} className="relative w-full">
+            <div className="flex items-center bg-white rounded-full border border-gray-200 shadow-sm focus-within:border-blue-400 focus-within:ring-1 focus-within:ring-blue-400 px-4 transition-colors">
+                <svg className="w-4 h-4 text-slate-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                 </svg>
                 <input
@@ -144,7 +144,7 @@ function WorkerSearch() {
                     onFocus={() => q.trim().length >= 2 && setOpen(true)}
                     onKeyDown={(e) => { if (e.key === 'Enter') goToAllResults(); }}
                     placeholder={t('feed.searchWorkersPlaceholder')}
-                    className="w-full py-3.5 px-3 border-0 focus:ring-0 text-sm text-gray-900 placeholder-slate-400 bg-transparent"
+                    className="w-full py-2.5 px-3 border-0 focus:ring-0 text-sm text-gray-900 placeholder-slate-400 bg-transparent"
                 />
                 {loading && (
                     <svg className="w-4 h-4 text-amber-500 gear-spin flex-shrink-0" fill="none" stroke="currentColor" strokeWidth={1.8} viewBox="0 0 24 24">
@@ -246,71 +246,7 @@ export default function FeedIndex({ posts, categories, filters, suggestedWorkers
                 <meta name="description" content={t('home.seoDescription')} />
             </Head>
 
-            {/* ── Hero banner: blueprint + crane + live search ─── */}
-            <div className="relative bg-gradient-to-br from-slate-950 via-slate-900 to-blue-950 overflow-hidden">
-                <div className="absolute inset-0 pointer-events-none">
-                    <div className="absolute inset-0 blueprint-grid" />
-                    <div className="absolute -top-24 -left-24 w-[480px] h-[480px] bg-blue-600/[0.08] rounded-full blur-[100px]" />
-                    <div className="absolute -bottom-32 -right-24 w-[420px] h-[420px] bg-amber-500/[0.06] rounded-full blur-[90px]" />
-                </div>
-
-                {/* Tower crane silhouette, gently swaying */}
-                <svg
-                    viewBox="0 0 220 170"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="3"
-                    strokeLinecap="round"
-                    className="crane-sway hidden md:block absolute right-6 lg:right-16 bottom-0 h-[170px] lg:h-[200px] w-auto text-white/[0.09] pointer-events-none select-none"
-                    aria-hidden="true"
-                >
-                    {/* base + mast */}
-                    <path d="M42 170v-6h36v6M52 164V34M68 164V34M52 148h16M52 128h16M52 108h16M52 88h16M52 68h16M52 48h16" />
-                    <path d="M52 148l16-20M68 128l-16-20M52 88l16-20M68 68l-16-20" strokeWidth="2" />
-                    {/* cab + apex */}
-                    <path d="M46 34h28v-12H46zM60 22V8" />
-                    {/* jib, counter-jib, ties, counterweight */}
-                    <path d="M74 30h138M74 38h130M12 30h34M60 8l84 22M60 8l150 22M60 8L20 30M12 30v14h14V30" />
-                    {/* trolley cable + hook */}
-                    <g className="hook-bob">
-                        <path d="M158 38v40" strokeWidth="2" />
-                        <path d="M166 78c0 6-8 6-8 0m4 0v-2a5 5 0 015-5" strokeWidth="2.5" />
-                    </g>
-                </svg>
-
-                <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 md:py-14 text-center">
-                    <motion.h1 initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} className="text-2xl md:text-4xl font-extrabold text-white tracking-tight">
-                        {t('feed.homeHeading')}
-                    </motion.h1>
-                    <motion.span
-                        initial={{ scaleX: 0 }}
-                        animate={{ scaleX: 1 }}
-                        transition={{ delay: 0.25, duration: 0.5, ease: 'easeOut' }}
-                        className="block mx-auto mt-3 h-1.5 w-24 rounded-full hazard-stripes hazard-stripes--animated opacity-90"
-                    />
-                    <motion.p initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }} className="text-slate-400 mt-3 text-sm md:text-base max-w-xl mx-auto">
-                        {t('feed.homeTagline')}
-                    </motion.p>
-                    <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }} className="mt-6">
-                        <WorkerSearch />
-                    </motion.div>
-                    {!auth?.user && (
-                        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.3 }} className="mt-5 flex items-center justify-center gap-3">
-                            <Link href="/register" className="bg-amber-500 hover:bg-amber-600 text-white px-6 py-2.5 rounded-xl text-sm font-semibold transition-colors shadow-lg shadow-amber-500/20">
-                                {t('nav.signUp')}
-                            </Link>
-                            <Link href="/login" className="border border-white/15 text-slate-200 hover:bg-white/[0.06] hover:text-white px-6 py-2.5 rounded-xl text-sm font-semibold transition-all">
-                                {t('nav.logIn')}
-                            </Link>
-                        </motion.div>
-                    )}
-                </div>
-
-                {/* Safety-tape divider into the feed */}
-                <div className="relative h-1.5 hazard-stripes hazard-stripes--animated opacity-70" />
-            </div>
-
-            <div className="min-h-screen bg-gray-50 py-8">
+            <div className="min-h-screen bg-gray-50 py-6">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                     <div className="lg:grid lg:grid-cols-12 lg:gap-6 lg:items-start">
 
@@ -354,6 +290,24 @@ export default function FeedIndex({ posts, categories, filters, suggestedWorkers
 
                     {/* ── Center: the feed ────────────────────────── */}
                     <div className="lg:col-span-6 max-w-2xl mx-auto lg:mx-0 lg:max-w-none">
+
+                    {/* Mobile: search + guest CTA (desktop has them in the rails) */}
+                    <div className="lg:hidden mb-4">
+                        <WorkerSearch />
+                    </div>
+                    {!auth?.user && (
+                        <div className="lg:hidden bg-white rounded-2xl border border-gray-100 shadow-sm p-4 mb-4 flex items-center justify-between gap-3">
+                            <p className="text-sm text-gray-600 flex-1">{t('feed.loginToPost')}</p>
+                            <div className="flex items-center gap-2 flex-shrink-0">
+                                <Link href="/login" className="border border-gray-200 hover:bg-gray-50 text-gray-700 px-3.5 py-1.5 rounded-full text-xs font-semibold transition-colors">
+                                    {t('nav.logIn')}
+                                </Link>
+                                <Link href="/register" className="bg-blue-600 hover:bg-blue-700 text-white px-3.5 py-1.5 rounded-full text-xs font-semibold transition-colors">
+                                    {t('nav.signUp')}
+                                </Link>
+                            </div>
+                        </div>
+                    )}
 
                     {/* Composer */}
                     {auth?.user && (
@@ -525,8 +479,9 @@ export default function FeedIndex({ posts, categories, filters, suggestedWorkers
                     )}
                     </div>
 
-                    {/* ── Right rail: technician discovery ────────── */}
-                    <aside className="hidden lg:block lg:col-span-3 lg:sticky lg:top-24">
+                    {/* ── Right rail: search + technician discovery ── */}
+                    <aside className="hidden lg:block lg:col-span-3 lg:sticky lg:top-24 space-y-4">
+                        <WorkerSearch />
                         {suggestedWorkers.length > 0 && (
                             <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5">
                                 <p className="flex items-center gap-1.5 text-[11px] font-bold uppercase tracking-wider text-gray-400 mb-4">

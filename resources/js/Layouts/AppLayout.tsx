@@ -64,13 +64,14 @@ export default function GuestLayout({ header, children }: Props) {
                                 <Link href="/" className="text-gray-600 hover:text-blue-600 font-medium transition-colors">
                                     {t('nav.feed')}
                                 </Link>
-                                <Link href="/workers" className="text-gray-600 hover:text-blue-600 font-medium transition-colors">
-                                    {t('nav.findWorkers')}
-                                </Link>
                             </div>
                         </div>
 
                         <div className="hidden md:flex items-center space-x-4">
+                            <Link href="/workers" className="inline-flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white pl-3.5 pr-4 py-2 rounded-full text-sm font-semibold transition-colors shadow-sm">
+                                <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M2 18a1 1 0 001 1h18a1 1 0 001-1v-2a1 1 0 00-1-1H3a1 1 0 00-1 1v2zM10 10V5a1 1 0 011-1h2a1 1 0 011 1v5M4 15v-3a6 6 0 016-6M14 6a6 6 0 016 6v3" /></svg>
+                                {t('nav.findWorkers')}
+                            </Link>
                             {notificationBell}
                             <DarkModeToggle />
                             <LanguageSwitcher variant="light" />
@@ -121,6 +122,9 @@ export default function GuestLayout({ header, children }: Props) {
 
                         {/* Mobile menu button + language switcher */}
                         <div className="flex items-center gap-2 md:hidden">
+                            <Link href="/workers" aria-label={t('nav.findWorkers')} title={t('nav.findWorkers')} className="p-2 rounded-full bg-blue-600 text-white">
+                                <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M2 18a1 1 0 001 1h18a1 1 0 001-1v-2a1 1 0 00-1-1H3a1 1 0 00-1 1v2zM10 10V5a1 1 0 011-1h2a1 1 0 011 1v5M4 15v-3a6 6 0 016-6M14 6a6 6 0 016 6v3" /></svg>
+                            </Link>
                             {notificationBell}
                             <DarkModeToggle />
                             <LanguageSwitcher variant="light" />
