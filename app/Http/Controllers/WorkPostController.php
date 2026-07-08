@@ -21,7 +21,7 @@ class WorkPostController extends Controller
                 'user:id,name,phone,avatar',
                 'user.workerProfile:id,user_id',
             ]),
-        ])->withCount(['interests', 'notifications as notified_count' => fn ($q) => $q->whereIn('status', ['sent', 'delivered', 'read'])]);
+        ])->withCount(['interests', 'notifications as notified_count']);
 
         if ($request->filled('category')) {
             $postsQuery->where('category_id', $request->category);

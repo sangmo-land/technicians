@@ -35,17 +35,4 @@ return [
         ],
     ],
 
-    'whatsapp' => [
-        'token' => env('WHATSAPP_TOKEN'),
-        'phone_number_id' => env('WHATSAPP_PHONE_NUMBER_ID'),
-        'template' => env('WHATSAPP_TEMPLATE', 'new_work_post'),
-        'template_locale' => env('WHATSAPP_TEMPLATE_LOCALE', 'fr'),
-        // Default country calling code used to normalize local phone numbers
-        'default_country_code' => env('WHATSAPP_DEFAULT_COUNTRY_CODE', '237'),
-        // Secret string you invent; Meta echoes it back during webhook setup
-        'webhook_verify_token' => env('WHATSAPP_WEBHOOK_VERIFY_TOKEN'),
-        // App secret from the Meta app dashboard; used to verify webhook signatures
-        'app_secret' => env('WHATSAPP_APP_SECRET'),
-    ],
-
 ];

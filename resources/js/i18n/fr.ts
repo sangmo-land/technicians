@@ -48,6 +48,17 @@ const fr = {
         signUp: "S'inscrire",
         toggleTheme: 'Basculer le mode sombre',
         feed: 'Fil des travaux',
+        notifications: 'Notifications',
+    },
+
+    // ─── Notifications ───────────────────────────────────
+    notifications: {
+        pageTitle: 'Notifications',
+        heading: 'Notifications',
+        postedNew: '{{name}} a publié une nouvelle demande de travail',
+        empty: 'Aucune notification pour le moment',
+        emptyHint: 'Lorsque quelqu\'un publie un travail correspondant à votre métier, il apparaîtra ici.',
+        new: 'Nouveau',
     },
 
     // ─── Work Feed ───────────────────────────────────────

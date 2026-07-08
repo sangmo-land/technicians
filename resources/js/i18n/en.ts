@@ -48,6 +48,17 @@ const en = {
         signUp: 'Sign Up',
         toggleTheme: 'Toggle dark mode',
         feed: 'Work Feed',
+        notifications: 'Notifications',
+    },
+
+    // ─── Notifications ───────────────────────────────────
+    notifications: {
+        pageTitle: 'Notifications',
+        heading: 'Notifications',
+        postedNew: '{{name}} posted a new work request',
+        empty: 'No notifications yet',
+        emptyHint: "When someone posts work matching your trade, you'll see it here.",
+        new: 'New',
     },
 
     // ─── Work Feed ───────────────────────────────────────

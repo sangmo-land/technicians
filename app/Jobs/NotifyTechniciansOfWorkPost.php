@@ -5,91 +5,53 @@ namespace App\Jobs;
 use App\Models\WorkerProfile;
 use App\Models\WorkPost;
 use App\Models\WorkPostNotification;
-use App\Services\WhatsAppService;
-use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Foundation\Queue\Queueable;
-use Illuminate\Support\Str;
+use Illuminate\Foundation\Bus\Dispatchable;
 
-class NotifyTechniciansOfWorkPost implements ShouldQueue
+/**
+ * Creates in-app notifications for technicians when a work post is
+ * published. Runs synchronously (plain DB inserts — no queue worker needed).
+ */
+class NotifyTechniciansOfWorkPost
 {
-    use Queueable;
-
-    /** Cap per post so one post can never blast the whole platform. */
-    public const MAX_RECIPIENTS = 50;
+    use Dispatchable;
 
     public function __construct(public WorkPost $post)
     {
     }
 
-    public function handle(WhatsAppService $whatsapp): void
+    public function handle(): void
     {
-        $post = $this->post->fresh(['category', 'user']);
+        // Reload so DB defaults (e.g. status = 'open') set outside Eloquent
+        // are visible on a freshly created model.
+        $post = $this->post->fresh();
 
         if (! $post || $post->status !== 'open') {
             return;
         }
 
-        foreach ($this->matchingTechnicians($post) as $profile) {
-            $notification = WorkPostNotification::firstOrCreate(
-                [
-                    'work_post_id' => $post->id,
-                    'user_id' => $profile->user_id,
-                    'channel' => 'whatsapp',
-                ],
-                ['status' => 'queued'],
-            );
-
-            // Already handled by a previous run (e.g. job retry)
-            if (! $notification->wasRecentlyCreated && $notification->status !== 'queued') {
-                continue;
-            }
-
-            if (! $whatsapp->isConfigured()) {
-                $notification->update(['status' => 'skipped', 'error' => 'whatsapp_not_configured']);
-                continue;
-            }
-
-            $result = $whatsapp->sendTemplate($profile->user->phone, [
-                $post->category?->name ?? 'NexJobs',
-                trim(implode(', ', array_filter([$post->city, $post->state]))) ?: 'Cameroon',
-                Str::limit($post->description, 120),
-            ]);
-
-            $notification->update([
-                'status' => $result['error'] === null ? 'sent' : 'failed',
-                'wa_message_id' => $result['id'],
-                'error' => $result['error'] ? Str::limit($result['error'], 250) : null,
-            ]);
-        }
-    }
-
-    /**
-     * Technicians to notify: active users with a phone, excluding the poster.
-     * Filtered to the post's trade when one is set; technicians in the post's
-     * region (or willing to relocate) are prioritized when the cap applies.
-     */
-    private function matchingTechnicians(WorkPost $post)
-    {
-        $query = WorkerProfile::with('user:id,phone')
+        // Active technicians, excluding the poster, limited to the post's
+        // trade when one is set.
+        $userIds = WorkerProfile::query()
             ->whereHas('user', fn ($q) => $q
-                ->whereNotNull('phone')
                 ->where('is_active', true)
-                ->where('id', '!=', $post->user_id));
+                ->where('id', '!=', $post->user_id))
+            ->when($post->category_id, fn ($q) => $q
+                ->whereHas('jobCategories', fn ($sub) => $sub->where('job_categories.id', $post->category_id)))
+            ->pluck('user_id');
 
-        if ($post->category_id) {
-            $query->whereHas('jobCategories', fn ($q) => $q->where('job_categories.id', $post->category_id));
+        if ($userIds->isEmpty()) {
+            return;
         }
 
-        if ($post->state) {
-            $query->orderByRaw(
-                'CASE WHEN state = ? THEN 0 WHEN willing_to_relocate = 1 THEN 1 ELSE 2 END',
-                [$post->state],
-            );
-        }
+        $now = now();
 
-        return $query
-            ->latest()
-            ->limit(self::MAX_RECIPIENTS)
-            ->get();
+        WorkPostNotification::insertOrIgnore(
+            $userIds->map(fn ($userId) => [
+                'work_post_id' => $post->id,
+                'user_id' => $userId,
+                'created_at' => $now,
+                'updated_at' => $now,
+            ])->all(),
+        );
     }
 }

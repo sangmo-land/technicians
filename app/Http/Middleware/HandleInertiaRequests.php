@@ -5,6 +5,7 @@ namespace App\Http\Middleware;
 use App\Models\SiteVisit;
 use App\Models\User;
 use App\Models\WorkerProfile;
+use App\Models\WorkPostNotification;
 use Illuminate\Http\Request;
 use Inertia\Middleware;
 
@@ -43,6 +44,9 @@ class HandleInertiaRequests extends Middleware
                 'error' => fn () => $request->session()->get('error'),
             ],
             'profileIncomplete' => fn () => $this->checkProfileIncomplete($request),
+            'unreadNotifications' => fn () => $request->user()
+                ? WorkPostNotification::where('user_id', $request->user()->id)->whereNull('read_at')->count()
+                : 0,
             'siteVisits' => fn () => SiteVisit::count(),
             'adminPhone' => fn () => User::where('email', 'admin@nexjobs.com')->value('phone'),
         ];

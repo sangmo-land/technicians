@@ -5,7 +5,7 @@ use App\Http\Controllers\JobListingController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\UserInviteController;
 use App\Http\Controllers\WorkerProfileController;
-use App\Http\Controllers\WhatsAppWebhookController;
+use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\WorkPostController;
 use App\Models\JobListing;
 use App\Models\WorkerProfile;
@@ -40,10 +40,6 @@ Route::get('/jobs', [JobListingController::class, 'index'])->name('jobs.index');
 Route::get('/jobs/{job}', [JobListingController::class, 'show'])->name('jobs.show');
 Route::get('/feed', [WorkPostController::class, 'index'])->name('feed');
 
-// WhatsApp Cloud API webhook (Meta server-to-server)
-Route::get('/webhooks/whatsapp', [WhatsAppWebhookController::class, 'verify'])->name('webhooks.whatsapp.verify');
-Route::post('/webhooks/whatsapp', [WhatsAppWebhookController::class, 'handle'])->name('webhooks.whatsapp');
-
 // Dashboard — redirect to own worker profile
 Route::get('/dashboard', function () {
     $user = auth()->user();
@@ -76,6 +72,9 @@ Route::middleware('auth')->group(function () {
     // Add users (only users with can_add_users permission)
     Route::get('/users/add', [UserInviteController::class, 'index'])->name('users.add');
     Route::post('/users/add', [UserInviteController::class, 'store'])->name('users.add.store');
+
+    // In-app notifications
+    Route::get('/notifications', [NotificationController::class, 'index'])->name('notifications');
 
     // Work feed (community posts)
     Route::post('/feed', [WorkPostController::class, 'store'])->name('feed.store');

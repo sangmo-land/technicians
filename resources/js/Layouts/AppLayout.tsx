@@ -11,10 +11,23 @@ interface Props {
 }
 
 export default function GuestLayout({ header, children }: Props) {
-    const { auth, siteVisits, profileIncomplete } = usePage().props as any;
+    const { auth, siteVisits, profileIncomplete, unreadNotifications } = usePage().props as any;
     const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
     const [showProfileReminder, setShowProfileReminder] = useState(false);
     const { t } = useTranslation();
+
+    const notificationBell = auth?.user && (
+        <Link href="/notifications" className="relative p-2 text-gray-500 hover:text-blue-600 transition-colors" aria-label={t('nav.notifications')} title={t('nav.notifications')}>
+            <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M14.857 17.082a23.848 23.848 0 005.454-1.31A8.967 8.967 0 0118 9.75v-.7V9A6 6 0 006 9v.75a8.967 8.967 0 01-2.312 6.022c1.733.64 3.56 1.085 5.455 1.31m5.714 0a24.255 24.255 0 01-5.714 0m5.714 0a3 3 0 11-5.714 0" />
+            </svg>
+            {unreadNotifications > 0 && (
+                <span className="absolute top-0.5 right-0.5 min-w-[16px] h-4 px-1 bg-red-500 text-white text-[10px] font-bold rounded-full flex items-center justify-center">
+                    {unreadNotifications > 9 ? '9+' : unreadNotifications}
+                </span>
+            )}
+        </Link>
+    );
 
     useEffect(() => {
         if (auth?.user && profileIncomplete) {
@@ -58,6 +71,7 @@ export default function GuestLayout({ header, children }: Props) {
                         </div>
 
                         <div className="hidden md:flex items-center space-x-4">
+                            {notificationBell}
                             <DarkModeToggle />
                             <LanguageSwitcher variant="light" />
                             {auth?.user ? (
@@ -107,6 +121,7 @@ export default function GuestLayout({ header, children }: Props) {
 
                         {/* Mobile menu button + language switcher */}
                         <div className="flex items-center gap-2 md:hidden">
+                            {notificationBell}
                             <DarkModeToggle />
                             <LanguageSwitcher variant="light" />
                             <button

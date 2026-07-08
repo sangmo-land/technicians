@@ -17,11 +17,7 @@ return Application::configure(basePath: dirname(__DIR__))
             \App\Http\Middleware\TrackSiteVisits::class,
         ]);
 
-        // Meta calls this endpoint server-to-server; it authenticates via
-        // the webhook signature, not a CSRF token.
-        $middleware->validateCsrfTokens(except: [
-            'webhooks/whatsapp',
-        ]);
+        //
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         //

@@ -13,11 +13,15 @@ class WorkPostNotification extends Model
     protected $fillable = [
         'work_post_id',
         'user_id',
-        'channel',
-        'status',
-        'wa_message_id',
-        'error',
+        'read_at',
     ];
+
+    protected function casts(): array
+    {
+        return [
+            'read_at' => 'datetime',
+        ];
+    }
 
     public function workPost(): BelongsTo
     {
