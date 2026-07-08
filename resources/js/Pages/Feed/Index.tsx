@@ -1,5 +1,5 @@
 import { Head, Link, useForm, usePage, router } from '@inertiajs/react';
-import { FormEventHandler, useState } from 'react';
+import { FormEventHandler, useEffect, useRef, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import AppLayout from '@/Layouts/AppLayout';
 import InputError from '@/Components/InputError';
@@ -23,6 +23,14 @@ interface Interest {
     user: FeedUser;
 }
 
+interface Comment {
+    id: number;
+    user_id: number;
+    body: string;
+    created_at: string;
+    user: FeedUser;
+}
+
 interface Post {
     id: number;
     user_id: number;
@@ -34,8 +42,12 @@ interface Post {
     status: 'open' | 'filled' | 'closed';
     created_at: string;
     interests_count: number;
+    likes_count: number;
+    comments_count: number;
+    liked_by_me: boolean;
     notified_count: number;
     interests: Interest[];
+    comments: Comment[];
     user: FeedUser;
     category?: { id: number; name: string } | null;
 }
@@ -50,6 +62,14 @@ interface SuggestedWorker {
     job_categories?: { id: number; name: string }[];
 }
 
+interface SearchResult {
+    id: number;
+    name: string;
+    avatar?: string | null;
+    title?: string | null;
+    location?: string | null;
+}
+
 interface Props {
     posts: PaginatedData<Post>;
     categories: JobCategory[];
@@ -57,7 +77,7 @@ interface Props {
     suggestedWorkers: SuggestedWorker[];
 }
 
-function Avatar({ user, size = 'w-10 h-10' }: { user: FeedUser; size?: string }) {
+function Avatar({ user, size = 'w-10 h-10' }: { user: { name: string; avatar?: string | null }; size?: string }) {
     return (
         <div className={`${size} rounded-full bg-gradient-to-br from-blue-500 to-blue-600 flex items-center justify-center flex-shrink-0 overflow-hidden`}>
             {user.avatar ? (
@@ -65,6 +85,106 @@ function Avatar({ user, size = 'w-10 h-10' }: { user: FeedUser; size?: string })
             ) : (
                 <span className="text-white font-bold text-sm">{user.name?.charAt(0).toUpperCase()}</span>
             )}
+        </div>
+    );
+}
+
+/* ── Live technician search (typeahead) ───────────────────── */
+function WorkerSearch() {
+    const { t } = useTranslation();
+    const [q, setQ] = useState('');
+    const [results, setResults] = useState<SearchResult[]>([]);
+    const [open, setOpen] = useState(false);
+    const [loading, setLoading] = useState(false);
+    const ref = useRef<HTMLDivElement>(null);
+
+    useEffect(() => {
+        const handler = (e: MouseEvent) => {
+            if (ref.current && !ref.current.contains(e.target as Node)) setOpen(false);
+        };
+        document.addEventListener('mousedown', handler);
+        return () => document.removeEventListener('mousedown', handler);
+    }, []);
+
+    useEffect(() => {
+        const trimmed = q.trim();
+        if (trimmed.length < 2) {
+            setResults([]);
+            setOpen(false);
+            return;
+        }
+        setLoading(true);
+        const id = setTimeout(() => {
+            fetch(`/workers-search?q=${encodeURIComponent(trimmed)}`, { headers: { Accept: 'application/json' } })
+                .then((r) => r.json())
+                .then((data) => {
+                    setResults(data);
+                    setOpen(true);
+                })
+                .catch(() => setResults([]))
+                .finally(() => setLoading(false));
+        }, 300);
+        return () => clearTimeout(id);
+    }, [q]);
+
+    const goToAllResults = () => {
+        router.get('/workers', q.trim() ? { search: q.trim() } : {});
+    };
+
+    return (
+        <div ref={ref} className="relative w-full max-w-xl mx-auto">
+            <div className="flex items-center bg-white rounded-2xl shadow-2xl shadow-black/25 px-4">
+                <svg className="w-5 h-5 text-slate-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                </svg>
+                <input
+                    type="text"
+                    value={q}
+                    onChange={(e) => setQ(e.target.value)}
+                    onFocus={() => q.trim().length >= 2 && setOpen(true)}
+                    onKeyDown={(e) => { if (e.key === 'Enter') goToAllResults(); }}
+                    placeholder={t('feed.searchWorkersPlaceholder')}
+                    className="w-full py-3.5 px-3 border-0 focus:ring-0 text-sm text-gray-900 placeholder-slate-400 bg-transparent"
+                />
+                {loading && (
+                    <svg className="w-4 h-4 text-slate-300 animate-spin flex-shrink-0" fill="none" viewBox="0 0 24 24">
+                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
+                    </svg>
+                )}
+            </div>
+
+            <AnimatePresence>
+                {open && (
+                    <motion.div
+                        initial={{ opacity: 0, y: 6 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0, y: 6 }}
+                        transition={{ duration: 0.15 }}
+                        className="absolute left-0 right-0 mt-2 bg-white rounded-2xl border border-gray-100 shadow-2xl shadow-black/20 overflow-hidden z-40"
+                    >
+                        {results.length === 0 ? (
+                            <p className="px-4 py-4 text-sm text-gray-400 text-center">{t('feed.noResults')}</p>
+                        ) : (
+                            <div className="py-1.5">
+                                {results.map((worker) => (
+                                    <Link key={worker.id} href={`/workers/${worker.id}`} className="flex items-center gap-3 px-4 py-2.5 hover:bg-blue-50/60 transition-colors">
+                                        <Avatar user={worker} size="w-9 h-9" />
+                                        <div className="min-w-0 text-left">
+                                            <p className="text-sm font-semibold text-gray-900 truncate">{worker.name}</p>
+                                            <p className="text-xs text-gray-400 truncate">{[worker.title, worker.location].filter(Boolean).join(' · ')}</p>
+                                        </div>
+                                        <svg className="w-4 h-4 text-gray-300 ml-auto flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" /></svg>
+                                    </Link>
+                                ))}
+                            </div>
+                        )}
+                        <button onClick={goToAllResults} className="w-full px-4 py-3 border-t border-gray-100 text-sm font-semibold text-blue-600 hover:bg-blue-50/60 transition-colors text-center">
+                            {t('feed.seeAllResults')}
+                        </button>
+                    </motion.div>
+                )}
+            </AnimatePresence>
         </div>
     );
 }
@@ -111,7 +231,7 @@ export default function FeedIndex({ posts, categories, filters, suggestedWorkers
     /* ── Filters ──────────────────────────────────────────── */
     const applyFilter = (key: string, value: string) => {
         const next = { ...filters, [key]: value || undefined };
-        router.get(route('feed'), next as any, { preserveState: true, preserveScroll: true });
+        router.get(route('home'), next as any, { preserveState: true, preserveScroll: true });
     };
 
     const statusStyles: Record<Post['status'], string> = {
@@ -122,9 +242,40 @@ export default function FeedIndex({ posts, categories, filters, suggestedWorkers
 
     return (
         <AppLayout>
-            <Head title={t('feed.pageTitle')} />
+            <Head title={t('feed.pageTitle')}>
+                <meta name="description" content={t('home.seoDescription')} />
+            </Head>
 
-            <div className="min-h-screen bg-gray-50 py-8 md:py-10">
+            {/* ── Hero banner: tagline + live technician search ── */}
+            <div className="relative bg-gradient-to-br from-slate-950 via-slate-900 to-blue-950 overflow-hidden">
+                <div className="absolute inset-0 pointer-events-none">
+                    <div className="absolute -top-24 -left-24 w-[480px] h-[480px] bg-blue-600/[0.08] rounded-full blur-[100px]" />
+                    <div className="absolute -bottom-32 -right-24 w-[420px] h-[420px] bg-amber-500/[0.06] rounded-full blur-[90px]" />
+                </div>
+                <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 md:py-14 text-center">
+                    <motion.h1 initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} className="text-2xl md:text-4xl font-extrabold text-white tracking-tight">
+                        {t('feed.homeHeading')}
+                    </motion.h1>
+                    <motion.p initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }} className="text-slate-400 mt-2 text-sm md:text-base max-w-xl mx-auto">
+                        {t('feed.homeTagline')}
+                    </motion.p>
+                    <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }} className="mt-6">
+                        <WorkerSearch />
+                    </motion.div>
+                    {!auth?.user && (
+                        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.3 }} className="mt-5 flex items-center justify-center gap-3">
+                            <Link href="/register" className="bg-amber-500 hover:bg-amber-600 text-white px-6 py-2.5 rounded-xl text-sm font-semibold transition-colors shadow-lg shadow-amber-500/20">
+                                {t('nav.signUp')}
+                            </Link>
+                            <Link href="/login" className="border border-white/15 text-slate-200 hover:bg-white/[0.06] hover:text-white px-6 py-2.5 rounded-xl text-sm font-semibold transition-all">
+                                {t('nav.logIn')}
+                            </Link>
+                        </motion.div>
+                    )}
+                </div>
+            </div>
+
+            <div className="min-h-screen bg-gray-50 py-8">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                     <div className="lg:grid lg:grid-cols-12 lg:gap-6 lg:items-start">
 
@@ -168,14 +319,9 @@ export default function FeedIndex({ posts, categories, filters, suggestedWorkers
 
                     {/* ── Center: the feed ────────────────────────── */}
                     <div className="lg:col-span-6 max-w-2xl mx-auto lg:mx-0 lg:max-w-none">
-                    {/* Header */}
-                    <div className="mb-6 lg:hidden">
-                        <h1 className="text-2xl md:text-3xl font-extrabold text-gray-900">{t('feed.heading')}</h1>
-                        <p className="text-gray-500 mt-1 text-sm">{t('feed.subheading')}</p>
-                    </div>
 
                     {/* Composer */}
-                    {auth?.user ? (
+                    {auth?.user && (
                         <form onSubmit={publish} className="bg-white rounded-2xl border border-gray-100 shadow-sm p-4 mb-6">
                             <div className="flex gap-3">
                                 <Avatar user={auth.user} />
@@ -257,13 +403,6 @@ export default function FeedIndex({ posts, categories, filters, suggestedWorkers
                                 </button>
                             </div>
                         </form>
-                    ) : (
-                        <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5 mb-6 flex flex-col sm:flex-row items-center justify-between gap-3">
-                            <p className="text-sm text-gray-600">{t('feed.loginToPost')}</p>
-                            <Link href="/login" className="bg-blue-600 hover:bg-blue-700 text-white px-5 py-2 rounded-xl text-sm font-semibold transition-colors flex-shrink-0">
-                                {t('nav.logIn')}
-                            </Link>
-                        </div>
                     )}
 
                     {/* Filters */}
@@ -403,6 +542,9 @@ function PostCard({
     statusStyles: Record<Post['status'], string>;
 }) {
     const [showInterested, setShowInterested] = useState(false);
+    const [showComments, setShowComments] = useState(false);
+    const [commentBody, setCommentBody] = useState('');
+    const [sendingComment, setSendingComment] = useState(false);
 
     const isOwner = auth?.user?.id === post.user_id;
     const myInterest = auth?.user ? post.interests.find((i) => i.user_id === auth.user.id) : undefined;
@@ -410,6 +552,30 @@ function PostCard({
 
     const toggleInterest = () => {
         router.post(route('feed.interest', post.id), {}, { preserveScroll: true });
+    };
+
+    const toggleLike = () => {
+        if (!auth?.user) {
+            router.get('/login');
+            return;
+        }
+        router.post(route('feed.like', post.id), {}, { preserveScroll: true });
+    };
+
+    const submitComment = (e: React.FormEvent) => {
+        e.preventDefault();
+        const body = commentBody.trim();
+        if (!body || sendingComment) return;
+        setSendingComment(true);
+        router.post(route('feed.comments.store', post.id), { body }, {
+            preserveScroll: true,
+            onSuccess: () => setCommentBody(''),
+            onFinish: () => setSendingComment(false),
+        });
+    };
+
+    const deleteComment = (commentId: number) => {
+        router.delete(route('feed.comments.destroy', commentId), { preserveScroll: true });
     };
 
     const setStatus = (status: string) => {
@@ -432,128 +598,232 @@ function PostCard({
         <motion.article
             initial={{ opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
-            className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5"
+            className="bg-white rounded-2xl border border-gray-100 shadow-sm"
         >
-            {/* Header */}
-            <div className="flex items-start justify-between gap-3">
-                <div className="flex items-center gap-3 min-w-0">
-                    {post.user.worker_profile ? (
-                        <Link href={`/workers/${post.user.worker_profile.id}`}>
+            <div className="p-5 pb-0">
+                {/* Header */}
+                <div className="flex items-start justify-between gap-3">
+                    <div className="flex items-center gap-3 min-w-0">
+                        {post.user.worker_profile ? (
+                            <Link href={`/workers/${post.user.worker_profile.id}`}>
+                                <Avatar user={post.user} />
+                            </Link>
+                        ) : (
                             <Avatar user={post.user} />
-                        </Link>
-                    ) : (
-                        <Avatar user={post.user} />
-                    )}
-                    <div className="min-w-0">
-                        <p className="font-bold text-gray-900 text-sm truncate">
-                            {post.user.name}
-                            {isOwner && <span className="ml-2 text-[11px] font-semibold text-blue-600">{t('feed.yourPost')}</span>}
-                        </p>
-                        <p className="text-xs text-gray-400">
-                            {timeAgo(post.created_at)}
-                            {isOwner && post.notified_count > 0 && (
-                                <span className="ml-2 inline-flex items-center gap-1 text-emerald-600 font-medium">
-                                    <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10.34 15.84c-.688-.06-1.386-.09-2.09-.09H7.5a4.5 4.5 0 110-9h.75c.704 0 1.402-.03 2.09-.09m0 9.18c.253.962.584 1.892.985 2.783.247.55.06 1.21-.463 1.511l-.657.38c-.551.318-1.26.117-1.527-.461a20.845 20.845 0 01-1.44-4.282m3.102.069a18.03 18.03 0 01-.59-4.59c0-1.586.205-3.124.59-4.59m0 9.18a23.848 23.848 0 018.835 2.535M10.34 6.66a23.847 23.847 0 008.835-2.535m0 0A23.74 23.74 0 0018.795 3m.38 1.125a23.91 23.91 0 011.014 5.395m-1.014 8.855c-.118.38-.245.754-.38 1.125m.38-1.125a23.91 23.91 0 001.014-5.395m0-3.46c.495.413.811 1.035.811 1.73 0 .695-.316 1.317-.811 1.73m0-3.46a24.347 24.347 0 010 3.46" /></svg>
-                                    {t('feed.notified', { n: post.notified_count })}
-                                </span>
-                            )}
-                        </p>
+                        )}
+                        <div className="min-w-0">
+                            <p className="font-bold text-gray-900 text-sm truncate">
+                                {post.user.name}
+                                {isOwner && <span className="ml-2 text-[11px] font-semibold text-blue-600">{t('feed.yourPost')}</span>}
+                            </p>
+                            <p className="text-xs text-gray-400">
+                                {timeAgo(post.created_at)}
+                                {isOwner && post.notified_count > 0 && (
+                                    <span className="ml-2 inline-flex items-center gap-1 text-emerald-600 font-medium">
+                                        <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10.34 15.84c-.688-.06-1.386-.09-2.09-.09H7.5a4.5 4.5 0 110-9h.75c.704 0 1.402-.03 2.09-.09m0 9.18c.253.962.584 1.892.985 2.783.247.55.06 1.21-.463 1.511l-.657.38c-.551.318-1.26.117-1.527-.461a20.845 20.845 0 01-1.44-4.282m3.102.069a18.03 18.03 0 01-.59-4.59c0-1.586.205-3.124.59-4.59m0 9.18a23.848 23.848 0 018.835 2.535M10.34 6.66a23.847 23.847 0 008.835-2.535m0 0A23.74 23.74 0 0018.795 3m.38 1.125a23.91 23.91 0 011.014 5.395m-1.014 8.855c-.118.38-.245.754-.38 1.125m.38-1.125a23.91 23.91 0 001.014-5.395m0-3.46c.495.413.811 1.035.811 1.73 0 .695-.316 1.317-.811 1.73m0-3.46a24.347 24.347 0 010 3.46" /></svg>
+                                        {t('feed.notified', { n: post.notified_count })}
+                                    </span>
+                                )}
+                            </p>
+                        </div>
+                    </div>
+                    <div className="flex items-center gap-2 flex-shrink-0">
+                        <span className={`px-2.5 py-1 rounded-full text-[11px] font-bold ${statusStyles[post.status]}`}>{statusLabel}</span>
+                        {isOwner && (
+                            <button onClick={deletePost} aria-label={t('feed.delete')} title={t('feed.delete')} className="p-1.5 rounded-lg text-gray-300 hover:text-red-500 hover:bg-red-50 transition-colors">
+                                <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0" /></svg>
+                            </button>
+                        )}
                     </div>
                 </div>
-                <div className="flex items-center gap-2 flex-shrink-0">
-                    <span className={`px-2.5 py-1 rounded-full text-[11px] font-bold ${statusStyles[post.status]}`}>{statusLabel}</span>
-                </div>
+
+                {/* Body */}
+                <p className="mt-3 text-[15px] text-gray-800 leading-relaxed whitespace-pre-line">{post.description}</p>
+
+                {/* Meta chips */}
+                {(post.category || post.city || post.state || post.technicians_needed || post.budget) && (
+                    <div className="flex flex-wrap gap-2 mt-3">
+                        {post.category && (
+                            <span className="inline-flex items-center gap-1 px-2.5 py-1 bg-blue-50 text-blue-700 rounded-full text-[11px] font-semibold">
+                                {translateCategory(post.category.name)}
+                            </span>
+                        )}
+                        {(post.city || post.state) && (
+                            <span className="inline-flex items-center gap-1 px-2.5 py-1 bg-gray-50 text-gray-600 rounded-full text-[11px] font-medium">
+                                <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 10.5a3 3 0 11-6 0 3 3 0 016 0z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1115 0z" /></svg>
+                                {[post.city, post.state].filter(Boolean).join(', ')}
+                            </span>
+                        )}
+                        {post.technicians_needed && (
+                            <span className="inline-flex items-center gap-1 px-2.5 py-1 bg-amber-50 text-amber-700 rounded-full text-[11px] font-semibold">
+                                <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19.128a9.38 9.38 0 002.625.372 9.337 9.337 0 004.121-.952 4.125 4.125 0 00-7.533-2.493M15 19.128v-.003c0-1.113-.285-2.16-.786-3.07M15 19.128v.106A12.318 12.318 0 018.624 21c-2.331 0-4.512-.645-6.374-1.766l-.001-.109a6.375 6.375 0 0111.964-3.07M12 6.375a3.375 3.375 0 11-6.75 0 3.375 3.375 0 016.75 0zm8.25 2.25a2.625 2.625 0 11-5.25 0 2.625 2.625 0 015.25 0z" /></svg>
+                                {t('feed.needed', { n: post.technicians_needed })}
+                            </span>
+                        )}
+                        {post.budget && (
+                            <span className="inline-flex items-center gap-1 px-2.5 py-1 bg-emerald-50 text-emerald-700 rounded-full text-[11px] font-semibold">
+                                {post.budget}
+                            </span>
+                        )}
+                    </div>
+                )}
+
+                {/* Counts row */}
+                {(post.likes_count > 0 || post.comments_count > 0 || post.interests_count > 0) && (
+                    <div className="flex items-center gap-4 mt-3 pb-3 text-xs text-gray-400">
+                        {post.likes_count > 0 && (
+                            <span className="inline-flex items-center gap-1.5">
+                                <span className="w-4.5 h-4.5 w-[18px] h-[18px] rounded-full bg-blue-600 flex items-center justify-center">
+                                    <svg className="w-2.5 h-2.5 text-white" fill="currentColor" viewBox="0 0 24 24"><path d="M7.493 18.5c-.425 0-.82-.236-.975-.632A7.48 7.48 0 016 15.125c0-1.75.599-3.358 1.602-4.634.151-.192.373-.309.6-.397.473-.183.89-.514 1.212-.924a9.042 9.042 0 012.861-2.4c.723-.384 1.35-.956 1.653-1.715a4.498 4.498 0 00.322-1.672v-.633A.75.75 0 0115 2a2.25 2.25 0 012.25 2.25c0 1.152-.26 2.243-.723 3.218-.266.558.107 1.282.725 1.282h3.126c1.026 0 1.945.694 2.054 1.715.045.422.068.85.068 1.285a11.95 11.95 0 01-2.649 7.521c-.388.482-.987.729-1.605.729h-5.373c-.483 0-.964-.078-1.423-.23l-3.114-1.04a4.501 4.501 0 00-1.423-.23h-.777z" /></svg>
+                                </span>
+                                {t('feed.likesCount', { n: post.likes_count })}
+                            </span>
+                        )}
+                        {post.comments_count > 0 && (
+                            <button onClick={() => setShowComments(!showComments)} className="hover:text-blue-600 transition-colors">
+                                {t('feed.commentsCount', { n: post.comments_count })}
+                            </button>
+                        )}
+                        {post.interests_count > 0 && (
+                            <button onClick={() => setShowInterested(!showInterested)} className="inline-flex items-center gap-1.5 hover:text-blue-600 transition-colors ml-auto">
+                                <span className="flex -space-x-1.5">
+                                    {post.interests.slice(0, 3).map((interest) => (
+                                        <span key={interest.id} className="ring-2 ring-white rounded-full">
+                                            <Avatar user={interest.user} size="w-5 h-5" />
+                                        </span>
+                                    ))}
+                                </span>
+                                {post.technicians_needed
+                                    ? t('feed.slots', { count: post.interests_count, needed: post.technicians_needed })
+                                    : t('feed.interestedCount', { n: post.interests_count })}
+                            </button>
+                        )}
+                    </div>
+                )}
             </div>
 
-            {/* Body */}
-            <p className="mt-3 text-[15px] text-gray-800 leading-relaxed whitespace-pre-line">{post.description}</p>
-
-            {/* Meta chips */}
-            {(post.category || post.city || post.state || post.technicians_needed || post.budget) && (
-                <div className="flex flex-wrap gap-2 mt-3">
-                    {post.category && (
-                        <span className="inline-flex items-center gap-1 px-2.5 py-1 bg-blue-50 text-blue-700 rounded-full text-[11px] font-semibold">
-                            {translateCategory(post.category.name)}
-                        </span>
-                    )}
-                    {(post.city || post.state) && (
-                        <span className="inline-flex items-center gap-1 px-2.5 py-1 bg-gray-50 text-gray-600 rounded-full text-[11px] font-medium">
-                            <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 10.5a3 3 0 11-6 0 3 3 0 016 0z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1115 0z" /></svg>
-                            {[post.city, post.state].filter(Boolean).join(', ')}
-                        </span>
-                    )}
-                    {post.technicians_needed && (
-                        <span className="inline-flex items-center gap-1 px-2.5 py-1 bg-amber-50 text-amber-700 rounded-full text-[11px] font-semibold">
-                            <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19.128a9.38 9.38 0 002.625.372 9.337 9.337 0 004.121-.952 4.125 4.125 0 00-7.533-2.493M15 19.128v-.003c0-1.113-.285-2.16-.786-3.07M15 19.128v.106A12.318 12.318 0 018.624 21c-2.331 0-4.512-.645-6.374-1.766l-.001-.109a6.375 6.375 0 0111.964-3.07M12 6.375a3.375 3.375 0 11-6.75 0 3.375 3.375 0 016.75 0zm8.25 2.25a2.625 2.625 0 11-5.25 0 2.625 2.625 0 015.25 0z" /></svg>
-                            {t('feed.needed', { n: post.technicians_needed })}
-                        </span>
-                    )}
-                    {post.budget && (
-                        <span className="inline-flex items-center gap-1 px-2.5 py-1 bg-emerald-50 text-emerald-700 rounded-full text-[11px] font-semibold">
-                            {post.budget}
-                        </span>
-                    )}
-                </div>
-            )}
-
-            {/* Footer */}
-            <div className="flex flex-wrap items-center justify-between gap-3 mt-4 pt-4 border-t border-gray-100">
-                {/* Interest count + avatars */}
+            {/* Action bar */}
+            <div className="flex items-stretch border-t border-gray-100 px-2 py-1">
                 <button
-                    onClick={() => setShowInterested(!showInterested)}
-                    className="flex items-center gap-2 group"
-                    disabled={post.interests_count === 0}
+                    onClick={toggleLike}
+                    className={`flex-1 inline-flex items-center justify-center gap-2 py-2 rounded-xl text-[13px] font-semibold transition-colors ${
+                        post.liked_by_me ? 'text-blue-600 hover:bg-blue-50' : 'text-gray-500 hover:bg-gray-50 hover:text-gray-700'
+                    }`}
                 >
-                    <div className="flex -space-x-2">
-                        {post.interests.slice(0, 4).map((interest) => (
-                            <div key={interest.id} className="ring-2 ring-white rounded-full">
-                                <Avatar user={interest.user} size="w-7 h-7" />
-                            </div>
-                        ))}
-                    </div>
-                    <span className={`text-xs font-medium ${post.interests_count > 0 ? 'text-gray-600 group-hover:text-blue-600' : 'text-gray-400'} transition-colors`}>
-                        {post.technicians_needed
-                            ? t('feed.slots', { count: post.interests_count, needed: post.technicians_needed })
-                            : t('feed.interestedCount', { n: post.interests_count })}
-                    </span>
+                    <svg className="w-[18px] h-[18px]" fill={post.liked_by_me ? 'currentColor' : 'none'} stroke="currentColor" strokeWidth={post.liked_by_me ? 0 : 2} viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M6.633 10.25c.806 0 1.533-.446 2.031-1.08a9.041 9.041 0 012.861-2.4c.723-.384 1.35-.956 1.653-1.715a4.498 4.498 0 00.322-1.672V2.75a.75.75 0 01.75-.75 2.25 2.25 0 012.25 2.25c0 1.152-.26 2.243-.723 3.218-.266.558.107 1.282.725 1.282h3.126c1.026 0 1.945.694 2.054 1.715.045.422.068.85.068 1.285a11.95 11.95 0 01-2.649 7.521c-.388.482-.987.729-1.605.729H13.48c-.483 0-.964-.078-1.423-.23l-3.114-1.04a4.501 4.501 0 00-1.423-.23H5.904M14.25 9h2.25M5.904 18.5c.083.205.173.405.27.602.197.4-.078.898-.523.898h-.908c-.889 0-1.713-.518-1.972-1.368a12 12 0 01-.521-3.507c0-1.553.295-3.036.831-4.398.306-.774 1.086-1.227 1.918-1.227h1.053c.472 0 .745.556.5.96a8.958 8.958 0 00-1.302 4.665c0 1.194.232 2.333.654 3.375z" />
+                    </svg>
+                    {post.liked_by_me ? t('feed.liked') : t('feed.like')}
                 </button>
 
-                {/* Actions */}
-                <div className="flex items-center gap-2">
-                    {isOwner ? (
-                        <>
-                            {post.status === 'open' ? (
-                                <button onClick={() => setStatus('filled')} className="px-3.5 py-1.5 rounded-lg text-xs font-semibold bg-blue-50 text-blue-700 hover:bg-blue-100 transition-colors">
-                                    {t('feed.markFilled')}
-                                </button>
-                            ) : (
-                                <button onClick={() => setStatus('open')} className="px-3.5 py-1.5 rounded-lg text-xs font-semibold bg-emerald-50 text-emerald-700 hover:bg-emerald-100 transition-colors">
-                                    {t('feed.reopen')}
-                                </button>
-                            )}
-                            <button onClick={deletePost} className="px-3.5 py-1.5 rounded-lg text-xs font-semibold text-red-600 hover:bg-red-50 transition-colors">
-                                {t('feed.delete')}
-                            </button>
-                        </>
-                    ) : !auth?.user ? (
-                        <Link href="/login" className="px-4 py-2 rounded-xl text-xs font-bold bg-blue-600 hover:bg-blue-700 text-white transition-colors">
-                            {t('feed.imInterested')}
-                        </Link>
-                    ) : isTechnician ? (
-                        myInterest ? (
-                            <button onClick={toggleInterest} className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs font-bold bg-emerald-600 hover:bg-emerald-700 text-white transition-colors">
-                                <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M5 13l4 4L19 7" /></svg>
-                                {t('feed.interested')}
-                            </button>
-                        ) : post.status === 'open' ? (
-                            <button onClick={toggleInterest} className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs font-bold bg-blue-600 hover:bg-blue-700 text-white transition-colors">
-                                <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 11.5V14m0-2.5v-6a1.5 1.5 0 113 0m-3 6a1.5 1.5 0 00-3 0v2a7.5 7.5 0 0015 0v-5a1.5 1.5 0 00-3 0m-6-3V11m0-5.5v-1a1.5 1.5 0 013 0v1m0 0V11m0-5.5a1.5 1.5 0 013 0v3m0 0V11" /></svg>
-                                {t('feed.imInterested')}
-                            </button>
-                        ) : null
-                    ) : null}
-                </div>
+                <button
+                    onClick={() => setShowComments(!showComments)}
+                    className="flex-1 inline-flex items-center justify-center gap-2 py-2 rounded-xl text-[13px] font-semibold text-gray-500 hover:bg-gray-50 hover:text-gray-700 transition-colors"
+                >
+                    <svg className="w-[18px] h-[18px]" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M12 20.25c4.97 0 9-3.694 9-8.25s-4.03-8.25-9-8.25S3 7.444 3 12c0 2.104.859 4.023 2.273 5.48.432.447.74 1.04.586 1.641a4.483 4.483 0 01-.923 1.785A5.969 5.969 0 006 21c1.282 0 2.47-.402 3.445-1.087.81.22 1.668.337 2.555.337z" />
+                    </svg>
+                    {t('feed.comment')}
+                </button>
+
+                {isOwner ? (
+                    post.status === 'open' ? (
+                        <button onClick={() => setStatus('filled')} className="flex-1 inline-flex items-center justify-center gap-2 py-2 rounded-xl text-[13px] font-semibold text-blue-600 hover:bg-blue-50 transition-colors">
+                            <svg className="w-[18px] h-[18px]" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                            {t('feed.markFilled')}
+                        </button>
+                    ) : (
+                        <button onClick={() => setStatus('open')} className="flex-1 inline-flex items-center justify-center gap-2 py-2 rounded-xl text-[13px] font-semibold text-emerald-600 hover:bg-emerald-50 transition-colors">
+                            <svg className="w-[18px] h-[18px]" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0l3.181 3.183a8.25 8.25 0 0013.803-3.7M4.031 9.865a8.25 8.25 0 0113.803-3.7l3.181 3.182m0-4.991v4.99" /></svg>
+                            {t('feed.reopen')}
+                        </button>
+                    )
+                ) : !auth?.user ? (
+                    <Link href="/login" className="flex-1 inline-flex items-center justify-center gap-2 py-2 rounded-xl text-[13px] font-semibold text-amber-600 hover:bg-amber-50 transition-colors">
+                        <svg className="w-[18px] h-[18px]" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M7 11.5V14m0-2.5v-6a1.5 1.5 0 113 0m-3 6a1.5 1.5 0 00-3 0v2a7.5 7.5 0 0015 0v-5a1.5 1.5 0 00-3 0m-6-3V11m0-5.5v-1a1.5 1.5 0 013 0v1m0 0V11m0-5.5a1.5 1.5 0 013 0v3m0 0V11" /></svg>
+                        {t('feed.imInterested')}
+                    </Link>
+                ) : isTechnician && (myInterest || post.status === 'open') ? (
+                    <button
+                        onClick={toggleInterest}
+                        className={`flex-1 inline-flex items-center justify-center gap-2 py-2 rounded-xl text-[13px] font-semibold transition-colors ${
+                            myInterest ? 'text-emerald-600 hover:bg-emerald-50' : 'text-amber-600 hover:bg-amber-50'
+                        }`}
+                    >
+                        {myInterest ? (
+                            <svg className="w-[18px] h-[18px]" fill="none" stroke="currentColor" strokeWidth={2.5} viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" /></svg>
+                        ) : (
+                            <svg className="w-[18px] h-[18px]" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M7 11.5V14m0-2.5v-6a1.5 1.5 0 113 0m-3 6a1.5 1.5 0 00-3 0v2a7.5 7.5 0 0015 0v-5a1.5 1.5 0 00-3 0m-6-3V11m0-5.5v-1a1.5 1.5 0 013 0v1m0 0V11m0-5.5a1.5 1.5 0 013 0v3m0 0V11" /></svg>
+                        )}
+                        {myInterest ? t('feed.interested') : t('feed.imInterested')}
+                    </button>
+                ) : null}
             </div>
+
+            {/* Comments */}
+            <AnimatePresence>
+                {showComments && (
+                    <motion.div
+                        initial={{ height: 0, opacity: 0 }}
+                        animate={{ height: 'auto', opacity: 1 }}
+                        exit={{ height: 0, opacity: 0 }}
+                        className="overflow-hidden"
+                    >
+                        <div className="border-t border-gray-100 px-5 py-4 space-y-3">
+                            {post.comments.map((comment) => (
+                                <div key={comment.id} className="flex gap-2.5 group">
+                                    <Avatar user={comment.user} size="w-8 h-8" />
+                                    <div className="min-w-0 flex-1">
+                                        <div className="inline-block bg-gray-50 rounded-2xl rounded-tl-md px-3.5 py-2">
+                                            <p className="text-[13px] font-bold text-gray-900">{comment.user.name}</p>
+                                            <p className="text-[13px] text-gray-700 whitespace-pre-line break-words">{comment.body}</p>
+                                        </div>
+                                        <div className="flex items-center gap-3 mt-1 px-2">
+                                            <span className="text-[11px] text-gray-400">{timeAgo(comment.created_at)}</span>
+                                            {auth?.user && (comment.user_id === auth.user.id || isOwner) && (
+                                                <button
+                                                    onClick={() => deleteComment(comment.id)}
+                                                    className="text-[11px] text-gray-400 hover:text-red-500 opacity-0 group-hover:opacity-100 transition-opacity"
+                                                >
+                                                    {t('feed.delete')}
+                                                </button>
+                                            )}
+                                        </div>
+                                    </div>
+                                </div>
+                            ))}
+
+                            {auth?.user ? (
+                                <form onSubmit={submitComment} className="flex items-center gap-2.5 pt-1">
+                                    <Avatar user={auth.user} size="w-8 h-8" />
+                                    <div className="flex-1 flex items-center bg-gray-50 rounded-full border border-gray-200 focus-within:border-blue-400 focus-within:ring-1 focus-within:ring-blue-400 transition-colors pr-1.5">
+                                        <input
+                                            type="text"
+                                            value={commentBody}
+                                            onChange={(e) => setCommentBody(e.target.value)}
+                                            placeholder={t('feed.writeComment')}
+                                            maxLength={1000}
+                                            className="flex-1 bg-transparent border-0 focus:ring-0 text-[13px] text-gray-800 placeholder-gray-400 py-2 px-3.5"
+                                        />
+                                        <button
+                                            type="submit"
+                                            disabled={!commentBody.trim() || sendingComment}
+                                            aria-label={t('feed.send')}
+                                            className="w-7 h-7 rounded-full bg-blue-600 hover:bg-blue-700 disabled:opacity-30 disabled:cursor-not-allowed text-white flex items-center justify-center transition-colors flex-shrink-0"
+                                        >
+                                            <svg className="w-3.5 h-3.5 translate-x-[1px]" fill="currentColor" viewBox="0 0 24 24"><path d="M3.478 2.404a.75.75 0 00-.926.941l2.432 7.905H13.5a.75.75 0 010 1.5H4.984l-2.432 7.905a.75.75 0 00.926.94 60.519 60.519 0 0018.445-8.986.75.75 0 000-1.218A60.517 60.517 0 003.478 2.404z" /></svg>
+                                        </button>
+                                    </div>
+                                </form>
+                            ) : (
+                                <Link href="/login" className="block text-center text-[13px] font-semibold text-blue-600 hover:text-blue-700 pt-1">
+                                    {t('feed.loginToComment')}
+                                </Link>
+                            )}
+                        </div>
+                    </motion.div>
+                )}
+            </AnimatePresence>
 
             {/* Interested technicians (expandable) */}
             <AnimatePresence>
@@ -564,7 +834,7 @@ function PostCard({
                         exit={{ height: 0, opacity: 0 }}
                         className="overflow-hidden"
                     >
-                        <div className="mt-4 pt-4 border-t border-gray-100">
+                        <div className="border-t border-gray-100 px-5 py-4">
                             <p className="text-[11px] font-bold uppercase tracking-wider text-gray-400 mb-3">{t('feed.interestedTechnicians')}</p>
                             <div className="space-y-2.5">
                                 {post.interests.map((interest) => (

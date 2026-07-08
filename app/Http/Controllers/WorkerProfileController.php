@@ -12,6 +12,39 @@ use Inertia\Inertia;
 
 class WorkerProfileController extends Controller
 {
+    /**
+     * Lightweight typeahead search used by the home page search box.
+     */
+    public function search(Request $request)
+    {
+        $q = trim((string) $request->query('q'));
+
+        if (mb_strlen($q) < 2) {
+            return response()->json([]);
+        }
+
+        $workers = WorkerProfile::with('user:id,name,avatar')
+            ->where('availability', '!=', 'not_available')
+            ->where(fn ($query) => $query
+                ->where('title', 'like', "%{$q}%")
+                ->orWhere('city', 'like', "%{$q}%")
+                ->orWhere('state', 'like', "%{$q}%")
+                ->orWhereHas('user', fn ($u) => $u->where('name', 'like', "%{$q}%"))
+                ->orWhereHas('skills', fn ($s) => $s->where('name', 'like', "%{$q}%"))
+                ->orWhereHas('jobCategories', fn ($c) => $c->where('name', 'like', "%{$q}%")))
+            ->take(6)
+            ->get(['id', 'user_id', 'title', 'city', 'state'])
+            ->map(fn ($w) => [
+                'id' => $w->id,
+                'name' => $w->user?->name,
+                'avatar' => $w->user?->avatar,
+                'title' => $w->title,
+                'location' => trim(implode(', ', array_filter([$w->city, $w->state]))),
+            ]);
+
+        return response()->json($workers);
+    }
+
     public function index(Request $request)
     {
         $query = WorkerProfile::with(['user.reviewsReceived', 'skills', 'jobCategories', 'portfolioPhotos']);

@@ -1,6 +1,5 @@
 <?php
 
-use App\Http\Controllers\HomeController;
 use App\Http\Controllers\JobListingController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\UserInviteController;
@@ -32,13 +31,14 @@ Route::get('/sitemap.xml', function () {
         ->header('Content-Type', 'application/xml');
 })->name('sitemap');
 
-// Public routes
-Route::get('/', [HomeController::class, 'index'])->name('home');
+// Public routes — the social work feed IS the home page
+Route::get('/', [WorkPostController::class, 'index'])->name('home');
+Route::get('/feed', fn () => redirect()->route('home'))->name('feed');
+Route::get('/workers-search', [WorkerProfileController::class, 'search'])->name('workers.search');
 Route::get('/workers', [WorkerProfileController::class, 'index'])->name('workers.index');
 Route::get('/workers/{worker}', [WorkerProfileController::class, 'show'])->name('workers.show');
 Route::get('/jobs', [JobListingController::class, 'index'])->name('jobs.index');
 Route::get('/jobs/{job}', [JobListingController::class, 'show'])->name('jobs.show');
-Route::get('/feed', [WorkPostController::class, 'index'])->name('feed');
 
 // Dashboard — redirect to own worker profile
 Route::get('/dashboard', function () {
@@ -79,6 +79,9 @@ Route::middleware('auth')->group(function () {
     // Work feed (community posts)
     Route::post('/feed', [WorkPostController::class, 'store'])->name('feed.store');
     Route::post('/feed/{post}/interest', [WorkPostController::class, 'toggleInterest'])->name('feed.interest');
+    Route::post('/feed/{post}/like', [WorkPostController::class, 'toggleLike'])->name('feed.like');
+    Route::post('/feed/{post}/comments', [WorkPostController::class, 'storeComment'])->name('feed.comments.store');
+    Route::delete('/feed/comments/{comment}', [WorkPostController::class, 'destroyComment'])->name('feed.comments.destroy');
     Route::patch('/feed/{post}/status', [WorkPostController::class, 'updateStatus'])->name('feed.status');
     Route::delete('/feed/{post}', [WorkPostController::class, 'destroy'])->name('feed.destroy');
 });

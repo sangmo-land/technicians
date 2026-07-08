@@ -102,6 +102,21 @@ const fr = {
         onlyTechnicians: 'Seuls les techniciens peuvent manifester leur intérêt',
         notified: '{{n}} techniciens notifiés',
         suggestedTechnicians: 'Techniciens disponibles',
+
+        // Social home
+        homeHeading: "De quoi avez-vous besoin aujourd'hui ?",
+        homeTagline: 'Publiez-le sur le fil — ou trouvez tout de suite le bon technicien.',
+        searchWorkersPlaceholder: 'Rechercher des techniciens — nom, métier ou ville…',
+        seeAllResults: 'Voir tous les résultats',
+        noResults: 'Aucun technicien trouvé',
+        like: "J'aime",
+        liked: 'Aimé',
+        comment: 'Commenter',
+        likesCount: "{{n}} J'aime",
+        commentsCount: '{{n}} commentaires',
+        writeComment: 'Écrire un commentaire…',
+        send: 'Envoyer',
+        loginToComment: 'Connectez-vous pour commenter',
     },
 
     // ─── Footer ──────────────────────────────────────────

@@ -68,7 +68,7 @@ export default function NotificationsIndex({ notifications, unreadIds }: Props) 
                                 return (
                                     <motion.div key={notification.id} initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }}>
                                         <Link
-                                            href="/feed"
+                                            href="/"
                                             className={`block bg-white rounded-2xl border p-4 shadow-sm hover:shadow transition-shadow ${isNew ? 'border-blue-200 bg-blue-50/40' : 'border-gray-100'}`}
                                         >
                                             <div className="flex gap-3">

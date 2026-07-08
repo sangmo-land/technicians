@@ -102,6 +102,21 @@ const en = {
         onlyTechnicians: 'Only technicians can show interest',
         notified: '{{n}} technicians notified',
         suggestedTechnicians: 'Available technicians',
+
+        // Social home
+        homeHeading: 'What do you need done today?',
+        homeTagline: 'Post it to the feed — or find the right technician right away.',
+        searchWorkersPlaceholder: 'Search technicians — name, trade, or city…',
+        seeAllResults: 'See all results',
+        noResults: 'No technicians found',
+        like: 'Like',
+        liked: 'Liked',
+        comment: 'Comment',
+        likesCount: '{{n}} likes',
+        commentsCount: '{{n}} comments',
+        writeComment: 'Write a comment…',
+        send: 'Send',
+        loginToComment: 'Log in to comment',
     },
 
     // ─── Footer ──────────────────────────────────────────

@@ -6,6 +6,7 @@ use App\Jobs\NotifyTechniciansOfWorkPost;
 use App\Models\JobCategory;
 use App\Models\WorkerProfile;
 use App\Models\WorkPost;
+use App\Models\WorkPostComment;
 use App\Models\WorkPostInterest;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
@@ -22,7 +23,10 @@ class WorkPostController extends Controller
                 'user:id,name,phone,avatar',
                 'user.workerProfile:id,user_id',
             ]),
-        ])->withCount(['interests', 'notifications as notified_count']);
+            'comments' => fn ($q) => $q->oldest()->with('user:id,name,avatar'),
+        ])
+            ->withCount(['interests', 'likes', 'comments', 'notifications as notified_count'])
+            ->withExists(['likes as liked_by_me' => fn ($q) => $q->where('user_id', $request->user()?->id ?? 0)]);
 
         if ($request->filled('category')) {
             $postsQuery->where('category_id', $request->category);
@@ -103,6 +107,48 @@ class WorkPostController extends Controller
         ]);
 
         return back()->with('success', 'interest_added');
+    }
+
+    public function toggleLike(Request $request, WorkPost $post)
+    {
+        $existing = $post->likes()->where('user_id', $request->user()->id)->first();
+
+        if ($existing) {
+            $existing->delete();
+        } else {
+            $post->likes()->create(['user_id' => $request->user()->id]);
+        }
+
+        return back();
+    }
+
+    public function storeComment(Request $request, WorkPost $post)
+    {
+        $validated = $request->validate([
+            'body' => 'required|string|max:1000',
+        ]);
+
+        $post->comments()->create([
+            'user_id' => $request->user()->id,
+            'body' => $validated['body'],
+        ]);
+
+        return back();
+    }
+
+    public function destroyComment(Request $request, WorkPostComment $comment)
+    {
+        $user = $request->user();
+
+        if ($comment->user_id !== $user->id
+            && $comment->workPost->user_id !== $user->id
+            && ! $user->isAdmin()) {
+            abort(403);
+        }
+
+        $comment->delete();
+
+        return back();
     }
 
     public function updateStatus(Request $request, WorkPost $post)
