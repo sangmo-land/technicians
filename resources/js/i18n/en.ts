@@ -118,6 +118,11 @@ const en = {
         send: 'Send',
         loginToComment: 'Log in to comment',
         post: 'Post',
+        popularTrades: 'Popular trades',
+        howItWorks: 'How it works',
+        step1: 'Post the job you need done — describe it in a sentence.',
+        step2: 'Skilled technicians nearby show interest instantly.',
+        step3: 'Pick your team and get in touch directly.',
     },
 
     // ─── Footer ──────────────────────────────────────────

@@ -118,6 +118,11 @@ const fr = {
         send: 'Envoyer',
         loginToComment: 'Connectez-vous pour commenter',
         post: 'Publier',
+        popularTrades: 'Métiers populaires',
+        howItWorks: 'Comment ça marche',
+        step1: 'Publiez le travail à réaliser — décrivez-le en une phrase.',
+        step2: 'Les techniciens qualifiés à proximité manifestent leur intérêt.',
+        step3: 'Choisissez votre équipe et contactez-les directement.',
     },
 
     // ─── Footer ──────────────────────────────────────────

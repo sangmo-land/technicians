@@ -5,6 +5,7 @@ import AppLayout from '@/Layouts/AppLayout';
 import InputError from '@/Components/InputError';
 import { useTranslation } from '@/hooks/useTranslation';
 import { cameroonRegions } from '@/data/cameroonLocations';
+import { getCategoryColor } from '@/utils/categoryColors';
 import { JobCategory, PaginatedData } from '@/types';
 
 interface FeedUser {
@@ -246,21 +247,28 @@ export default function FeedIndex({ posts, categories, filters, suggestedWorkers
                 <meta name="description" content={t('home.seoDescription')} />
             </Head>
 
-            <div className="min-h-screen bg-gray-50 py-6">
-                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="relative min-h-screen bg-gradient-to-b from-slate-100 via-[#eef1f7] to-slate-100 py-6">
+                {/* Ambient brand glow behind the timeline */}
+                <div className="pointer-events-none absolute inset-x-0 top-0 h-72 bg-gradient-to-b from-blue-600/[0.07] to-transparent" />
+
+                <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                     <div className="lg:grid lg:grid-cols-12 lg:gap-6 lg:items-start">
 
                     {/* ── Left rail ────────────────────────────────── */}
-                    <aside className="hidden lg:block lg:col-span-3 lg:sticky lg:top-24">
+                    <aside className="hidden lg:block lg:col-span-3 lg:sticky lg:top-24 space-y-4">
                         {auth?.user ? (
-                            <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5">
-                                <div className="flex items-center gap-3">
-                                    <Avatar user={auth.user} size="w-12 h-12" />
-                                    <div className="min-w-0">
+                            <div className="bg-white rounded-2xl border border-slate-200/70 shadow-lg shadow-slate-300/30 overflow-hidden">
+                                <div className="h-16 bg-gradient-to-br from-blue-600 via-blue-700 to-slate-800" />
+                                <div className="px-5 pb-5">
+                                    <div className="-mt-8 flex items-end gap-3">
+                                        <div className="ring-4 ring-white rounded-full">
+                                            <Avatar user={auth.user} size="w-14 h-14" />
+                                        </div>
+                                    </div>
+                                    <div className="mt-2 min-w-0">
                                         <p className="font-bold text-gray-900 truncate">{auth.user.name}</p>
                                         <p className="text-xs text-gray-400 truncate">{auth.user.email}</p>
                                     </div>
-                                </div>
                                 <nav className="mt-4 pt-4 border-t border-gray-100 space-y-0.5">
                                     {auth.worker_profile_id && (
                                         <Link href={`/workers/${auth.worker_profile_id}`} className="flex items-center gap-3 px-2 py-2 -mx-2 rounded-xl text-sm font-medium text-gray-600 hover:bg-gray-50 hover:text-gray-900 transition-colors">
@@ -277,9 +285,12 @@ export default function FeedIndex({ posts, categories, filters, suggestedWorkers
                                         {t('nav.findWorkers')}
                                     </Link>
                                 </nav>
+                                </div>
                             </div>
                         ) : (
-                            <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5">
+                            <div className="bg-white rounded-2xl border border-slate-200/70 shadow-lg shadow-slate-300/30 overflow-hidden">
+                                <div className="h-16 bg-gradient-to-br from-blue-600 via-blue-700 to-slate-800" />
+                                <div className="p-5">
                                 <p className="font-bold text-gray-900">{t('feed.heading')}</p>
                                 <p className="text-sm text-gray-500 mt-1 leading-relaxed">{t('feed.loginToPost')}</p>
                                 <Link href="/register" className="mt-4 block text-center bg-blue-600 hover:bg-blue-700 text-white px-4 py-2.5 rounded-full text-sm font-semibold transition-colors">
@@ -288,8 +299,26 @@ export default function FeedIndex({ posts, categories, filters, suggestedWorkers
                                 <Link href="/login" className="mt-2 block text-center border border-gray-200 hover:bg-gray-50 text-gray-700 px-4 py-2.5 rounded-full text-sm font-semibold transition-colors">
                                     {t('nav.logIn')}
                                 </Link>
+                                </div>
                             </div>
                         )}
+
+                        {/* How it works */}
+                        <div className="rounded-2xl border border-slate-200/70 shadow-lg shadow-slate-300/30 overflow-hidden bg-gradient-to-br from-slate-800 to-blue-900 p-5 text-white">
+                            <p className="text-[15px] font-bold mb-4">{t('feed.howItWorks')}</p>
+                            <ul className="space-y-3.5">
+                                {[
+                                    { n: '1', text: t('feed.step1') },
+                                    { n: '2', text: t('feed.step2') },
+                                    { n: '3', text: t('feed.step3') },
+                                ].map((s) => (
+                                    <li key={s.n} className="flex items-start gap-3">
+                                        <span className="flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-lg bg-white/15 text-[11px] font-extrabold">{s.n}</span>
+                                        <span className="text-[13px] text-blue-50/90 leading-snug">{s.text}</span>
+                                    </li>
+                                ))}
+                            </ul>
+                        </div>
                     </aside>
 
                     {/* ── Center: timeline ─────────────────────────── */}
@@ -313,7 +342,21 @@ export default function FeedIndex({ posts, categories, filters, suggestedWorkers
                             </div>
                         )}
 
-                        <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-visible">
+                        <div className="bg-white rounded-2xl border border-slate-200/70 shadow-lg shadow-slate-300/30 overflow-visible">
+                            {/* Branded header */}
+                            <div className="relative overflow-hidden rounded-t-2xl bg-gradient-to-r from-blue-700 via-blue-600 to-indigo-600 px-5 py-4">
+                                <div className="pointer-events-none absolute -right-6 -top-10 h-32 w-32 rounded-full bg-white/10 blur-2xl" />
+                                <div className="relative flex items-center gap-2.5">
+                                    <span className="flex h-8 w-8 items-center justify-center rounded-xl bg-white/15 backdrop-blur-sm">
+                                        <svg className="h-4.5 w-4.5 text-white" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M2 18a1 1 0 001 1h18a1 1 0 001-1v-2a1 1 0 00-1-1H3a1 1 0 00-1 1v2zM10 10V5a1 1 0 011-1h2a1 1 0 011 1v5M4 15v-3a6 6 0 016-6M14 6a6 6 0 016 6v3" /></svg>
+                                    </span>
+                                    <div>
+                                        <h1 className="text-[15px] font-extrabold text-white leading-tight">{t('feed.heading')}</h1>
+                                        <p className="text-[11px] text-blue-100/90">{t('feed.homeTagline')}</p>
+                                    </div>
+                                </div>
+                            </div>
+
                             {/* Status tabs */}
                             <div className="flex border-b border-gray-100" role="tablist">
                                 {statusTabs.map((tab) => {
@@ -523,6 +566,29 @@ export default function FeedIndex({ posts, categories, filters, suggestedWorkers
                                 </Link>
                             </div>
                         )}
+
+                        {/* Popular trades */}
+                        {categories.length > 0 && (
+                            <div className="bg-white rounded-2xl border border-slate-200/70 shadow-lg shadow-slate-300/30 p-5">
+                                <p className="text-[15px] font-bold text-gray-900 mb-3.5">{t('feed.popularTrades')}</p>
+                                <div className="flex flex-wrap gap-2">
+                                    {categories.slice(0, 10).map((c) => (
+                                        <button
+                                            key={c.id}
+                                            onClick={() => applyFilter('category', String(c.id))}
+                                            className={`px-2.5 py-1 rounded-lg text-[11px] font-bold ring-1 ring-inset transition-transform hover:-translate-y-0.5 ${getCategoryColor(c.name)}`}
+                                        >
+                                            {translateCategory(c.name)}
+                                        </button>
+                                    ))}
+                                </div>
+                            </div>
+                        )}
+
+                        {/* Footer note */}
+                        <p className="px-2 text-[11px] text-slate-400 leading-relaxed">
+                            {t('common.copyright', { year: new Date().getFullYear() })}
+                        </p>
                     </aside>
 
                     </div>
@@ -610,13 +676,8 @@ function PostRow({
         }
     };
 
-    const contextLine = [
-        post.category ? translateCategory(post.category.name) : null,
-        [post.city, post.state].filter(Boolean).join(', ') || null,
-    ].filter(Boolean).join(' · ');
-
     return (
-        <article className="px-4 sm:px-5 py-4 border-b border-gray-100 last:border-b-0 hover:bg-gray-50/50 transition-colors">
+        <article className="px-4 sm:px-5 py-4 border-b border-gray-100 last:border-b-0 hover:bg-slate-50/70 transition-colors">
             <div className="flex gap-3">
                 {post.user.worker_profile ? (
                     <Link href={`/workers/${post.user.worker_profile.id}`} className="flex-shrink-0">
@@ -676,24 +737,27 @@ function PostRow({
                         )}
                     </div>
 
-                    {/* Context line */}
-                    {contextLine && <p className="text-[13px] text-gray-400 mt-0.5">{contextLine}</p>}
-
                     {/* Body */}
                     <p className="mt-1.5 text-[15px] text-gray-800 leading-relaxed whitespace-pre-line">{post.description}</p>
 
-                    {/* Details line */}
-                    {(post.technicians_needed || post.budget) && (
-                        <div className="flex flex-wrap items-center gap-x-4 gap-y-1 mt-2 text-[13px] text-gray-500">
-                            {post.technicians_needed ? (
-                                <span className="inline-flex items-center gap-1.5">
-                                    <svg className="w-3.5 h-3.5 text-gray-400" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M15 19.128a9.38 9.38 0 002.625.372 9.337 9.337 0 004.121-.952 4.125 4.125 0 00-7.533-2.493M15 19.128v-.003c0-1.113-.285-2.16-.786-3.07M15 19.128v.106A12.318 12.318 0 018.624 21c-2.331 0-4.512-.645-6.374-1.766l-.001-.109a6.375 6.375 0 0111.964-3.07M12 6.375a3.375 3.375 0 11-6.75 0 3.375 3.375 0 016.75 0zm8.25 2.25a2.625 2.625 0 11-5.25 0 2.625 2.625 0 015.25 0z" /></svg>
-                                    {t('feed.slots', { count: post.interests_count, needed: post.technicians_needed })}
+                    {/* Tags: trade + location + budget */}
+                    {(post.category || post.city || post.state || post.budget) && (
+                        <div className="flex flex-wrap items-center gap-1.5 mt-2.5">
+                            {post.category && (
+                                <span className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-[11px] font-bold ring-1 ring-inset ${getCategoryColor(post.category.name)}`}>
+                                    <svg className="w-3 h-3" fill="none" stroke="currentColor" strokeWidth={2.2} viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M11.42 15.17L17.25 21A2.652 2.652 0 0021 17.25l-5.877-5.877M11.42 15.17l2.496-3.03c.317-.384.74-.626 1.208-.766M11.42 15.17l-4.655 5.653a2.548 2.548 0 11-3.586-3.586l6.837-5.63m5.108-.233c.55-.164 1.163-.188 1.743-.14a4.5 4.5 0 004.486-6.336l-3.276 3.277a3.004 3.004 0 01-2.25-2.25l3.276-3.276a4.5 4.5 0 00-6.336 4.486c.091 1.076-.071 2.264-.904 2.95l-.102.085" /></svg>
+                                    {translateCategory(post.category.name)}
                                 </span>
-                            ) : null}
+                            )}
+                            {(post.city || post.state) && (
+                                <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-[11px] font-semibold bg-slate-100 text-slate-600 ring-1 ring-inset ring-slate-200/80">
+                                    <svg className="w-3 h-3" fill="none" stroke="currentColor" strokeWidth={2.2} viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M15 10.5a3 3 0 11-6 0 3 3 0 016 0z" /><path strokeLinecap="round" strokeLinejoin="round" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1115 0z" /></svg>
+                                    {[post.city, post.state].filter(Boolean).join(', ')}
+                                </span>
+                            )}
                             {post.budget && (
-                                <span className="inline-flex items-center gap-1.5">
-                                    <svg className="w-3.5 h-3.5 text-gray-400" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M12 6v12m-3-2.818l.879.659c1.171.879 3.07.879 4.242 0 1.172-.879 1.172-2.303 0-3.182C13.536 12.219 12.768 12 12 12c-.725 0-1.45-.22-2.003-.659-1.106-.879-1.106-2.303 0-3.182s2.9-.879 4.006 0l.415.33M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                                <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-[11px] font-bold bg-emerald-50 text-emerald-700 ring-1 ring-inset ring-emerald-200/80">
+                                    <svg className="w-3 h-3" fill="none" stroke="currentColor" strokeWidth={2.2} viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M12 6v12m-3-2.818l.879.659c1.171.879 3.07.879 4.242 0 1.172-.879 1.172-2.303 0-3.182C13.536 12.219 12.768 12 12 12c-.725 0-1.45-.22-2.003-.659-1.106-.879-1.106-2.303 0-3.182s2.9-.879 4.006 0l.415.33M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
                                     {post.budget}
                                 </span>
                             )}
@@ -702,13 +766,21 @@ function PostRow({
 
                     {/* Positions progress */}
                     {post.technicians_needed ? (
-                        <div className="mt-2.5 max-w-[220px]">
-                            <div className="h-1 rounded-full bg-gray-100 overflow-hidden">
+                        <div className="mt-3 max-w-[260px]">
+                            <div className="flex items-center justify-between mb-1">
+                                <span className="text-[11px] font-semibold text-slate-500">
+                                    {t('feed.slots', { count: post.interests_count, needed: post.technicians_needed })}
+                                </span>
+                                {post.interests_count >= post.technicians_needed && (
+                                    <span className="text-[10px] font-bold uppercase tracking-wide text-emerald-600">✓</span>
+                                )}
+                            </div>
+                            <div className="h-1.5 rounded-full bg-slate-100 overflow-hidden">
                                 <motion.div
                                     initial={{ width: 0 }}
                                     animate={{ width: `${Math.min(100, Math.round((post.interests_count / post.technicians_needed) * 100))}%` }}
                                     transition={{ duration: 0.7, ease: 'easeOut' }}
-                                    className={`h-full rounded-full ${post.interests_count >= post.technicians_needed ? 'bg-emerald-500' : 'bg-blue-500'}`}
+                                    className={`h-full rounded-full ${post.interests_count >= post.technicians_needed ? 'bg-gradient-to-r from-emerald-500 to-emerald-400' : 'bg-gradient-to-r from-amber-500 to-amber-400'}`}
                                 />
                             </div>
                         </div>
