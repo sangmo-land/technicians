@@ -125,6 +125,19 @@ const fr = {
         step3: 'Choisissez votre équipe et contactez-les directement.',
     },
 
+    // ─── Site home (workers-first) ───────────────────────
+    siteHome: {
+        headline: 'Des mains qualifiées, disponibles.',
+        sub: 'Recrutez des techniciens du bâtiment vérifiés partout au Cameroun — ou publiez le travail et laissez-les venir à vous.',
+        availableNow: 'Disponibles maintenant',
+        viewAll: 'Voir tous les ouvriers',
+        onTheBoard: 'Le tableau des travaux',
+        postJob: 'Publier un travail',
+        available: 'Disponible',
+        perDay: '/jour',
+        noWorkersYet: 'Aucun technicien disponible pour le moment',
+    },
+
     // ─── Footer ──────────────────────────────────────────
     footer: {
         tagline: 'Trouvez des professionnels qualifiés du génie civil pour vos projets de construction.',

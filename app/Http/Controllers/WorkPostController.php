@@ -49,11 +49,11 @@ class WorkPostController extends Controller
             'posts' => $posts,
             'categories' => JobCategory::where('is_active', true)->orderBy('name')->get(['id', 'name']),
             'filters' => $request->only(['category', 'region', 'status']),
-            'suggestedWorkers' => WorkerProfile::with(['user:id,name,avatar', 'jobCategories:id,name'])
+            'featuredWorkers' => WorkerProfile::with(['user:id,name,avatar', 'jobCategories:id,name'])
                 ->where('availability', '!=', 'not_available')
                 ->latest()
-                ->take(5)
-                ->get(['id', 'user_id', 'title', 'city', 'state']),
+                ->take(8)
+                ->get(['id', 'user_id', 'title', 'city', 'state', 'daily_rate', 'availability']),
         ]);
     }
 

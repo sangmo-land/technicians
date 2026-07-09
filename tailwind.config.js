@@ -16,6 +16,7 @@ export default {
         extend: {
             fontFamily: {
                 sans: ['Inter', ...defaultTheme.fontFamily.sans],
+                display: ['Oswald', 'Inter', ...defaultTheme.fontFamily.sans],
             },
         },
     },

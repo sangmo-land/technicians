@@ -125,6 +125,19 @@ const en = {
         step3: 'Pick your team and get in touch directly.',
     },
 
+    // ─── Site home (workers-first) ───────────────────────
+    siteHome: {
+        headline: 'Skilled hands, on call.',
+        sub: 'Hire verified construction technicians across Cameroon — or post the job and let them come to you.',
+        availableNow: 'Available now',
+        viewAll: 'View all workers',
+        onTheBoard: 'The job board',
+        postJob: 'Post a job',
+        available: 'Available',
+        perDay: '/day',
+        noWorkersYet: 'No technicians available yet',
+    },
+
     // ─── Footer ──────────────────────────────────────────
     footer: {
         tagline: 'Find skilled civil engineering professionals for your construction projects.',

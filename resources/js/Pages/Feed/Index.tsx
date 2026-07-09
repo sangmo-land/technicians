@@ -53,12 +53,14 @@ interface Post {
     category?: { id: number; name: string } | null;
 }
 
-interface SuggestedWorker {
+interface FeaturedWorker {
     id: number;
     user_id: number;
     title?: string | null;
     city?: string | null;
     state?: string | null;
+    daily_rate?: string | number | null;
+    availability?: string | null;
     user: FeedUser;
     job_categories?: { id: number; name: string }[];
 }
@@ -75,7 +77,7 @@ interface Props {
     posts: PaginatedData<Post>;
     categories: JobCategory[];
     filters: { category?: string; region?: string; status?: string };
-    suggestedWorkers: SuggestedWorker[];
+    featuredWorkers: FeaturedWorker[];
 }
 
 function Avatar({ user, size = 'w-10 h-10' }: { user: { name: string; avatar?: string | null }; size?: string }) {
@@ -90,8 +92,21 @@ function Avatar({ user, size = 'w-10 h-10' }: { user: { name: string; avatar?: s
     );
 }
 
+/* ── Section header: skewed safety-amber marker + signage type ── */
+function SectionHeader({ label, action }: { label: string; action?: React.ReactNode }) {
+    return (
+        <div className="flex items-end justify-between gap-4 mb-4">
+            <h2 className="font-display uppercase text-xl md:text-2xl tracking-wide text-slate-900 flex items-center gap-3">
+                <span className="inline-block w-2.5 h-6 bg-amber-500 -skew-x-12" aria-hidden="true" />
+                {label}
+            </h2>
+            {action}
+        </div>
+    );
+}
+
 /* ── Live technician search (typeahead) ───────────────────── */
-function WorkerSearch() {
+function WorkerSearch({ large = false }: { large?: boolean }) {
     const { t } = useTranslation();
     const [q, setQ] = useState('');
     const [results, setResults] = useState<SearchResult[]>([]);
@@ -134,8 +149,12 @@ function WorkerSearch() {
 
     return (
         <div ref={ref} className="relative w-full">
-            <div className="flex items-center bg-gray-100 focus-within:bg-white rounded-full border border-transparent focus-within:border-blue-400 focus-within:ring-1 focus-within:ring-blue-400 px-4 transition-colors">
-                <svg className="w-4 h-4 text-gray-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <div className={`flex items-center rounded-full transition-colors ${
+                large
+                    ? 'bg-white shadow-xl shadow-black/25 px-5 focus-within:ring-2 focus-within:ring-amber-500'
+                    : 'bg-gray-100 focus-within:bg-white border border-transparent focus-within:border-amber-500 focus-within:ring-1 focus-within:ring-amber-500 px-4'
+            }`}>
+                <svg className={`${large ? 'w-5 h-5' : 'w-4 h-4'} text-gray-400 flex-shrink-0`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                 </svg>
                 <input
@@ -145,7 +164,7 @@ function WorkerSearch() {
                     onFocus={() => q.trim().length >= 2 && setOpen(true)}
                     onKeyDown={(e) => { if (e.key === 'Enter') goToAllResults(); }}
                     placeholder={t('feed.searchWorkersPlaceholder')}
-                    className="w-full py-2.5 px-3 border-0 focus:ring-0 text-sm text-gray-900 placeholder-gray-400 bg-transparent"
+                    className={`w-full border-0 focus:ring-0 text-gray-900 placeholder-gray-400 bg-transparent ${large ? 'py-3.5 px-3 text-[15px]' : 'py-2.5 px-3 text-sm'}`}
                 />
                 {loading && (
                     <svg className="w-4 h-4 text-gray-400 gear-spin flex-shrink-0" fill="none" stroke="currentColor" strokeWidth={1.8} viewBox="0 0 24 24">
@@ -179,7 +198,7 @@ function WorkerSearch() {
                                 ))}
                             </div>
                         )}
-                        <button onClick={goToAllResults} className="w-full px-4 py-3 border-t border-gray-100 text-sm font-semibold text-blue-600 hover:bg-gray-50 transition-colors text-center">
+                        <button onClick={goToAllResults} className="w-full px-4 py-3 border-t border-gray-100 text-sm font-bold text-amber-600 hover:bg-amber-50 transition-colors text-center">
                             {t('feed.seeAllResults')}
                         </button>
                     </motion.div>
@@ -189,7 +208,7 @@ function WorkerSearch() {
     );
 }
 
-export default function FeedIndex({ posts, categories, filters, suggestedWorkers }: Props) {
+export default function FeedIndex({ posts, categories, filters, featuredWorkers }: Props) {
     const { auth } = usePage().props as any;
     const { t } = useTranslation();
 
@@ -247,18 +266,87 @@ export default function FeedIndex({ posts, categories, filters, suggestedWorkers
                 <meta name="description" content={t('home.seoDescription')} />
             </Head>
 
-            <div className="relative min-h-screen bg-gradient-to-b from-slate-100 via-[#eef1f7] to-slate-100 py-6">
-                {/* Ambient brand glow behind the timeline */}
-                <div className="pointer-events-none absolute inset-x-0 top-0 h-72 bg-gradient-to-b from-blue-600/[0.07] to-transparent" />
+            {/* ══ Command bar: charcoal, signage type, search ══ */}
+            <section className="relative bg-slate-900 overflow-hidden">
+                <div className="pointer-events-none absolute inset-0" aria-hidden="true">
+                    <div className="absolute -top-20 right-[-10%] w-[420px] h-[420px] rounded-full bg-amber-500/[0.07] blur-[90px]" />
+                    {/* Oversized hard-hat line drawing anchoring the right side */}
+                    <svg className="hidden lg:block absolute -right-16 -bottom-24 h-[420px] w-auto text-white/[0.045]" fill="none" stroke="currentColor" strokeWidth={1.2} viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M2 18a1 1 0 001 1h18a1 1 0 001-1v-2a1 1 0 00-1-1H3a1 1 0 00-1 1v2zM10 10V5a1 1 0 011-1h2a1 1 0 011 1v5M4 15v-3a6 6 0 016-6M14 6a6 6 0 016 6v3" />
+                    </svg>
+                </div>
+                <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 md:py-14">
+                    <div className="max-w-2xl">
+                        <motion.h1
+                            initial={{ opacity: 0, y: 14 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            className="font-display uppercase text-3xl md:text-5xl tracking-wide text-white leading-none"
+                        >
+                            {t('siteHome.headline')}
+                        </motion.h1>
+                        <motion.span
+                            initial={{ scaleX: 0 }}
+                            animate={{ scaleX: 1 }}
+                            transition={{ delay: 0.2, duration: 0.45, ease: 'easeOut' }}
+                            className="block origin-left mt-3 h-2 w-24 bg-amber-500 -skew-x-12"
+                            aria-hidden="true"
+                        />
+                        <motion.p
+                            initial={{ opacity: 0, y: 10 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{ delay: 0.1 }}
+                            className="mt-4 text-slate-400 text-sm md:text-base leading-relaxed"
+                        >
+                            {t('siteHome.sub')}
+                        </motion.p>
+                        <motion.div
+                            initial={{ opacity: 0, y: 10 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{ delay: 0.2 }}
+                            className="mt-6"
+                        >
+                            <WorkerSearch large />
+                        </motion.div>
+                    </div>
+                </div>
+            </section>
 
+            <div className="relative min-h-screen bg-gradient-to-b from-slate-100 via-[#eef1f7] to-slate-100 py-8">
                 <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+
+                    {/* ══ Workers first: site-badge cards ══ */}
+                    <section className="mb-10">
+                        <SectionHeader
+                            label={t('siteHome.availableNow')}
+                            action={
+                                <Link href="/workers" className="inline-flex items-center gap-1.5 text-sm font-bold text-slate-700 hover:text-amber-600 transition-colors">
+                                    {t('siteHome.viewAll')}
+                                    <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M17 8l4 4m0 0l-4 4m4-4H3" /></svg>
+                                </Link>
+                            }
+                        />
+                        {featuredWorkers.length === 0 ? (
+                            <div className="bg-white rounded-xl border border-slate-200/70 p-10 text-center text-sm text-gray-400">
+                                {t('siteHome.noWorkersYet')}
+                            </div>
+                        ) : (
+                            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+                                {featuredWorkers.map((worker, i) => (
+                                    <WorkerBadgeCard key={worker.id} worker={worker} index={i} t={t} translateCategory={translateCategory} />
+                                ))}
+                            </div>
+                        )}
+                    </section>
+
+                    {/* ══ The job board ══ */}
+                    <SectionHeader label={t('siteHome.onTheBoard')} />
                     <div className="lg:grid lg:grid-cols-12 lg:gap-6 lg:items-start">
 
                     {/* ── Left rail ────────────────────────────────── */}
                     <aside className="hidden lg:block lg:col-span-3 lg:sticky lg:top-24 space-y-4">
                         {auth?.user ? (
                             <div className="bg-white rounded-2xl border border-slate-200/70 shadow-lg shadow-slate-300/30 overflow-hidden">
-                                <div className="h-16 bg-gradient-to-br from-blue-600 via-blue-700 to-slate-800" />
+                                <div className="h-14 bg-slate-900 border-b-4 border-amber-500" />
                                 <div className="px-5 pb-5">
                                     <div className="-mt-8 flex items-end gap-3">
                                         <div className="ring-4 ring-white rounded-full">
@@ -289,11 +377,11 @@ export default function FeedIndex({ posts, categories, filters, suggestedWorkers
                             </div>
                         ) : (
                             <div className="bg-white rounded-2xl border border-slate-200/70 shadow-lg shadow-slate-300/30 overflow-hidden">
-                                <div className="h-16 bg-gradient-to-br from-blue-600 via-blue-700 to-slate-800" />
+                                <div className="h-14 bg-slate-900 border-b-4 border-amber-500" />
                                 <div className="p-5">
                                 <p className="font-bold text-gray-900">{t('feed.heading')}</p>
                                 <p className="text-sm text-gray-500 mt-1 leading-relaxed">{t('feed.loginToPost')}</p>
-                                <Link href="/register" className="mt-4 block text-center bg-blue-600 hover:bg-blue-700 text-white px-4 py-2.5 rounded-full text-sm font-semibold transition-colors">
+                                <Link href="/register" className="mt-4 block text-center bg-amber-500 hover:bg-amber-400 text-slate-900 px-4 py-2.5 rounded-full text-sm font-bold transition-colors">
                                     {t('nav.signUp')}
                                 </Link>
                                 <Link href="/login" className="mt-2 block text-center border border-gray-200 hover:bg-gray-50 text-gray-700 px-4 py-2.5 rounded-full text-sm font-semibold transition-colors">
@@ -304,8 +392,11 @@ export default function FeedIndex({ posts, categories, filters, suggestedWorkers
                         )}
 
                         {/* How it works */}
-                        <div className="rounded-2xl border border-slate-200/70 shadow-lg shadow-slate-300/30 overflow-hidden bg-gradient-to-br from-slate-800 to-blue-900 p-5 text-white">
-                            <p className="text-[15px] font-bold mb-4">{t('feed.howItWorks')}</p>
+                        <div className="rounded-2xl border border-slate-200/70 shadow-lg shadow-slate-300/30 overflow-hidden bg-slate-900 p-5 text-white">
+                            <p className="font-display uppercase tracking-wide text-[15px] mb-4 flex items-center gap-2.5">
+                                <span className="inline-block w-2 h-4 bg-amber-500 -skew-x-12" aria-hidden="true" />
+                                {t('feed.howItWorks')}
+                            </p>
                             <ul className="space-y-3.5">
                                 {[
                                     { n: '1', text: t('feed.step1') },
@@ -313,8 +404,8 @@ export default function FeedIndex({ posts, categories, filters, suggestedWorkers
                                     { n: '3', text: t('feed.step3') },
                                 ].map((s) => (
                                     <li key={s.n} className="flex items-start gap-3">
-                                        <span className="flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-lg bg-white/15 text-[11px] font-extrabold">{s.n}</span>
-                                        <span className="text-[13px] text-blue-50/90 leading-snug">{s.text}</span>
+                                        <span className="flex h-6 w-6 flex-shrink-0 items-center justify-center bg-amber-500 -skew-x-6 text-[11px] font-extrabold text-slate-900">{s.n}</span>
+                                        <span className="text-[13px] text-slate-300 leading-snug">{s.text}</span>
                                     </li>
                                 ))}
                             </ul>
@@ -335,7 +426,7 @@ export default function FeedIndex({ posts, categories, filters, suggestedWorkers
                                     <Link href="/login" className="border border-gray-200 hover:bg-gray-50 text-gray-700 px-3.5 py-1.5 rounded-full text-xs font-semibold transition-colors">
                                         {t('nav.logIn')}
                                     </Link>
-                                    <Link href="/register" className="bg-blue-600 hover:bg-blue-700 text-white px-3.5 py-1.5 rounded-full text-xs font-semibold transition-colors">
+                                    <Link href="/register" className="bg-amber-500 hover:bg-amber-400 text-slate-900 px-3.5 py-1.5 rounded-full text-xs font-bold transition-colors">
                                         {t('nav.signUp')}
                                     </Link>
                                 </div>
@@ -343,20 +434,6 @@ export default function FeedIndex({ posts, categories, filters, suggestedWorkers
                         )}
 
                         <div className="bg-white rounded-2xl border border-slate-200/70 shadow-lg shadow-slate-300/30 overflow-visible">
-                            {/* Branded header */}
-                            <div className="relative overflow-hidden rounded-t-2xl bg-gradient-to-r from-blue-700 via-blue-600 to-indigo-600 px-5 py-4">
-                                <div className="pointer-events-none absolute -right-6 -top-10 h-32 w-32 rounded-full bg-white/10 blur-2xl" />
-                                <div className="relative flex items-center gap-2.5">
-                                    <span className="flex h-8 w-8 items-center justify-center rounded-xl bg-white/15 backdrop-blur-sm">
-                                        <svg className="h-4.5 w-4.5 text-white" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M2 18a1 1 0 001 1h18a1 1 0 001-1v-2a1 1 0 00-1-1H3a1 1 0 00-1 1v2zM10 10V5a1 1 0 011-1h2a1 1 0 011 1v5M4 15v-3a6 6 0 016-6M14 6a6 6 0 016 6v3" /></svg>
-                                    </span>
-                                    <div>
-                                        <h1 className="text-[15px] font-extrabold text-white leading-tight">{t('feed.heading')}</h1>
-                                        <p className="text-[11px] text-blue-100/90">{t('feed.homeTagline')}</p>
-                                    </div>
-                                </div>
-                            </div>
-
                             {/* Status tabs */}
                             <div className="flex border-b border-gray-100" role="tablist">
                                 {statusTabs.map((tab) => {
@@ -372,7 +449,7 @@ export default function FeedIndex({ posts, categories, filters, suggestedWorkers
                                             }`}
                                         >
                                             {tab.label}
-                                            {active && <span className="absolute bottom-0 left-1/2 -translate-x-1/2 w-12 h-1 rounded-full bg-blue-500" />}
+                                            {active && <span className="absolute bottom-0 left-1/2 -translate-x-1/2 w-12 h-1 bg-amber-500 -skew-x-12" />}
                                         </button>
                                     );
                                 })}
@@ -406,7 +483,7 @@ export default function FeedIndex({ posts, categories, filters, suggestedWorkers
                                                     <select
                                                         value={data.category_id}
                                                         onChange={(e) => setData('category_id', e.target.value)}
-                                                        className="rounded-lg border-gray-200 text-xs text-gray-600 focus:border-blue-500 focus:ring-blue-500"
+                                                        className="rounded-lg border-gray-200 text-xs text-gray-600 focus:border-amber-500 focus:ring-amber-500"
                                                     >
                                                         <option value="">{t('feed.anyCategory')}</option>
                                                         {categories.map((c) => (
@@ -416,7 +493,7 @@ export default function FeedIndex({ posts, categories, filters, suggestedWorkers
                                                     <select
                                                         value={data.state}
                                                         onChange={(e) => setData('state', e.target.value)}
-                                                        className="rounded-lg border-gray-200 text-xs text-gray-600 focus:border-blue-500 focus:ring-blue-500"
+                                                        className="rounded-lg border-gray-200 text-xs text-gray-600 focus:border-amber-500 focus:ring-amber-500"
                                                     >
                                                         <option value="">{t('feed.selectRegion')}</option>
                                                         {cameroonRegions.map((r) => (
@@ -428,7 +505,7 @@ export default function FeedIndex({ posts, categories, filters, suggestedWorkers
                                                         value={data.city}
                                                         onChange={(e) => setData('city', e.target.value)}
                                                         placeholder={t('feed.detailsCity')}
-                                                        className="rounded-lg border-gray-200 text-xs text-gray-600 placeholder-gray-400 focus:border-blue-500 focus:ring-blue-500"
+                                                        className="rounded-lg border-gray-200 text-xs text-gray-600 placeholder-gray-400 focus:border-amber-500 focus:ring-amber-500"
                                                     />
                                                     <input
                                                         type="number"
@@ -437,14 +514,14 @@ export default function FeedIndex({ posts, categories, filters, suggestedWorkers
                                                         value={data.technicians_needed}
                                                         onChange={(e) => setData('technicians_needed', e.target.value)}
                                                         placeholder={t('feed.detailsNeeded')}
-                                                        className="rounded-lg border-gray-200 text-xs text-gray-600 placeholder-gray-400 focus:border-blue-500 focus:ring-blue-500"
+                                                        className="rounded-lg border-gray-200 text-xs text-gray-600 placeholder-gray-400 focus:border-amber-500 focus:ring-amber-500"
                                                     />
                                                     <input
                                                         type="text"
                                                         value={data.budget}
                                                         onChange={(e) => setData('budget', e.target.value)}
                                                         placeholder={t('feed.budgetPlaceholder')}
-                                                        className="col-span-2 sm:col-span-1 rounded-lg border-gray-200 text-xs text-gray-600 placeholder-gray-400 focus:border-blue-500 focus:ring-blue-500"
+                                                        className="col-span-2 sm:col-span-1 rounded-lg border-gray-200 text-xs text-gray-600 placeholder-gray-400 focus:border-amber-500 focus:ring-amber-500"
                                                     />
                                                 </div>
                                             </motion.div>
@@ -469,7 +546,7 @@ export default function FeedIndex({ posts, categories, filters, suggestedWorkers
                                 <select
                                     value={filters.category || ''}
                                     onChange={(e) => applyFilter('category', e.target.value)}
-                                    className="border-0 bg-transparent text-xs font-medium text-gray-500 py-1 pl-1 pr-7 focus:ring-0 cursor-pointer hover:text-gray-800 transition-colors"
+                                    className="min-w-0 flex-1 sm:flex-none sm:w-auto border-0 bg-transparent text-xs font-medium text-gray-500 py-1 pl-1 pr-7 focus:ring-0 cursor-pointer hover:text-gray-800 transition-colors"
                                 >
                                     <option value="">{t('feed.allTrades')}</option>
                                     {categories.map((c) => (
@@ -479,7 +556,7 @@ export default function FeedIndex({ posts, categories, filters, suggestedWorkers
                                 <select
                                     value={filters.region || ''}
                                     onChange={(e) => applyFilter('region', e.target.value)}
-                                    className="border-0 bg-transparent text-xs font-medium text-gray-500 py-1 pl-1 pr-7 focus:ring-0 cursor-pointer hover:text-gray-800 transition-colors"
+                                    className="min-w-0 flex-1 sm:flex-none sm:w-auto border-0 bg-transparent text-xs font-medium text-gray-500 py-1 pl-1 pr-7 focus:ring-0 cursor-pointer hover:text-gray-800 transition-colors"
                                 >
                                     <option value="">{t('feed.allRegions')}</option>
                                     {cameroonRegions.map((r) => (
@@ -524,7 +601,7 @@ export default function FeedIndex({ posts, categories, filters, suggestedWorkers
                                             preserveScroll
                                             className={`px-3.5 py-2 rounded-full text-sm font-medium transition-colors ${
                                                 link.active
-                                                    ? 'bg-blue-600 text-white'
+                                                    ? 'bg-slate-900 text-white'
                                                     : 'bg-white text-gray-600 hover:bg-gray-100 border border-gray-200'
                                             }`}
                                             dangerouslySetInnerHTML={{ __html: link.label }}
@@ -537,36 +614,8 @@ export default function FeedIndex({ posts, categories, filters, suggestedWorkers
                         )}
                     </main>
 
-                    {/* ── Right rail: search + discovery ───────────── */}
+                    {/* ── Right rail: discovery ────────────────────── */}
                     <aside className="hidden lg:block lg:col-span-3 lg:sticky lg:top-24 space-y-4">
-                        <WorkerSearch />
-                        {suggestedWorkers.length > 0 && (
-                            <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5">
-                                <p className="text-[15px] font-bold text-gray-900 mb-4">{t('feed.suggestedTechnicians')}</p>
-                                <div className="space-y-3.5">
-                                    {suggestedWorkers.map((worker) => (
-                                        <div key={worker.id} className="flex items-center gap-3">
-                                            <Avatar user={worker.user} size="w-10 h-10" />
-                                            <div className="min-w-0 flex-1">
-                                                <Link href={`/workers/${worker.id}`} className="block text-sm font-bold text-gray-900 hover:underline truncate">{worker.user.name}</Link>
-                                                <p className="text-xs text-gray-400 truncate">
-                                                    {worker.title
-                                                        || (worker.job_categories?.[0] && translateCategory(worker.job_categories[0].name))
-                                                        || [worker.city, worker.state].filter(Boolean).join(', ')}
-                                                </p>
-                                            </div>
-                                            <Link href={`/workers/${worker.id}`} className="flex-shrink-0 px-3.5 py-1.5 rounded-full text-xs font-bold bg-gray-900 text-white hover:bg-gray-700 transition-colors">
-                                                {t('feed.viewProfile')}
-                                            </Link>
-                                        </div>
-                                    ))}
-                                </div>
-                                <Link href="/workers" className="mt-4 block text-sm font-medium text-blue-600 hover:underline">
-                                    {t('home.viewAllWorkers')}
-                                </Link>
-                            </div>
-                        )}
-
                         {/* Popular trades */}
                         {categories.length > 0 && (
                             <div className="bg-white rounded-2xl border border-slate-200/70 shadow-lg shadow-slate-300/30 p-5">
@@ -980,5 +1029,71 @@ function PostRow({
                 </div>
             </div>
         </article>
+    );
+}
+
+/* ── Signature: technician card as a site access badge ────── */
+function WorkerBadgeCard({
+    worker,
+    index,
+    t,
+    translateCategory,
+}: {
+    worker: FeaturedWorker;
+    index: number;
+    t: (key: string, params?: Record<string, string | number>) => string;
+    translateCategory: (name: string) => string;
+}) {
+    const trade = worker.title || (worker.job_categories?.[0] && translateCategory(worker.job_categories[0].name)) || null;
+    const location = [worker.city, worker.state?.split('/')[0]?.trim()].filter(Boolean).join(', ');
+    const rate = worker.daily_rate && Number(worker.daily_rate) > 0
+        ? `${Number(worker.daily_rate).toLocaleString()} FCFA${t('siteHome.perDay')}`
+        : null;
+
+    return (
+        <motion.div
+            initial={{ opacity: 0, y: 18 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: Math.min(index * 0.05, 0.35), type: 'spring', stiffness: 260, damping: 24 }}
+        >
+            <Link
+                href={`/workers/${worker.id}`}
+                className="group relative block bg-white rounded-xl border border-slate-200/70 shadow-md shadow-slate-300/20 hover:shadow-xl hover:shadow-slate-400/20 hover:-translate-y-1 transition-all overflow-hidden"
+            >
+                {/* Lanyard strip + punch slot */}
+                <div className="h-2 bg-amber-500" />
+                <div className="absolute top-[13px] left-1/2 -translate-x-1/2 w-9 h-[7px] rounded-full bg-slate-200 ring-1 ring-slate-300/70" aria-hidden="true" />
+
+                <div className="pt-8 pb-4 px-3 flex flex-col items-center text-center">
+                    <div className="ring-2 ring-slate-100 group-hover:ring-amber-400 rounded-full transition-colors">
+                        <Avatar user={worker.user} size="w-16 h-16" />
+                    </div>
+                    <p className="mt-3 font-bold text-[15px] text-gray-900 truncate w-full">{worker.user.name}</p>
+                    {trade && <p className="text-xs text-gray-500 truncate w-full mt-0.5">{trade}</p>}
+
+                    {worker.job_categories?.[0] && (
+                        <span className={`mt-2 inline-flex px-2 py-0.5 rounded-md text-[10px] font-bold ring-1 ring-inset ${getCategoryColor(worker.job_categories[0].name)}`}>
+                            {translateCategory(worker.job_categories[0].name)}
+                        </span>
+                    )}
+
+                    {location && (
+                        <p className="mt-2 inline-flex items-center gap-1 text-[11px] text-gray-400 truncate w-full justify-center">
+                            <svg className="w-3 h-3 flex-shrink-0" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M15 10.5a3 3 0 11-6 0 3 3 0 016 0z" /><path strokeLinecap="round" strokeLinejoin="round" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1115 0z" /></svg>
+                            {location}
+                        </p>
+                    )}
+
+                    {/* Stamp row */}
+                    <div className="mt-3 pt-3 border-t border-dashed border-slate-200 w-full flex flex-wrap items-center justify-center gap-x-2 gap-y-0.5 text-[10px] font-bold uppercase tracking-wider">
+                        <span className="inline-flex items-center gap-1 text-emerald-600">
+                            <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+                            {t('siteHome.available')}
+                        </span>
+                        {rate && <span className="text-slate-400 normal-case tracking-normal font-semibold">{rate}</span>}
+                    </div>
+                </div>
+            </Link>
+        </motion.div>
     );
 }
