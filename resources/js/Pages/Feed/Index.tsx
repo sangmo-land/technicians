@@ -92,12 +92,12 @@ function Avatar({ user, size = 'w-10 h-10' }: { user: { name: string; avatar?: s
     );
 }
 
-/* ── Section header: skewed safety-amber marker + signage type ── */
+/* ── Shared section heading ── */
 function SectionHeader({ label, action }: { label: string; action?: React.ReactNode }) {
     return (
-        <div className="flex items-end justify-between gap-4 mb-4">
-            <h2 className="font-display uppercase text-xl md:text-2xl tracking-wide text-slate-900 flex items-center gap-3">
-                <span className="inline-block w-2.5 h-6 bg-amber-500 -skew-x-12" aria-hidden="true" />
+        <div className="mb-7 flex flex-col items-start gap-4 sm:flex-row sm:items-center sm:justify-between">
+            <h2 className="text-2xl md:text-3xl font-bold tracking-tight text-slate-900 flex items-center gap-3">
+                <span className="inline-block w-2.5 h-2.5 rounded-full bg-amber-500" aria-hidden="true" />
                 {label}
             </h2>
             {action}
@@ -149,10 +149,10 @@ function WorkerSearch({ large = false }: { large?: boolean }) {
 
     return (
         <div ref={ref} className="relative w-full">
-            <div className={`flex items-center rounded-full transition-colors ${
+            <div className={`flex items-center transition-all ${
                 large
-                    ? 'bg-white shadow-xl shadow-black/25 px-5 focus-within:ring-2 focus-within:ring-amber-500'
-                    : 'bg-gray-100 focus-within:bg-white border border-transparent focus-within:border-amber-500 focus-within:ring-1 focus-within:ring-amber-500 px-4'
+                    ? 'bg-white rounded-2xl shadow-2xl shadow-black/20 p-2 pl-5 focus-within:ring-4 focus-within:ring-amber-500/20'
+                    : 'bg-gray-100 rounded-xl focus-within:bg-white border border-transparent focus-within:border-amber-500 focus-within:ring-4 focus-within:ring-amber-500/10 px-4'
             }`}>
                 <svg className={`${large ? 'w-5 h-5' : 'w-4 h-4'} text-gray-400 flex-shrink-0`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
@@ -164,13 +164,25 @@ function WorkerSearch({ large = false }: { large?: boolean }) {
                     onFocus={() => q.trim().length >= 2 && setOpen(true)}
                     onKeyDown={(e) => { if (e.key === 'Enter') goToAllResults(); }}
                     placeholder={t('feed.searchWorkersPlaceholder')}
-                    className={`w-full border-0 focus:ring-0 text-gray-900 placeholder-gray-400 bg-transparent ${large ? 'py-3.5 px-3 text-[15px]' : 'py-2.5 px-3 text-sm'}`}
+                    className={`w-full border-0 focus:ring-0 text-gray-900 placeholder-gray-400 bg-transparent ${large ? 'py-3.5 px-3 text-base' : 'py-2.5 px-3 text-sm'}`}
                 />
                 {loading && (
                     <svg className="w-4 h-4 text-gray-400 gear-spin flex-shrink-0" fill="none" stroke="currentColor" strokeWidth={1.8} viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" d="M9.594 3.94c.09-.542.56-.94 1.11-.94h2.593c.55 0 1.02.398 1.11.94l.213 1.281c.063.374.313.686.645.87.074.04.147.083.22.127.324.196.72.257 1.075.124l1.217-.456a1.125 1.125 0 011.37.49l1.296 2.247a1.125 1.125 0 01-.26 1.431l-1.003.827c-.293.24-.438.613-.431.992a6.759 6.759 0 010 .255c-.007.378.138.75.43.99l1.005.828c.424.35.534.954.26 1.43l-1.298 2.247a1.125 1.125 0 01-1.369.491l-1.217-.456c-.355-.133-.75-.072-1.076.124a6.57 6.57 0 01-.22.128c-.331.183-.581.495-.644.869l-.213 1.28c-.09.543-.56.941-1.11.941h-2.594c-.55 0-1.02-.398-1.11-.94l-.213-1.281c-.062-.374-.312-.686-.644-.87a6.52 6.52 0 01-.22-.127c-.325-.196-.72-.257-1.076-.124l-1.217.456a1.125 1.125 0 01-1.369-.49l-1.297-2.247a1.125 1.125 0 01.26-1.431l1.004-.827c.292-.24.437-.613.43-.992a6.932 6.932 0 010-.255c.007-.378-.138-.75-.43-.99l-1.004-.828a1.125 1.125 0 01-.26-1.43l1.297-2.247a1.125 1.125 0 011.37-.491l1.216.456c.356.133.751.072 1.076-.124.072-.044.146-.087.22-.128.332-.183.582-.495.644-.869l.214-1.281z" />
                         <path strokeLinecap="round" strokeLinejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
                     </svg>
+                )}
+                {large && (
+                    <button
+                        type="button"
+                        onClick={goToAllResults}
+                        aria-label={t('feed.seeAllResults')}
+                        className="ml-2 flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-xl bg-amber-500 text-slate-950 transition-all hover:bg-amber-400 hover:scale-[1.03]"
+                    >
+                        <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth={2.2} viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M5 12h14m-6-6 6 6-6 6" />
+                        </svg>
+                    </button>
                 )}
             </div>
 
@@ -266,60 +278,114 @@ export default function FeedIndex({ posts, categories, filters, featuredWorkers 
                 <meta name="description" content={t('home.seoDescription')} />
             </Head>
 
-            {/* ══ Command bar: charcoal, signage type, search ══ */}
-            <section className="relative bg-slate-900 overflow-hidden">
+            {/* Spacious marketplace hero */}
+            <section className="relative isolate overflow-hidden bg-[#0b1220]">
                 <div className="pointer-events-none absolute inset-0" aria-hidden="true">
-                    <div className="absolute -top-20 right-[-10%] w-[420px] h-[420px] rounded-full bg-amber-500/[0.07] blur-[90px]" />
-                    {/* Oversized hard-hat line drawing anchoring the right side */}
-                    <svg className="hidden lg:block absolute -right-16 -bottom-24 h-[420px] w-auto text-white/[0.045]" fill="none" stroke="currentColor" strokeWidth={1.2} viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" d="M2 18a1 1 0 001 1h18a1 1 0 001-1v-2a1 1 0 00-1-1H3a1 1 0 00-1 1v2zM10 10V5a1 1 0 011-1h2a1 1 0 011 1v5M4 15v-3a6 6 0 016-6M14 6a6 6 0 016 6v3" />
-                    </svg>
+                    <div className="absolute -top-48 left-[45%] h-[520px] w-[520px] rounded-full bg-blue-500/[0.12] blur-[120px]" />
+                    <div className="absolute -bottom-48 -right-32 h-[480px] w-[480px] rounded-full bg-amber-400/[0.12] blur-[110px]" />
+                    <div className="absolute inset-0 opacity-[0.035]" style={{
+                        backgroundImage: 'linear-gradient(rgba(255,255,255,.2) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.2) 1px, transparent 1px)',
+                        backgroundSize: '64px 64px',
+                    }} />
                 </div>
-                <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 md:py-14">
-                    <div className="max-w-2xl">
-                        <motion.h1
-                            initial={{ opacity: 0, y: 14 }}
+
+                <div className="relative mx-auto grid max-w-[1400px] items-center gap-12 px-4 py-16 sm:px-6 md:py-20 lg:grid-cols-[minmax(0,1.15fr)_minmax(360px,.85fr)] lg:px-10 lg:py-24">
+                    <div className="max-w-3xl">
+                        <motion.div
+                            initial={{ opacity: 0, y: 12 }}
                             animate={{ opacity: 1, y: 0 }}
-                            className="font-display uppercase text-3xl md:text-5xl tracking-wide text-white leading-none"
+                            className="mb-7 inline-flex items-center gap-2.5 rounded-full border border-white/10 bg-white/[0.06] px-4 py-2 text-xs font-semibold tracking-wide text-slate-200 backdrop-blur-sm"
+                        >
+                            <span className="relative flex h-2 w-2">
+                                <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-70" />
+                                <span className="relative inline-flex h-2 w-2 rounded-full bg-emerald-400" />
+                            </span>
+                            {t('siteHome.availableNow')}
+                        </motion.div>
+
+                        <motion.h1
+                            initial={{ opacity: 0, y: 18 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{ delay: 0.05 }}
+                            className="max-w-3xl text-5xl font-bold tracking-[-0.04em] text-white sm:text-6xl lg:text-7xl lg:leading-[1.02]"
                         >
                             {t('siteHome.headline')}
                         </motion.h1>
-                        <motion.span
-                            initial={{ scaleX: 0 }}
-                            animate={{ scaleX: 1 }}
-                            transition={{ delay: 0.2, duration: 0.45, ease: 'easeOut' }}
-                            className="block origin-left mt-3 h-2 w-24 bg-amber-500 -skew-x-12"
-                            aria-hidden="true"
-                        />
                         <motion.p
-                            initial={{ opacity: 0, y: 10 }}
+                            initial={{ opacity: 0, y: 12 }}
                             animate={{ opacity: 1, y: 0 }}
-                            transition={{ delay: 0.1 }}
-                            className="mt-4 text-slate-400 text-sm md:text-base leading-relaxed"
+                            transition={{ delay: 0.12 }}
+                            className="mt-7 max-w-2xl text-base leading-8 text-slate-300 sm:text-lg"
                         >
                             {t('siteHome.sub')}
                         </motion.p>
                         <motion.div
-                            initial={{ opacity: 0, y: 10 }}
+                            initial={{ opacity: 0, y: 12 }}
                             animate={{ opacity: 1, y: 0 }}
                             transition={{ delay: 0.2 }}
-                            className="mt-6"
+                            className="mt-9 max-w-2xl"
                         >
                             <WorkerSearch large />
                         </motion.div>
                     </div>
+
+                    <motion.div
+                        initial={{ opacity: 0, x: 24 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        transition={{ delay: 0.2, duration: 0.55 }}
+                        className="relative hidden lg:block"
+                    >
+                        <div className="rounded-[2rem] border border-white/10 bg-white/[0.07] p-7 shadow-2xl shadow-black/20 backdrop-blur-xl">
+                            <div className="flex items-center justify-between gap-4">
+                                <div>
+                                    <p className="text-xs font-semibold uppercase tracking-[0.18em] text-amber-400">{t('siteHome.availableNow')}</p>
+                                    <p className="mt-2 text-2xl font-bold text-white">{featuredWorkers.length} {t('home.skilledWorkers')}</p>
+                                </div>
+                                <Link href="/workers" className="flex h-11 w-11 items-center justify-center rounded-full border border-white/10 bg-white/10 text-white transition-colors hover:bg-amber-500 hover:text-slate-950">
+                                    <svg className="h-5 w-5" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M5 12h14m-6-6 6 6-6 6" /></svg>
+                                </Link>
+                            </div>
+
+                            <div className="mt-7 space-y-3">
+                                {featuredWorkers.length === 0 && (
+                                    <div className="rounded-2xl border border-white/[0.06] bg-black/10 px-5 py-8 text-center text-sm text-slate-400">
+                                        {t('siteHome.noWorkersYet')}
+                                    </div>
+                                )}
+                                {featuredWorkers.slice(0, 3).map((worker) => {
+                                    const trade = worker.title || worker.job_categories?.[0]?.name;
+                                    return (
+                                        <Link key={worker.id} href={`/workers/${worker.id}`} className="group flex items-center gap-4 rounded-2xl border border-white/[0.06] bg-black/10 p-3.5 transition-all hover:border-white/15 hover:bg-white/[0.08]">
+                                            <div className="ring-2 ring-white/10 rounded-full">
+                                                <Avatar user={worker.user} size="w-12 h-12" />
+                                            </div>
+                                            <div className="min-w-0 flex-1">
+                                                <p className="truncate font-semibold text-white">{worker.user.name}</p>
+                                                <p className="mt-0.5 truncate text-sm text-slate-400">{trade ? translateCategory(trade) : t('siteHome.available')}</p>
+                                            </div>
+                                            <span className="h-2.5 w-2.5 rounded-full bg-emerald-400 shadow-[0_0_0_4px_rgba(52,211,153,.12)]" />
+                                        </Link>
+                                    );
+                                })}
+                            </div>
+                        </div>
+                        <div className="absolute -bottom-5 -left-5 rounded-2xl border border-white/10 bg-slate-950/90 px-5 py-3 text-sm font-medium text-slate-300 shadow-xl backdrop-blur">
+                            <span className="mr-2 text-amber-400">●</span>
+                            {t('feed.howItWorks')}: {t('feed.step3')}
+                        </div>
+                    </motion.div>
                 </div>
             </section>
 
-            <div className="relative min-h-screen bg-gradient-to-b from-slate-100 via-[#eef1f7] to-slate-100 py-8">
-                <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="relative min-h-screen bg-slate-50 py-14 md:py-20">
+                <div className="relative mx-auto max-w-[1400px] px-4 sm:px-6 lg:px-10">
 
                     {/* ══ Workers first: site-badge cards ══ */}
-                    <section className="mb-10">
+                    <section className="mb-20">
                         <SectionHeader
                             label={t('siteHome.availableNow')}
                             action={
-                                <Link href="/workers" className="inline-flex items-center gap-1.5 text-sm font-bold text-slate-700 hover:text-amber-600 transition-colors">
+                                <Link href="/workers" className="inline-flex items-center gap-2 rounded-full bg-white px-4 py-2 text-sm font-semibold text-slate-700 shadow-sm ring-1 ring-slate-200 transition-all hover:-translate-y-0.5 hover:text-amber-600 hover:shadow-md">
                                     {t('siteHome.viewAll')}
                                     <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M17 8l4 4m0 0l-4 4m4-4H3" /></svg>
                                 </Link>
@@ -330,7 +396,7 @@ export default function FeedIndex({ posts, categories, filters, featuredWorkers 
                                 {t('siteHome.noWorkersYet')}
                             </div>
                         ) : (
-                            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+                            <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 xl:grid-cols-4">
                                 {featuredWorkers.map((worker, i) => (
                                     <WorkerBadgeCard key={worker.id} worker={worker} index={i} t={t} translateCategory={translateCategory} />
                                 ))}
@@ -340,10 +406,10 @@ export default function FeedIndex({ posts, categories, filters, featuredWorkers 
 
                     {/* ══ The job board ══ */}
                     <SectionHeader label={t('siteHome.onTheBoard')} />
-                    <div className="lg:grid lg:grid-cols-12 lg:gap-6 lg:items-start">
+                    <div className="lg:grid lg:grid-cols-[minmax(0,1fr)_360px] lg:items-start lg:gap-10">
 
-                    {/* ── Left rail ────────────────────────────────── */}
-                    <aside className="hidden lg:block lg:col-span-3 lg:sticky lg:top-24 space-y-4">
+                    {/* ── Supporting sidebar ───────────────────────── */}
+                    <aside className="hidden lg:order-2 lg:sticky lg:top-24 lg:block space-y-5">
                         {auth?.user ? (
                             <div className="bg-white rounded-2xl border border-slate-200/70 shadow-lg shadow-slate-300/30 overflow-hidden">
                                 <div className="h-14 bg-slate-900 border-b-4 border-amber-500" />
@@ -410,15 +476,29 @@ export default function FeedIndex({ posts, categories, filters, featuredWorkers 
                                 ))}
                             </ul>
                         </div>
+
+                        {categories.length > 0 && (
+                            <div className="rounded-2xl border border-slate-200/70 bg-white p-6 shadow-sm">
+                                <p className="text-[15px] font-bold text-gray-900 mb-4">{t('feed.popularTrades')}</p>
+                                <div className="flex flex-wrap gap-2">
+                                    {categories.slice(0, 10).map((c) => (
+                                        <button
+                                            key={c.id}
+                                            onClick={() => applyFilter('category', String(c.id))}
+                                            className={`px-3 py-1.5 rounded-lg text-[11px] font-bold ring-1 ring-inset transition-transform hover:-translate-y-0.5 ${getCategoryColor(c.name)}`}
+                                        >
+                                            {translateCategory(c.name)}
+                                        </button>
+                                    ))}
+                                </div>
+                            </div>
+                        )}
                     </aside>
 
                     {/* ── Center: timeline ─────────────────────────── */}
-                    <main className="lg:col-span-6 max-w-2xl mx-auto lg:mx-0 lg:max-w-none">
+                    <main className="min-w-0 max-w-3xl mx-auto lg:order-1 lg:mx-0 lg:max-w-none">
 
-                        {/* Mobile: search + guest CTA */}
-                        <div className="lg:hidden mb-4">
-                            <WorkerSearch />
-                        </div>
+                        {/* Mobile guest CTA */}
                         {!auth?.user && (
                             <div className="lg:hidden bg-white rounded-2xl border border-gray-100 shadow-sm p-4 mb-4 flex items-center justify-between gap-3">
                                 <p className="text-sm text-gray-600 flex-1">{t('feed.loginToPost')}</p>
@@ -433,9 +513,10 @@ export default function FeedIndex({ posts, categories, filters, featuredWorkers 
                             </div>
                         )}
 
-                        <div className="bg-white rounded-2xl border border-slate-200/70 shadow-lg shadow-slate-300/30 overflow-visible">
+                        <div className="space-y-5">
+                            <div className="overflow-visible rounded-[1.75rem] border border-slate-200/70 bg-white shadow-sm">
                             {/* Status tabs */}
-                            <div className="flex border-b border-gray-100" role="tablist">
+                            <div className="flex border-b border-gray-100 px-2 pt-2" role="tablist">
                                 {statusTabs.map((tab) => {
                                     const active = (filters.status || '') === tab.value;
                                     return (
@@ -444,12 +525,12 @@ export default function FeedIndex({ posts, categories, filters, featuredWorkers 
                                             role="tab"
                                             aria-selected={active}
                                             onClick={() => applyFilter('status', tab.value)}
-                                            className={`relative flex-1 py-3.5 text-sm transition-colors hover:bg-gray-50 ${
+                                            className={`relative flex-1 rounded-t-xl py-3.5 text-sm transition-colors hover:bg-gray-50 ${
                                                 active ? 'font-bold text-gray-900' : 'font-medium text-gray-500'
                                             }`}
                                         >
                                             {tab.label}
-                                            {active && <span className="absolute bottom-0 left-1/2 -translate-x-1/2 w-12 h-1 bg-amber-500 -skew-x-12" />}
+                                            {active && <span className="absolute bottom-0 left-1/2 h-1 w-10 -translate-x-1/2 rounded-full bg-amber-500" />}
                                         </button>
                                     );
                                 })}
@@ -457,7 +538,7 @@ export default function FeedIndex({ posts, categories, filters, featuredWorkers 
 
                             {/* Composer */}
                             {auth?.user && (
-                                <form onSubmit={publish} className="border-b border-gray-100 px-4 sm:px-5 py-4">
+                                <form onSubmit={publish} className="border-b border-gray-100 px-5 py-5 sm:px-6">
                                     <div className="flex gap-3">
                                         <Avatar user={auth.user} />
                                         <textarea
@@ -466,7 +547,7 @@ export default function FeedIndex({ posts, categories, filters, featuredWorkers 
                                             onFocus={() => setComposerExpanded(true)}
                                             placeholder={t('feed.composerPlaceholder')}
                                             rows={composerExpanded ? 3 : 1}
-                                            className="flex-1 border-0 focus:ring-0 text-[15px] text-gray-900 placeholder-gray-400 resize-none bg-transparent pt-2"
+                                            className="flex-1 resize-none border-0 bg-transparent pt-2 text-base text-gray-900 placeholder-gray-400 focus:ring-0"
                                         />
                                     </div>
                                     <InputError message={errors.description} className="mt-1 ml-13" />
@@ -483,7 +564,7 @@ export default function FeedIndex({ posts, categories, filters, featuredWorkers 
                                                     <select
                                                         value={data.category_id}
                                                         onChange={(e) => setData('category_id', e.target.value)}
-                                                        className="rounded-lg border-gray-200 text-xs text-gray-600 focus:border-amber-500 focus:ring-amber-500"
+                                                        className="rounded-xl border-gray-200 text-xs text-gray-600 focus:border-amber-500 focus:ring-amber-500"
                                                     >
                                                         <option value="">{t('feed.anyCategory')}</option>
                                                         {categories.map((c) => (
@@ -493,7 +574,7 @@ export default function FeedIndex({ posts, categories, filters, featuredWorkers 
                                                     <select
                                                         value={data.state}
                                                         onChange={(e) => setData('state', e.target.value)}
-                                                        className="rounded-lg border-gray-200 text-xs text-gray-600 focus:border-amber-500 focus:ring-amber-500"
+                                                        className="rounded-xl border-gray-200 text-xs text-gray-600 focus:border-amber-500 focus:ring-amber-500"
                                                     >
                                                         <option value="">{t('feed.selectRegion')}</option>
                                                         {cameroonRegions.map((r) => (
@@ -505,7 +586,7 @@ export default function FeedIndex({ posts, categories, filters, featuredWorkers 
                                                         value={data.city}
                                                         onChange={(e) => setData('city', e.target.value)}
                                                         placeholder={t('feed.detailsCity')}
-                                                        className="rounded-lg border-gray-200 text-xs text-gray-600 placeholder-gray-400 focus:border-amber-500 focus:ring-amber-500"
+                                                        className="rounded-xl border-gray-200 text-xs text-gray-600 placeholder-gray-400 focus:border-amber-500 focus:ring-amber-500"
                                                     />
                                                     <input
                                                         type="number"
@@ -514,14 +595,14 @@ export default function FeedIndex({ posts, categories, filters, featuredWorkers 
                                                         value={data.technicians_needed}
                                                         onChange={(e) => setData('technicians_needed', e.target.value)}
                                                         placeholder={t('feed.detailsNeeded')}
-                                                        className="rounded-lg border-gray-200 text-xs text-gray-600 placeholder-gray-400 focus:border-amber-500 focus:ring-amber-500"
+                                                        className="rounded-xl border-gray-200 text-xs text-gray-600 placeholder-gray-400 focus:border-amber-500 focus:ring-amber-500"
                                                     />
                                                     <input
                                                         type="text"
                                                         value={data.budget}
                                                         onChange={(e) => setData('budget', e.target.value)}
                                                         placeholder={t('feed.budgetPlaceholder')}
-                                                        className="col-span-2 sm:col-span-1 rounded-lg border-gray-200 text-xs text-gray-600 placeholder-gray-400 focus:border-amber-500 focus:ring-amber-500"
+                                                        className="col-span-2 rounded-xl border-gray-200 text-xs text-gray-600 placeholder-gray-400 focus:border-amber-500 focus:ring-amber-500 sm:col-span-1"
                                                     />
                                                 </div>
                                             </motion.div>
@@ -532,7 +613,7 @@ export default function FeedIndex({ posts, categories, filters, featuredWorkers 
                                         <button
                                             type="submit"
                                             disabled={processing || data.description.trim().length < 10}
-                                            className="bg-blue-600 hover:bg-blue-700 disabled:opacity-40 disabled:cursor-not-allowed text-white px-6 py-2 rounded-full text-sm font-bold transition-colors"
+                                            className="rounded-xl bg-slate-900 px-6 py-2.5 text-sm font-bold text-white transition-colors hover:bg-slate-800 disabled:cursor-not-allowed disabled:opacity-40"
                                         >
                                             {t('feed.post')}
                                         </button>
@@ -541,7 +622,7 @@ export default function FeedIndex({ posts, categories, filters, featuredWorkers 
                             )}
 
                             {/* Trade / region filter row */}
-                            <div className="flex items-center gap-1 px-4 sm:px-5 py-2 border-b border-gray-100 bg-gray-50/60">
+                            <div className="flex items-center gap-1 rounded-b-[1.75rem] bg-slate-50/80 px-5 py-3 sm:px-6">
                                 <svg className="w-3.5 h-3.5 text-gray-400 flex-shrink-0" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M12 3c2.755 0 5.455.232 8.083.678.533.09.917.556.917 1.096v1.044a2.25 2.25 0 01-.659 1.591l-5.432 5.432a2.25 2.25 0 00-.659 1.591v2.927a2.25 2.25 0 01-1.244 2.013L9.75 21v-6.568a2.25 2.25 0 00-.659-1.591L3.659 7.409A2.25 2.25 0 013 5.818V4.774c0-.54.384-1.006.917-1.096A48.32 48.32 0 0112 3z" /></svg>
                                 <select
                                     value={filters.category || ''}
@@ -564,10 +645,11 @@ export default function FeedIndex({ posts, categories, filters, featuredWorkers 
                                     ))}
                                 </select>
                             </div>
+                            </div>
 
                             {/* Timeline */}
                             {posts.data.length === 0 ? (
-                                <div className="p-14 text-center">
+                                <div className="rounded-[1.75rem] border border-slate-200/70 bg-white p-14 text-center shadow-sm">
                                     <div className="w-14 h-14 mx-auto rounded-full bg-gray-50 flex items-center justify-center mb-4">
                                         <svg className="w-7 h-7 text-gray-300" fill="none" stroke="currentColor" strokeWidth={1.8} viewBox="0 0 24 24">
                                             <path strokeLinecap="round" strokeLinejoin="round" d="M2 18a1 1 0 001 1h18a1 1 0 001-1v-2a1 1 0 00-1-1H3a1 1 0 00-1 1v2zM10 10V5a1 1 0 011-1h2a1 1 0 011 1v5M4 15v-3a6 6 0 016-6M14 6a6 6 0 016 6v3" />
@@ -613,32 +695,6 @@ export default function FeedIndex({ posts, categories, filters, featuredWorkers 
                             </div>
                         )}
                     </main>
-
-                    {/* ── Right rail: discovery ────────────────────── */}
-                    <aside className="hidden lg:block lg:col-span-3 lg:sticky lg:top-24 space-y-4">
-                        {/* Popular trades */}
-                        {categories.length > 0 && (
-                            <div className="bg-white rounded-2xl border border-slate-200/70 shadow-lg shadow-slate-300/30 p-5">
-                                <p className="text-[15px] font-bold text-gray-900 mb-3.5">{t('feed.popularTrades')}</p>
-                                <div className="flex flex-wrap gap-2">
-                                    {categories.slice(0, 10).map((c) => (
-                                        <button
-                                            key={c.id}
-                                            onClick={() => applyFilter('category', String(c.id))}
-                                            className={`px-2.5 py-1 rounded-lg text-[11px] font-bold ring-1 ring-inset transition-transform hover:-translate-y-0.5 ${getCategoryColor(c.name)}`}
-                                        >
-                                            {translateCategory(c.name)}
-                                        </button>
-                                    ))}
-                                </div>
-                            </div>
-                        )}
-
-                        {/* Footer note */}
-                        <p className="px-2 text-[11px] text-slate-400 leading-relaxed">
-                            {t('common.copyright', { year: new Date().getFullYear() })}
-                        </p>
-                    </aside>
 
                     </div>
                 </div>
@@ -726,8 +782,8 @@ function PostRow({
     };
 
     return (
-        <article className="px-4 sm:px-5 py-4 border-b border-gray-100 last:border-b-0 hover:bg-slate-50/70 transition-colors">
-            <div className="flex gap-3">
+        <article className="rounded-[1.75rem] border border-slate-200/70 bg-white px-5 py-5 shadow-sm transition-all hover:-translate-y-0.5 hover:shadow-lg hover:shadow-slate-200/60 sm:px-6 sm:py-6">
+            <div className="flex gap-4">
                 {post.user.worker_profile ? (
                     <Link href={`/workers/${post.user.worker_profile.id}`} className="flex-shrink-0">
                         <Avatar user={post.user} />
@@ -787,25 +843,25 @@ function PostRow({
                     </div>
 
                     {/* Body */}
-                    <p className="mt-1.5 text-[15px] text-gray-800 leading-relaxed whitespace-pre-line">{post.description}</p>
+                    <p className="mt-3 text-base leading-7 text-gray-800 whitespace-pre-line">{post.description}</p>
 
                     {/* Tags: trade + location + budget */}
                     {(post.category || post.city || post.state || post.budget) && (
-                        <div className="flex flex-wrap items-center gap-1.5 mt-2.5">
+                        <div className="mt-4 flex flex-wrap items-center gap-2">
                             {post.category && (
-                                <span className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-[11px] font-bold ring-1 ring-inset ${getCategoryColor(post.category.name)}`}>
+                                <span className={`inline-flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-[11px] font-bold ring-1 ring-inset ${getCategoryColor(post.category.name)}`}>
                                     <svg className="w-3 h-3" fill="none" stroke="currentColor" strokeWidth={2.2} viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M11.42 15.17L17.25 21A2.652 2.652 0 0021 17.25l-5.877-5.877M11.42 15.17l2.496-3.03c.317-.384.74-.626 1.208-.766M11.42 15.17l-4.655 5.653a2.548 2.548 0 11-3.586-3.586l6.837-5.63m5.108-.233c.55-.164 1.163-.188 1.743-.14a4.5 4.5 0 004.486-6.336l-3.276 3.277a3.004 3.004 0 01-2.25-2.25l3.276-3.276a4.5 4.5 0 00-6.336 4.486c.091 1.076-.071 2.264-.904 2.95l-.102.085" /></svg>
                                     {translateCategory(post.category.name)}
                                 </span>
                             )}
                             {(post.city || post.state) && (
-                                <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-[11px] font-semibold bg-slate-100 text-slate-600 ring-1 ring-inset ring-slate-200/80">
+                                <span className="inline-flex items-center gap-1.5 rounded-lg bg-slate-100 px-3 py-1.5 text-[11px] font-semibold text-slate-600 ring-1 ring-inset ring-slate-200/80">
                                     <svg className="w-3 h-3" fill="none" stroke="currentColor" strokeWidth={2.2} viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M15 10.5a3 3 0 11-6 0 3 3 0 016 0z" /><path strokeLinecap="round" strokeLinejoin="round" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1115 0z" /></svg>
                                     {[post.city, post.state].filter(Boolean).join(', ')}
                                 </span>
                             )}
                             {post.budget && (
-                                <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-[11px] font-bold bg-emerald-50 text-emerald-700 ring-1 ring-inset ring-emerald-200/80">
+                                <span className="inline-flex items-center gap-1.5 rounded-lg bg-emerald-50 px-3 py-1.5 text-[11px] font-bold text-emerald-700 ring-1 ring-inset ring-emerald-200/80">
                                     <svg className="w-3 h-3" fill="none" stroke="currentColor" strokeWidth={2.2} viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M12 6v12m-3-2.818l.879.659c1.171.879 3.07.879 4.242 0 1.172-.879 1.172-2.303 0-3.182C13.536 12.219 12.768 12 12 12c-.725 0-1.45-.22-2.003-.659-1.106-.879-1.106-2.303 0-3.182s2.9-.879 4.006 0l.415.33M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
                                     {post.budget}
                                 </span>
@@ -815,7 +871,7 @@ function PostRow({
 
                     {/* Positions progress */}
                     {post.technicians_needed ? (
-                        <div className="mt-3 max-w-[260px]">
+                        <div className="mt-5 max-w-sm">
                             <div className="flex items-center justify-between mb-1">
                                 <span className="text-[11px] font-semibold text-slate-500">
                                     {t('feed.slots', { count: post.interests_count, needed: post.technicians_needed })}
@@ -836,7 +892,7 @@ function PostRow({
                     ) : null}
 
                     {/* Action row */}
-                    <div className="flex items-center justify-between max-w-sm mt-2.5 -ml-2">
+                    <div className="mt-5 flex max-w-md items-center justify-between border-t border-slate-100 pt-3 -ml-2">
                         {/* Comment */}
                         <button
                             onClick={() => setShowComments(!showComments)}
@@ -1055,43 +1111,46 @@ function WorkerBadgeCard({
             initial={{ opacity: 0, y: 18 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: Math.min(index * 0.05, 0.35), type: 'spring', stiffness: 260, damping: 24 }}
+            className="h-full"
         >
             <Link
                 href={`/workers/${worker.id}`}
-                className="group relative block bg-white rounded-xl border border-slate-200/70 shadow-md shadow-slate-300/20 hover:shadow-xl hover:shadow-slate-400/20 hover:-translate-y-1 transition-all overflow-hidden"
+                className="group relative flex h-full flex-col overflow-hidden rounded-[1.75rem] border border-slate-200/80 bg-white p-6 shadow-sm transition-all hover:-translate-y-1 hover:border-slate-300 hover:shadow-xl hover:shadow-slate-200/70"
             >
-                {/* Lanyard strip + punch slot */}
-                <div className="h-2 bg-amber-500" />
-                <div className="absolute top-[13px] left-1/2 -translate-x-1/2 w-9 h-[7px] rounded-full bg-slate-200 ring-1 ring-slate-300/70" aria-hidden="true" />
+                <div className="flex items-center justify-between gap-3">
+                    <span className="inline-flex items-center gap-2 rounded-full bg-emerald-50 px-3 py-1.5 text-[11px] font-bold text-emerald-700 ring-1 ring-inset ring-emerald-200/70">
+                        <span className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse" />
+                        {t('siteHome.available')}
+                    </span>
+                    <span className="flex h-9 w-9 items-center justify-center rounded-full bg-slate-50 text-slate-500 transition-all group-hover:bg-amber-500 group-hover:text-slate-950">
+                        <svg className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth={2.2} viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M5 12h14m-6-6 6 6-6 6" /></svg>
+                    </span>
+                </div>
 
-                <div className="pt-8 pb-4 px-3 flex flex-col items-center text-center">
-                    <div className="ring-2 ring-slate-100 group-hover:ring-amber-400 rounded-full transition-colors">
+                <div className="mt-8 flex items-center gap-4">
+                    <div className="rounded-full ring-4 ring-slate-100 transition-colors group-hover:ring-amber-100">
                         <Avatar user={worker.user} size="w-16 h-16" />
                     </div>
-                    <p className="mt-3 font-bold text-[15px] text-gray-900 truncate w-full">{worker.user.name}</p>
-                    {trade && <p className="text-xs text-gray-500 truncate w-full mt-0.5">{trade}</p>}
+                    <div className="min-w-0 flex-1">
+                        <p className="truncate text-lg font-bold tracking-tight text-gray-900">{worker.user.name}</p>
+                        {trade && <p className="mt-1 truncate text-sm text-gray-500">{trade}</p>}
+                    </div>
+                </div>
 
-                    {worker.job_categories?.[0] && (
-                        <span className={`mt-2 inline-flex px-2 py-0.5 rounded-md text-[10px] font-bold ring-1 ring-inset ${getCategoryColor(worker.job_categories[0].name)}`}>
-                            {translateCategory(worker.job_categories[0].name)}
-                        </span>
-                    )}
+                {worker.job_categories?.[0] && (
+                    <span className={`mt-6 inline-flex w-fit rounded-lg px-3 py-1.5 text-[11px] font-bold ring-1 ring-inset ${getCategoryColor(worker.job_categories[0].name)}`}>
+                        {translateCategory(worker.job_categories[0].name)}
+                    </span>
+                )}
 
-                    {location && (
-                        <p className="mt-2 inline-flex items-center gap-1 text-[11px] text-gray-400 truncate w-full justify-center">
-                            <svg className="w-3 h-3 flex-shrink-0" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M15 10.5a3 3 0 11-6 0 3 3 0 016 0z" /><path strokeLinecap="round" strokeLinejoin="round" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1115 0z" /></svg>
+                <div className="mt-auto flex items-end justify-between gap-4 border-t border-slate-100 pt-5">
+                    {location ? (
+                        <p className="inline-flex min-w-0 items-center gap-1.5 truncate text-xs text-gray-500">
+                            <svg className="h-3.5 w-3.5 flex-shrink-0" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M15 10.5a3 3 0 11-6 0 3 3 0 016 0z" /><path strokeLinecap="round" strokeLinejoin="round" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1115 0z" /></svg>
                             {location}
                         </p>
-                    )}
-
-                    {/* Stamp row */}
-                    <div className="mt-3 pt-3 border-t border-dashed border-slate-200 w-full flex flex-wrap items-center justify-center gap-x-2 gap-y-0.5 text-[10px] font-bold uppercase tracking-wider">
-                        <span className="inline-flex items-center gap-1 text-emerald-600">
-                            <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
-                            {t('siteHome.available')}
-                        </span>
-                        {rate && <span className="text-slate-400 normal-case tracking-normal font-semibold">{rate}</span>}
-                    </div>
+                    ) : <span />}
+                    {rate && <span className="flex-shrink-0 text-xs font-bold text-slate-700">{rate}</span>}
                 </div>
             </Link>
         </motion.div>
