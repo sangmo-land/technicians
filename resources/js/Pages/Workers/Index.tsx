@@ -260,6 +260,7 @@ export default function WorkersIndex({ workers, categories, filters }: Props) {
                     {[
                         { value: 'available', label: t('availability.availableForWork'), dot: 'bg-emerald-500', activeBg: 'bg-emerald-50 text-emerald-700 border-emerald-200' },
                         { value: 'busy', label: t('availability.currentlyBusy'), dot: 'bg-orange-500', activeBg: 'bg-orange-50 text-orange-700 border-orange-200' },
+                        { value: 'not_available', label: t('availability.unavailable'), dot: 'bg-slate-400', activeBg: 'bg-slate-50 text-slate-700 border-slate-200' },
                     ].map(({ value, label, dot, activeBg }) => {
                         const isActive = filters.availability === value;
                         return (
@@ -539,10 +540,11 @@ export default function WorkersIndex({ workers, categories, filters }: Props) {
                                                 initial={{ opacity: 0, y: 20 }}
                                                 animate={{ opacity: 1, y: 0 }}
                                                 transition={{ delay: i * 0.04 }}
+                                                className="h-full py-1.5"
                                             >
                                                 <Link
                                                     href={`/workers/${worker.id}`}
-                                                    className="block bg-white rounded-2xl border border-slate-200/70 shadow-md shadow-slate-300/20 hover:shadow-xl hover:shadow-slate-400/20 hover:border-amber-300/70 hover:-translate-y-1 transition-all duration-300 overflow-hidden h-full group"
+                                                    className="group relative z-0 block h-full -translate-y-1 overflow-hidden rounded-2xl border border-white/90 bg-white shadow-[0_16px_38px_-20px_rgba(15,23,42,0.5)] ring-1 ring-slate-900/[0.04] transition-all duration-300 hover:z-10 hover:-translate-y-2 hover:border-amber-300/70 hover:shadow-[0_24px_48px_-22px_rgba(15,23,42,0.55)]"
                                                 >
                                                     {/* Cover Photo */}
                                                     <div className="relative h-44 overflow-hidden">
@@ -550,13 +552,8 @@ export default function WorkersIndex({ workers, categories, filters }: Props) {
                                                             <img src={`/storage/${coverPhoto.path}`} alt={coverPhoto.caption || ''}
                                                                 className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out" loading="lazy" />
                                                         ) : (
-                                                            <div className="w-full h-full bg-gradient-to-br from-slate-800 via-slate-900 to-slate-950">
-                                                                <div className="absolute inset-0 opacity-10" style={{
-                                                                    backgroundImage: 'radial-gradient(circle at 25% 25%, white 1px, transparent 1px)',
-                                                                    backgroundSize: '20px 20px'
-                                                                }} />
-                                                                <div className="absolute bottom-0 inset-x-0 h-1.5 bg-amber-500" />
-                                                            </div>
+                                                            <img src="/images/worker-card-wall.jpg" alt="Construction wall project"
+                                                                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out" loading="lazy" />
                                                         )}
                                                         <div className="absolute inset-0 bg-gradient-to-t from-black/25 via-transparent to-transparent" />
 

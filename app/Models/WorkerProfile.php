@@ -74,7 +74,9 @@ class WorkerProfile extends Model
 
     public function portfolioPhotos(): HasMany
     {
-        return $this->hasMany(PortfolioPhoto::class);
+        return $this->hasMany(PortfolioPhoto::class)
+            ->orderBy('sort_order')
+            ->orderBy('id');
     }
 
     public function primaryCategory()

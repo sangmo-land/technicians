@@ -78,6 +78,7 @@ interface Props {
     posts: PaginatedData<Post>;
     categories: JobCategory[];
     filters: { category?: string; region?: string; status?: string };
+    totalWorkers: number;
     featuredWorkers: FeaturedWorker[];
 }
 
@@ -106,10 +107,12 @@ function SectionHeader({ label, action }: { label: string; action?: React.ReactN
     );
 }
 
-/* ── Live technician search (typeahead) ───────────────────── */
-function WorkerSearch({ large = false }: { large?: boolean }) {
+/* ── Worker finder: keyword + trade + region ──────────────── */
+function WorkerFinder({ categories }: { categories: JobCategory[] }) {
     const { t } = useTranslation();
     const [q, setQ] = useState('');
+    const [category, setCategory] = useState('');
+    const [region, setRegion] = useState('');
     const [results, setResults] = useState<SearchResult[]>([]);
     const [open, setOpen] = useState(false);
     const [loading, setLoading] = useState(false);
@@ -144,84 +147,132 @@ function WorkerSearch({ large = false }: { large?: boolean }) {
         return () => clearTimeout(id);
     }, [q]);
 
+    const translateCategory = (name: string) => {
+        const key = `categories.${name}`;
+        const translated = t(key);
+        return translated !== key ? translated : name;
+    };
+
     const goToAllResults = () => {
-        router.get('/workers', q.trim() ? { search: q.trim() } : {});
+        router.get('/workers', {
+            search: q.trim() || undefined,
+            category: category || undefined,
+            location: region || undefined,
+        });
     };
 
     return (
-        <div ref={ref} className="relative w-full">
-            <div className={`flex items-center transition-all ${
-                large
-                    ? 'bg-white rounded-2xl shadow-2xl shadow-black/20 p-2 pl-5 focus-within:ring-4 focus-within:ring-amber-500/20'
-                    : 'bg-gray-100 rounded-xl focus-within:bg-white border border-transparent focus-within:border-amber-500 focus-within:ring-4 focus-within:ring-amber-500/10 px-4'
-            }`}>
-                <svg className={`${large ? 'w-5 h-5' : 'w-4 h-4'} text-gray-400 flex-shrink-0`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-                </svg>
-                <input
-                    type="text"
-                    value={q}
-                    onChange={(e) => setQ(e.target.value)}
-                    onFocus={() => q.trim().length >= 2 && setOpen(true)}
-                    onKeyDown={(e) => { if (e.key === 'Enter') goToAllResults(); }}
-                    placeholder={t('feed.searchWorkersPlaceholder')}
-                    className={`w-full border-0 focus:ring-0 text-gray-900 placeholder-gray-400 bg-transparent ${large ? 'py-3.5 px-3 text-base' : 'py-2.5 px-3 text-sm'}`}
-                />
-                {loading && (
-                    <svg className="w-4 h-4 text-gray-400 gear-spin flex-shrink-0" fill="none" stroke="currentColor" strokeWidth={1.8} viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" d="M9.594 3.94c.09-.542.56-.94 1.11-.94h2.593c.55 0 1.02.398 1.11.94l.213 1.281c.063.374.313.686.645.87.074.04.147.083.22.127.324.196.72.257 1.075.124l1.217-.456a1.125 1.125 0 011.37.49l1.296 2.247a1.125 1.125 0 01-.26 1.431l-1.003.827c-.293.24-.438.613-.431.992a6.759 6.759 0 010 .255c-.007.378.138.75.43.99l1.005.828c.424.35.534.954.26 1.43l-1.298 2.247a1.125 1.125 0 01-1.369.491l-1.217-.456c-.355-.133-.75-.072-1.076.124a6.57 6.57 0 01-.22.128c-.331.183-.581.495-.644.869l-.213 1.28c-.09.543-.56.941-1.11.941h-2.594c-.55 0-1.02-.398-1.11-.94l-.213-1.281c-.062-.374-.312-.686-.644-.87a6.52 6.52 0 01-.22-.127c-.325-.196-.72-.257-1.076-.124l-1.217.456a1.125 1.125 0 01-1.369-.49l-1.297-2.247a1.125 1.125 0 01.26-1.431l1.004-.827c.292-.24.437-.613.43-.992a6.932 6.932 0 010-.255c.007-.378-.138-.75-.43-.99l-1.004-.828a1.125 1.125 0 01-.26-1.43l1.297-2.247a1.125 1.125 0 011.37-.491l1.216.456c.356.133.751.072 1.076-.124.072-.044.146-.087.22-.128.332-.183.582-.495.644-.869l.214-1.281z" />
-                        <path strokeLinecap="round" strokeLinejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                    </svg>
-                )}
-                {large && (
-                    <button
-                        type="button"
-                        onClick={goToAllResults}
-                        aria-label={t('feed.seeAllResults')}
-                        className="ml-2 flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-xl bg-amber-500 text-slate-950 transition-all hover:bg-amber-400 hover:scale-[1.03]"
-                    >
-                        <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth={2.2} viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" d="M5 12h14m-6-6 6 6-6 6" />
-                        </svg>
-                    </button>
-                )}
-            </div>
-
-            <AnimatePresence>
-                {open && (
-                    <motion.div
-                        initial={{ opacity: 0, y: 6 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        exit={{ opacity: 0, y: 6 }}
-                        transition={{ duration: 0.15 }}
-                        className="absolute left-0 right-0 mt-2 bg-white rounded-2xl border border-gray-100 shadow-xl shadow-black/10 overflow-hidden z-40"
-                    >
-                        {results.length === 0 ? (
-                            <p className="px-4 py-4 text-sm text-gray-400 text-center">{t('feed.noResults')}</p>
-                        ) : (
-                            <div className="py-1.5">
-                                {results.map((worker) => (
-                                    <Link key={worker.id} href={`/workers/${worker.id}`} className="flex items-center gap-3 px-4 py-2.5 hover:bg-gray-50 transition-colors">
-                                        <Avatar user={worker} size="w-9 h-9" />
-                                        <div className="min-w-0 text-left">
-                                            <p className="text-sm font-semibold text-gray-900 truncate">{worker.name}</p>
-                                            <p className="text-xs text-gray-400 truncate">{[worker.title, worker.location].filter(Boolean).join(' · ')}</p>
-                                        </div>
-                                    </Link>
-                                ))}
-                            </div>
+        <div className="relative w-full rounded-[2rem] border border-white/70 bg-white p-2.5 shadow-2xl shadow-slate-950/20 ring-1 ring-slate-900/5">
+            <form
+                onSubmit={(event) => { event.preventDefault(); goToAllResults(); }}
+                className="grid gap-2 md:grid-cols-2 lg:grid-cols-[minmax(0,1.35fr)_minmax(190px,.8fr)_minmax(190px,.8fr)_auto]"
+            >
+                <div ref={ref} className="relative rounded-2xl bg-slate-50 px-4 py-3 transition-all focus-within:bg-white focus-within:ring-2 focus-within:ring-amber-400/50 md:col-span-2 lg:col-span-1">
+                    <label htmlFor="worker-search" className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-[0.16em] text-slate-500">
+                        <svg className="h-3.5 w-3.5 text-amber-600" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
+                        {t('siteHome.keywordLabel')}
+                    </label>
+                    <div className="mt-1 flex items-center">
+                        <input
+                            id="worker-search"
+                            type="text"
+                            value={q}
+                            onChange={(e) => setQ(e.target.value)}
+                            onFocus={() => q.trim().length >= 2 && setOpen(true)}
+                            placeholder={t('siteHome.keywordPlaceholder')}
+                            className="min-w-0 flex-1 border-0 bg-transparent p-0 text-[15px] font-medium text-slate-900 placeholder-slate-400 focus:ring-0"
+                        />
+                        {loading && (
+                            <svg className="h-4 w-4 flex-shrink-0 text-slate-400 gear-spin" fill="none" stroke="currentColor" strokeWidth={1.8} viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" d="M9.594 3.94c.09-.542.56-.94 1.11-.94h2.593c.55 0 1.02.398 1.11.94l.213 1.281c.063.374.313.686.645.87.074.04.147.083.22.127.324.196.72.257 1.075.124l1.217-.456a1.125 1.125 0 011.37.49l1.296 2.247a1.125 1.125 0 01-.26 1.431l-1.003.827c-.293.24-.438.613-.431.992a6.759 6.759 0 010 .255c-.007.378.138.75.43.99l1.005.828c.424.35.534.954.26 1.43l-1.298 2.247a1.125 1.125 0 01-1.369.491l-1.217-.456c-.355-.133-.75-.072-1.076.124a6.57 6.57 0 01-.22.128c-.331.183-.581.495-.644.869l-.213 1.28c-.09.543-.56.941-1.11.941h-2.594c-.55 0-1.02-.398-1.11-.94l-.213-1.281c-.062-.374-.312-.686-.644-.87a6.52 6.52 0 01-.22-.127c-.325-.196-.72-.257-1.076-.124l-1.217.456a1.125 1.125 0 01-1.369-.49l-1.297-2.247a1.125 1.125 0 01.26-1.431l1.004-.827c.292-.24.437-.613.43-.992a6.932 6.932 0 010-.255c.007-.378-.138-.75-.43-.99l-1.004-.828a1.125 1.125 0 01-.26-1.43l1.297-2.247a1.125 1.125 0 011.37-.491l1.216.456c.356.133.751.072 1.076-.124.072-.044.146-.087.22-.128.332-.183.582-.495.644-.869l.214-1.281z" />
+                                <path strokeLinecap="round" strokeLinejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                            </svg>
                         )}
-                        <button onClick={goToAllResults} className="w-full px-4 py-3 border-t border-gray-100 text-sm font-bold text-amber-600 hover:bg-amber-50 transition-colors text-center">
-                            {t('feed.seeAllResults')}
+                    </div>
+
+                    <AnimatePresence>
+                        {open && (
+                            <motion.div
+                                initial={{ opacity: 0, y: 8 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                exit={{ opacity: 0, y: 8 }}
+                                transition={{ duration: 0.15 }}
+                                className="absolute left-0 right-0 top-[calc(100%+10px)] z-50 overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-2xl shadow-slate-900/15"
+                            >
+                                {results.length === 0 ? (
+                                    <p className="px-4 py-5 text-center text-sm text-slate-400">{t('feed.noResults')}</p>
+                                ) : (
+                                    <div className="py-1.5">
+                                        {results.map((worker) => (
+                                            <Link key={worker.id} href={`/workers/${worker.id}`} className="flex items-center gap-3 px-4 py-3 transition-colors hover:bg-slate-50">
+                                                <Avatar user={worker} size="w-9 h-9" />
+                                                <div className="min-w-0 text-left">
+                                                    <p className="truncate text-sm font-semibold text-slate-900">{worker.name}</p>
+                                                    <p className="truncate text-xs text-slate-400">{[worker.title, worker.location].filter(Boolean).join(' · ')}</p>
+                                                </div>
+                                            </Link>
+                                        ))}
+                                    </div>
+                                )}
+                                <button type="button" onClick={goToAllResults} className="w-full border-t border-slate-100 px-4 py-3 text-center text-sm font-bold text-amber-700 transition-colors hover:bg-amber-50">
+                                    {t('feed.seeAllResults')}
+                                </button>
+                            </motion.div>
+                        )}
+                    </AnimatePresence>
+                </div>
+
+                <label className="rounded-2xl bg-slate-50 px-4 py-3 transition-all focus-within:bg-white focus-within:ring-2 focus-within:ring-amber-400/50">
+                    <span className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-[0.16em] text-slate-500">
+                        <svg className="h-3.5 w-3.5 text-amber-600" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" /></svg>
+                        {t('siteHome.tradeLabel')}
+                    </span>
+                    <select value={category} onChange={(e) => setCategory(e.target.value)} className="mt-1 w-full cursor-pointer border-0 bg-transparent p-0 pr-7 text-[15px] font-medium text-slate-900 focus:ring-0">
+                        <option value="">{t('siteHome.allTrades')}</option>
+                        {categories.map((item) => <option key={item.id} value={item.id}>{translateCategory(item.name)}</option>)}
+                    </select>
+                </label>
+
+                <label className="rounded-2xl bg-slate-50 px-4 py-3 transition-all focus-within:bg-white focus-within:ring-2 focus-within:ring-amber-400/50">
+                    <span className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-[0.16em] text-slate-500">
+                        <svg className="h-3.5 w-3.5 text-amber-600" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M15 10.5a3 3 0 11-6 0 3 3 0 016 0z" /><path strokeLinecap="round" strokeLinejoin="round" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1115 0z" /></svg>
+                        {t('siteHome.regionLabel')}
+                    </span>
+                    <select value={region} onChange={(e) => setRegion(e.target.value)} className="mt-1 w-full cursor-pointer border-0 bg-transparent p-0 pr-7 text-[15px] font-medium text-slate-900 focus:ring-0">
+                        <option value="">{t('siteHome.allRegions')}</option>
+                        {cameroonRegions.map((item) => <option key={item.name} value={item.name}>{item.name}</option>)}
+                    </select>
+                </label>
+
+                <button
+                    type="submit"
+                    className="group flex min-h-[72px] items-center justify-center gap-2 rounded-2xl bg-amber-500 px-6 text-sm font-extrabold text-slate-950 shadow-lg shadow-amber-500/20 transition-all hover:bg-amber-400 hover:shadow-xl focus:outline-none focus:ring-4 focus:ring-amber-400/30 md:col-span-2 lg:col-span-1"
+                >
+                    {t('siteHome.findWorkers')}
+                    <svg className="h-4 w-4 transition-transform group-hover:translate-x-0.5" fill="none" stroke="currentColor" strokeWidth={2.3} viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M5 12h14m-6-6 6 6-6 6" /></svg>
+                </button>
+            </form>
+
+            {categories.length > 0 && (
+                <div className="flex flex-wrap items-center gap-2 px-3 pb-2 pt-4 sm:px-4">
+                    <span className="mr-1 text-[11px] font-bold uppercase tracking-[0.14em] text-slate-400">{t('siteHome.popular')}</span>
+                    {categories.slice(0, 5).map((item) => (
+                        <button
+                            key={item.id}
+                            type="button"
+                            onClick={() => router.get('/workers', { category: item.id })}
+                            className="rounded-full bg-slate-100 px-3 py-1.5 text-xs font-semibold text-slate-600 transition-all hover:bg-slate-900 hover:text-white"
+                        >
+                            {translateCategory(item.name)}
                         </button>
-                    </motion.div>
-                )}
-            </AnimatePresence>
+                    ))}
+                </div>
+            )}
         </div>
     );
 }
 
-export default function FeedIndex({ posts, categories, filters, featuredWorkers }: Props) {
+export default function FeedIndex({ posts, categories, filters, totalWorkers, featuredWorkers }: Props) {
     const { auth } = usePage().props as any;
     const { t } = useTranslation();
 
@@ -279,101 +330,41 @@ export default function FeedIndex({ posts, categories, filters, featuredWorkers 
                 <meta name="description" content={t('home.seoDescription')} />
             </Head>
 
-            {/* Spacious marketplace hero */}
+            {/* Compact introduction with the worker finder as the focus */}
             <section className="relative isolate overflow-hidden bg-[#0b1220]">
                 <div className="pointer-events-none absolute inset-0" aria-hidden="true">
-                    <div className="absolute -top-48 left-[45%] h-[520px] w-[520px] rounded-full bg-blue-500/[0.12] blur-[120px]" />
-                    <div className="absolute -bottom-48 -right-32 h-[480px] w-[480px] rounded-full bg-amber-400/[0.12] blur-[110px]" />
-                    <div className="absolute inset-0 opacity-[0.035]" style={{
+                    <div className="absolute -top-40 left-1/2 h-80 w-80 -translate-x-1/2 rounded-full bg-amber-400/[0.12] blur-[100px]" />
+                    <div className="absolute inset-0 opacity-[0.025]" style={{
                         backgroundImage: 'linear-gradient(rgba(255,255,255,.2) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.2) 1px, transparent 1px)',
-                        backgroundSize: '64px 64px',
+                        backgroundSize: '56px 56px',
                     }} />
                 </div>
 
-                <div className="relative mx-auto grid max-w-[1400px] items-center gap-12 px-4 py-16 sm:px-6 md:py-20 lg:grid-cols-[minmax(0,1.15fr)_minmax(360px,.85fr)] lg:px-10 lg:py-24">
-                    <div className="max-w-3xl">
-                        <motion.div
-                            initial={{ opacity: 0, y: 12 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            className="mb-7 inline-flex items-center gap-2.5 rounded-full border border-white/10 bg-white/[0.06] px-4 py-2 text-xs font-semibold tracking-wide text-slate-200 backdrop-blur-sm"
-                        >
-                            <span className="relative flex h-2 w-2">
-                                <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-70" />
-                                <span className="relative inline-flex h-2 w-2 rounded-full bg-emerald-400" />
-                            </span>
-                            {t('siteHome.availableNow')}
-                        </motion.div>
-
-                        <motion.h1
-                            initial={{ opacity: 0, y: 18 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            transition={{ delay: 0.05 }}
-                            className="max-w-3xl text-5xl font-bold tracking-[-0.04em] text-white sm:text-6xl lg:text-7xl lg:leading-[1.02]"
-                        >
-                            {t('siteHome.headline')}
-                        </motion.h1>
-                        <motion.p
-                            initial={{ opacity: 0, y: 12 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            transition={{ delay: 0.12 }}
-                            className="mt-7 max-w-2xl text-base leading-8 text-slate-300 sm:text-lg"
-                        >
-                            {t('siteHome.sub')}
-                        </motion.p>
-                        <motion.div
-                            initial={{ opacity: 0, y: 12 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            transition={{ delay: 0.2 }}
-                            className="mt-9 max-w-2xl"
-                        >
-                            <WorkerSearch large />
-                        </motion.div>
-                    </div>
+                <div className="relative mx-auto max-w-[1240px] px-4 py-12 sm:px-6 md:py-16 lg:px-10">
+                    <motion.div
+                        initial={{ opacity: 0, y: 14 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        className="mx-auto max-w-4xl text-center"
+                    >
+                        <p className="mb-4 inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/[0.06] px-3.5 py-1.5 text-[11px] font-bold uppercase tracking-[0.15em] text-slate-300">
+                            <span className="h-2 w-2 rounded-full bg-amber-400" />
+                            {t('siteHome.professionalsReady', { count: totalWorkers.toLocaleString() })}
+                        </p>
+                        <h1 className="text-4xl font-bold tracking-[-0.04em] text-white sm:text-5xl md:text-6xl md:leading-[1.05]">
+                            {t('siteHome.findHeadline')}
+                        </h1>
+                        <p className="mx-auto mt-4 max-w-2xl text-sm leading-6 text-slate-400 sm:text-base">
+                            {t('siteHome.findSub')}
+                        </p>
+                    </motion.div>
 
                     <motion.div
-                        initial={{ opacity: 0, x: 24 }}
-                        animate={{ opacity: 1, x: 0 }}
-                        transition={{ delay: 0.2, duration: 0.55 }}
-                        className="relative hidden lg:block"
+                        initial={{ opacity: 0, y: 18 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ delay: 0.12 }}
+                        className="mx-auto mt-9 max-w-6xl"
                     >
-                        <div className="rounded-[2rem] border border-white/10 bg-white/[0.07] p-7 shadow-2xl shadow-black/20 backdrop-blur-xl">
-                            <div className="flex items-center justify-between gap-4">
-                                <div>
-                                    <p className="text-xs font-semibold uppercase tracking-[0.18em] text-amber-400">{t('siteHome.availableNow')}</p>
-                                    <p className="mt-2 text-2xl font-bold text-white">{featuredWorkers.length} {t('home.skilledWorkers')}</p>
-                                </div>
-                                <Link href="/workers" className="flex h-11 w-11 items-center justify-center rounded-full border border-white/10 bg-white/10 text-white transition-colors hover:bg-amber-500 hover:text-slate-950">
-                                    <svg className="h-5 w-5" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M5 12h14m-6-6 6 6-6 6" /></svg>
-                                </Link>
-                            </div>
-
-                            <div className="mt-7 space-y-3">
-                                {featuredWorkers.length === 0 && (
-                                    <div className="rounded-2xl border border-white/[0.06] bg-black/10 px-5 py-8 text-center text-sm text-slate-400">
-                                        {t('siteHome.noWorkersYet')}
-                                    </div>
-                                )}
-                                {featuredWorkers.slice(0, 3).map((worker) => {
-                                    const trade = worker.title || worker.job_categories?.[0]?.name;
-                                    return (
-                                        <Link key={worker.id} href={`/workers/${worker.id}`} className="group flex items-center gap-4 rounded-2xl border border-white/[0.06] bg-black/10 p-3.5 transition-all hover:border-white/15 hover:bg-white/[0.08]">
-                                            <div className="ring-2 ring-white/10 rounded-full">
-                                                <Avatar user={worker.user} size="w-12 h-12" />
-                                            </div>
-                                            <div className="min-w-0 flex-1">
-                                                <p className="truncate font-semibold text-white">{worker.user.name}</p>
-                                                <p className="mt-0.5 truncate text-sm text-slate-400">{trade ? translateCategory(trade) : t('siteHome.available')}</p>
-                                            </div>
-                                            <span className="h-2.5 w-2.5 rounded-full bg-emerald-400 shadow-[0_0_0_4px_rgba(52,211,153,.12)]" />
-                                        </Link>
-                                    );
-                                })}
-                            </div>
-                        </div>
-                        <div className="absolute -bottom-5 -left-5 rounded-2xl border border-white/10 bg-slate-950/90 px-5 py-3 text-sm font-medium text-slate-300 shadow-xl backdrop-blur">
-                            <span className="mr-2 text-amber-400">●</span>
-                            {t('feed.howItWorks')}: {t('feed.step3')}
-                        </div>
+                        <WorkerFinder categories={categories} />
                     </motion.div>
                 </div>
             </section>
@@ -384,7 +375,7 @@ export default function FeedIndex({ posts, categories, filters, featuredWorkers 
                     {/* ══ Workers first: site-badge cards ══ */}
                     <section className="mb-20">
                         <SectionHeader
-                            label={t('siteHome.availableNow')}
+                            label={t('siteHome.allWorkers')}
                             action={
                                 <Link href="/workers" className="inline-flex items-center gap-2 rounded-full bg-white px-4 py-2 text-sm font-semibold text-slate-700 shadow-sm ring-1 ring-slate-200 transition-all hover:-translate-y-0.5 hover:text-amber-600 hover:shadow-md">
                                     {t('siteHome.viewAll')}
@@ -1107,20 +1098,22 @@ function WorkerBadgeCard({
         ? `${Number(worker.daily_rate).toLocaleString()} FCFA${t('siteHome.perDay')}`
         : null;
     const coverPhoto = worker.portfolio_photos?.[0];
-    const availability = worker.availability === 'busy'
-        ? { label: t('availability.busy'), dot: 'bg-amber-500', badge: 'text-amber-800' }
-        : { label: t('siteHome.available'), dot: 'bg-emerald-500', badge: 'text-emerald-800' };
+    const availability = worker.availability === 'available'
+        ? { label: t('availability.available'), dot: 'bg-emerald-500', badge: 'text-emerald-800' }
+        : worker.availability === 'busy'
+            ? { label: t('availability.busy'), dot: 'bg-amber-500', badge: 'text-amber-800' }
+            : { label: t('availability.unavailable'), dot: 'bg-slate-400', badge: 'text-slate-700' };
 
     return (
         <motion.div
             initial={{ opacity: 0, y: 18 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: Math.min(index * 0.05, 0.35), type: 'spring', stiffness: 260, damping: 24 }}
-            className="h-full"
+            className="h-full py-1.5"
         >
             <Link
                 href={`/workers/${worker.id}`}
-                className="group relative flex h-full flex-col overflow-hidden rounded-[1.75rem] border border-slate-200/80 bg-white shadow-sm transition-all duration-300 hover:-translate-y-1 hover:border-slate-300 hover:shadow-xl hover:shadow-slate-200/70"
+                className="group relative z-0 flex h-full -translate-y-1 flex-col overflow-hidden rounded-[1.75rem] border border-white/90 bg-white shadow-[0_16px_38px_-20px_rgba(15,23,42,0.5)] ring-1 ring-slate-900/[0.04] transition-all duration-300 hover:z-10 hover:-translate-y-2 hover:border-amber-200 hover:shadow-[0_24px_48px_-22px_rgba(15,23,42,0.55)]"
             >
                 <div className="relative h-52 flex-shrink-0 bg-slate-900">
                     <div className="absolute inset-0 overflow-hidden">

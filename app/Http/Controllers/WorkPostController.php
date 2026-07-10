@@ -47,14 +47,18 @@ class WorkPostController extends Controller
 
         return Inertia::render('Feed/Index', [
             'posts' => $posts,
-            'categories' => JobCategory::where('is_active', true)->orderBy('name')->get(['id', 'name']),
+            'categories' => JobCategory::withCount('workerProfiles')
+                ->where('is_active', true)
+                ->orderByDesc('worker_profiles_count')
+                ->orderBy('name')
+                ->get(['id', 'name']),
             'filters' => $request->only(['category', 'region', 'status']),
+            'totalWorkers' => WorkerProfile::count(),
             'featuredWorkers' => WorkerProfile::with([
                 'user:id,name,avatar',
                 'jobCategories:id,name',
                 'portfolioPhotos' => fn ($query) => $query->orderBy('sort_order')->limit(1),
             ])
-                ->where('availability', '!=', 'not_available')
                 ->latest()
                 ->take(8)
                 ->get(['id', 'user_id', 'title', 'city', 'state', 'daily_rate', 'availability']),

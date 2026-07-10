@@ -24,7 +24,6 @@ class WorkerProfileController extends Controller
         }
 
         $workers = WorkerProfile::with('user:id,name,avatar')
-            ->where('availability', '!=', 'not_available')
             ->where(fn ($query) => $query
                 ->where('title', 'like', "%{$q}%")
                 ->orWhere('city', 'like', "%{$q}%")
@@ -73,11 +72,14 @@ class WorkerProfileController extends Controller
         }
 
         if ($request->filled('location')) {
-            $query->where('location', 'like', "%{$request->location}%");
+            $location = $request->location;
+            $query->where(fn ($q) => $q
+                ->where('location', 'like', "%{$location}%")
+                ->orWhere('city', 'like', "%{$location}%")
+                ->orWhere('state', 'like', "%{$location}%"));
         }
 
-        $workers = $query->where('availability', '!=', 'not_available')
-            ->latest()
+        $workers = $query->latest()
             ->paginate(12)
             ->withQueryString();
 
