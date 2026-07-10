@@ -5,6 +5,7 @@ import AppLayout from '@/Layouts/AppLayout';
 import { WorkerProfile, JobCategory, PaginatedData } from '@/types';
 import { useTranslation } from '@/hooks/useTranslation';
 import { getCategoryColor } from '@/utils/categoryColors';
+import { getInitials } from '@/utils/getInitials';
 
 interface Props {
     workers: PaginatedData<WorkerProfile>;
@@ -530,6 +531,7 @@ export default function WorkersIndex({ workers, categories, filters }: Props) {
 
                                         const primaryCategory = worker.job_categories?.[0] || worker.categories?.[0];
                                         const coverPhoto = worker.portfolio_photos?.[0];
+                                        const coverInitials = getInitials(worker.user?.name);
                                         const reviews = worker.user?.reviews_received || [];
                                         const reviewCount = reviews.length;
                                         const rating = reviewCount > 0 ? reviews.reduce((sum: number, r: any) => sum + r.rating, 0) / reviewCount : 0;
@@ -552,8 +554,14 @@ export default function WorkersIndex({ workers, categories, filters }: Props) {
                                                             <img src={`/storage/${coverPhoto.path}`} alt={coverPhoto.caption || ''}
                                                                 className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out" loading="lazy" />
                                                         ) : (
-                                                            <img src="/images/worker-card-wall.jpg" alt="Construction wall project"
-                                                                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out" loading="lazy" />
+                                                            <div className="relative flex h-full w-full items-center justify-center overflow-hidden bg-gradient-to-br from-slate-700 via-slate-800 to-slate-950">
+                                                                <div className="absolute inset-0 opacity-[0.08]" style={{
+                                                                    backgroundImage: 'linear-gradient(rgba(255,255,255,.5) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.5) 1px, transparent 1px)',
+                                                                    backgroundSize: '28px 28px',
+                                                                }} />
+                                                                <div className="absolute -right-10 -top-12 h-36 w-36 rounded-full bg-amber-400/20 blur-3xl transition-transform duration-700 group-hover:scale-125" />
+                                                                <span className="relative text-6xl font-black tracking-[-0.08em] text-white/90 drop-shadow-lg">{coverInitials}</span>
+                                                            </div>
                                                         )}
                                                         <div className="absolute inset-0 bg-gradient-to-t from-black/25 via-transparent to-transparent" />
 

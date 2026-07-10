@@ -6,6 +6,7 @@ import InputError from '@/Components/InputError';
 import { useTranslation } from '@/hooks/useTranslation';
 import { cameroonRegions } from '@/data/cameroonLocations';
 import { getCategoryColor } from '@/utils/categoryColors';
+import { getInitials } from '@/utils/getInitials';
 import { JobCategory, PaginatedData } from '@/types';
 
 interface FeedUser {
@@ -1098,6 +1099,7 @@ function WorkerBadgeCard({
         ? `${Number(worker.daily_rate).toLocaleString()} FCFA${t('siteHome.perDay')}`
         : null;
     const coverPhoto = worker.portfolio_photos?.[0];
+    const coverInitials = getInitials(worker.user.name);
     const availability = worker.availability === 'available'
         ? { label: t('availability.available'), dot: 'bg-emerald-500', badge: 'text-emerald-800' }
         : worker.availability === 'busy'
@@ -1125,12 +1127,14 @@ function WorkerBadgeCard({
                                 loading="lazy"
                             />
                         ) : (
-                            <img
-                                src="/images/worker-card-wall.jpg"
-                                alt="Construction wall project"
-                                className="h-full w-full object-cover transition-transform duration-700 ease-out group-hover:scale-105"
-                                loading="lazy"
-                            />
+                            <div className="relative flex h-full w-full items-center justify-center overflow-hidden bg-gradient-to-br from-slate-700 via-slate-800 to-slate-950">
+                                <div className="absolute inset-0 opacity-[0.08]" style={{
+                                    backgroundImage: 'linear-gradient(rgba(255,255,255,.5) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.5) 1px, transparent 1px)',
+                                    backgroundSize: '32px 32px',
+                                }} />
+                                <div className="absolute -right-10 -top-12 h-40 w-40 rounded-full bg-amber-400/20 blur-3xl transition-transform duration-700 group-hover:scale-125" />
+                                <span className="relative text-7xl font-black tracking-[-0.08em] text-white/90 drop-shadow-lg">{coverInitials}</span>
+                            </div>
                         )}
                         <div className="absolute inset-0 bg-gradient-to-t from-slate-950/55 via-transparent to-black/10" />
                     </div>
