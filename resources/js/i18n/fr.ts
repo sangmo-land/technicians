@@ -49,6 +49,7 @@ const fr = {
         toggleTheme: 'Basculer le mode sombre',
         feed: 'Fil des travaux',
         notifications: 'Notifications',
+        backToTop: 'Retour en haut',
     },
 
     // ─── Notifications ───────────────────────────────────
@@ -162,6 +163,13 @@ const fr = {
         mason: 'Maçon',
         concreteWorker: 'Bétonneur',
         siteVisits: '👁 {{count}} visites du site',
+        getStarted: 'Commencer',
+        postWork: 'Publier un travail',
+        browseJobs: 'Parcourir les offres',
+        contactUs: 'Contact',
+        whatsappCta: 'Discuter sur WhatsApp',
+        whatsappHint: 'Des questions ? Réponse rapide.',
+        madeIn: 'Conçu pour le Cameroun 🇨🇲',
     },
 
     // ─── Home / Welcome ──────────────────────────────────

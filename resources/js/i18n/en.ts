@@ -49,6 +49,7 @@ const en = {
         toggleTheme: 'Toggle dark mode',
         feed: 'Work Feed',
         notifications: 'Notifications',
+        backToTop: 'Back to top',
     },
 
     // ─── Notifications ───────────────────────────────────
@@ -162,6 +163,13 @@ const en = {
         mason: 'Mason',
         concreteWorker: 'Concrete Worker',
         siteVisits: '👁 {{count}} site visits',
+        getStarted: 'Get Started',
+        postWork: 'Post Work',
+        browseJobs: 'Browse Jobs',
+        contactUs: 'Contact',
+        whatsappCta: 'Chat on WhatsApp',
+        whatsappHint: 'Questions? We reply fast.',
+        madeIn: 'Built for Cameroon 🇨🇲',
     },
 
     // ─── Home / Welcome ──────────────────────────────────

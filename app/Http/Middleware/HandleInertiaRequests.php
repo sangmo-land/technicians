@@ -2,11 +2,13 @@
 
 namespace App\Http\Middleware;
 
+use App\Models\JobCategory;
 use App\Models\SiteVisit;
 use App\Models\User;
 use App\Models\WorkerProfile;
 use App\Models\WorkPostNotification;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
 use Inertia\Middleware;
 
 class HandleInertiaRequests extends Middleware
@@ -49,6 +51,16 @@ class HandleInertiaRequests extends Middleware
                 : 0,
             'siteVisits' => fn () => SiteVisit::count(),
             'adminPhone' => fn () => User::where('email', 'admin@nexjobs.com')->value('phone'),
+            'footerCategories' => fn () => Cache::remember(
+                'footer_categories',
+                600,
+                fn () => JobCategory::where('is_active', true)
+                    ->withCount(['workerProfiles' => fn ($q) => $q->workersOnly()])
+                    ->orderByDesc('worker_profiles_count')
+                    ->orderBy('name')
+                    ->take(4)
+                    ->get(['id', 'name'])
+            ),
         ];
     }
 

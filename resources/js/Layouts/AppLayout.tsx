@@ -1,6 +1,6 @@
 import { Link, usePage, router } from '@inertiajs/react';
 import { PropsWithChildren, ReactNode, useState, useEffect } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion, AnimatePresence, useReducedMotion } from 'framer-motion';
 import LanguageSwitcher from '@/Components/LanguageSwitcher';
 import DarkModeToggle from '@/Components/DarkModeToggle';
 import { useTranslation } from '@/hooks/useTranslation';
@@ -11,10 +11,24 @@ interface Props {
 }
 
 export default function GuestLayout({ header, children }: Props) {
-    const { auth, siteVisits, profileIncomplete, unreadNotifications } = usePage().props as any;
+    const { auth, siteVisits, profileIncomplete, unreadNotifications, adminPhone, footerCategories } = usePage().props as any;
     const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
     const [showProfileReminder, setShowProfileReminder] = useState(false);
+    const [showFloatingNav, setShowFloatingNav] = useState(false);
+    const reduceMotion = useReducedMotion();
     const { t } = useTranslation();
+
+    useEffect(() => {
+        const onScroll = () => setShowFloatingNav(window.scrollY > 280);
+        onScroll();
+        window.addEventListener('scroll', onScroll, { passive: true });
+        return () => window.removeEventListener('scroll', onScroll);
+    }, []);
+
+    const scrollToTop = () => window.scrollTo({ top: 0, behavior: reduceMotion ? 'auto' : 'smooth' });
+
+    const whatsAppDigits = String(adminPhone ?? '').replace(/\D/g, '');
+    const whatsAppLink = whatsAppDigits ? `https://wa.me/${whatsAppDigits}` : null;
 
     const notificationBell = auth?.user && (
         <Link href="/notifications" className="relative p-2 text-gray-500 hover:text-blue-600 transition-colors" aria-label={t('nav.notifications')} title={t('nav.notifications')}>
@@ -52,7 +66,7 @@ export default function GuestLayout({ header, children }: Props) {
     return (
         <div className="min-h-screen bg-gray-50 flex flex-col overflow-x-hidden">
             {/* Navigation */}
-            <nav className="bg-white shadow-sm border-b border-gray-100 sticky top-0 z-50">
+            <nav className="relative z-40 bg-white shadow-sm border-b border-gray-100">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                     <div className="flex justify-between h-16">
                         <div className="flex items-center">
@@ -179,6 +193,81 @@ export default function GuestLayout({ header, children }: Props) {
                 </AnimatePresence>
             </nav>
 
+            {/* Floating nav — appears once the page is scrolled past the header zone */}
+            <AnimatePresence>
+                {showFloatingNav && (
+                    <motion.div
+                        initial={reduceMotion ? { opacity: 0 } : { opacity: 0, y: -24 }}
+                        animate={reduceMotion ? { opacity: 1 } : { opacity: 1, y: 0 }}
+                        exit={reduceMotion ? { opacity: 0 } : { opacity: 0, y: -24 }}
+                        transition={{ duration: 0.25, ease: 'easeOut' }}
+                        className="fixed top-3 inset-x-0 z-50 flex justify-center px-3 pointer-events-none"
+                    >
+                        <nav
+                            aria-label={t('nav.feed')}
+                            className="pointer-events-auto flex items-center gap-0.5 sm:gap-1.5 pl-3 pr-1.5 py-1.5 rounded-full bg-slate-900/90 backdrop-blur-md ring-1 ring-white/10 shadow-xl shadow-slate-950/40"
+                        >
+                            <Link href="/" className="flex items-center mr-1">
+                                <img src="/images/logoNexJobs.png" alt="NexJobs" className="h-7 w-auto brightness-0 invert" />
+                            </Link>
+                            <Link href="/" className="hidden sm:block px-3 py-1.5 text-sm font-medium text-slate-300 hover:text-amber-400 transition-colors">
+                                {t('nav.feed')}
+                            </Link>
+                            {auth?.worker_profile_id && (
+                                <Link
+                                    href={`/workers/${auth.worker_profile_id}`}
+                                    className="hidden md:block px-3 py-1.5 text-sm font-medium text-slate-300 hover:text-amber-400 transition-colors"
+                                >
+                                    {t('nav.myProfile')}
+                                </Link>
+                            )}
+                            <Link
+                                href="/workers"
+                                className="inline-flex items-center gap-2 bg-amber-500 hover:bg-amber-400 text-slate-900 px-3.5 py-1.5 rounded-full text-sm font-bold transition-colors"
+                            >
+                                <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M15 19.128a9.38 9.38 0 002.625.372 9.337 9.337 0 004.121-.952 4.125 4.125 0 00-7.533-2.493M15 19.128v-.003c0-1.113-.285-2.16-.786-3.07M15 19.128v.106A12.318 12.318 0 018.624 21c-2.331 0-4.512-.645-6.374-1.766l-.001-.109a6.375 6.375 0 0111.964-3.07M12 6.375a3.375 3.375 0 11-6.75 0 3.375 3.375 0 016.75 0zm8.25 2.25a2.625 2.625 0 11-5.25 0 2.625 2.625 0 015.25 0z" /></svg>
+                                <span className="hidden sm:inline">{t('nav.findWorkers')}</span>
+                            </Link>
+                            {auth?.user ? (
+                                <Link
+                                    href="/notifications"
+                                    className="relative p-2 text-slate-300 hover:text-amber-400 transition-colors"
+                                    aria-label={t('nav.notifications')}
+                                    title={t('nav.notifications')}
+                                >
+                                    <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
+                                        <path strokeLinecap="round" strokeLinejoin="round" d="M14.857 17.082a23.848 23.848 0 005.454-1.31A8.967 8.967 0 0118 9.75v-.7V9A6 6 0 006 9v.75a8.967 8.967 0 01-2.312 6.022c1.733.64 3.56 1.085 5.455 1.31m5.714 0a24.255 24.255 0 01-5.714 0m5.714 0a3 3 0 11-5.714 0" />
+                                    </svg>
+                                    {unreadNotifications > 0 && (
+                                        <span className="absolute top-0.5 right-0.5 min-w-[16px] h-4 px-1 bg-red-500 text-white text-[10px] font-bold rounded-full flex items-center justify-center">
+                                            {unreadNotifications > 9 ? '9+' : unreadNotifications}
+                                        </span>
+                                    )}
+                                </Link>
+                            ) : (
+                                <Link
+                                    href="/register"
+                                    className="hidden sm:block px-3 py-1.5 text-sm font-medium text-slate-300 hover:text-amber-400 transition-colors"
+                                >
+                                    {t('nav.signUp')}
+                                </Link>
+                            )}
+                            <span className="w-px h-5 bg-white/10 mx-0.5" aria-hidden="true" />
+                            <button
+                                onClick={scrollToTop}
+                                aria-label={t('nav.backToTop')}
+                                title={t('nav.backToTop')}
+                                className="p-2 text-slate-300 hover:text-amber-400 transition-colors"
+                            >
+                                <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 15.75l7.5-7.5 7.5 7.5" />
+                                </svg>
+                            </button>
+                        </nav>
+                    </motion.div>
+                )}
+            </AnimatePresence>
+
             {header && (
                 <header className="bg-white shadow-sm">
                     <div className="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
@@ -237,18 +326,97 @@ export default function GuestLayout({ header, children }: Props) {
             </AnimatePresence>
 
             {/* Footer */}
-            <footer className="bg-slate-900 text-slate-400">
-                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-                    <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
-                        <Link href="/" className="flex items-center">
-                            <img src="/images/logoNexJobs.png" alt="NexJobs" className="h-8 w-auto brightness-0 invert" />
-                        </Link>
-                        <div className="flex items-center gap-6 text-sm">
-                            <Link href="/workers" className="hover:text-white transition-colors">{t('footer.browseWorkers')}</Link>
-                            <Link href="/register" className="hover:text-white transition-colors">{t('footer.createProfile')}</Link>
+            <footer className="bg-slate-950 text-slate-400">
+                {/* Safety-stripe brand accent */}
+                <div
+                    aria-hidden="true"
+                    className="h-1.5 w-full"
+                    style={{ background: 'repeating-linear-gradient(-45deg, #f59e0b 0px, #f59e0b 14px, #0f172a 14px, #0f172a 28px)' }}
+                />
+
+                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-14 pb-12">
+                    <div className="grid grid-cols-2 gap-x-8 gap-y-10 md:grid-cols-4 lg:grid-cols-12">
+                        {/* Brand + contact */}
+                        <div className="col-span-2 md:col-span-4 lg:col-span-5">
+                            <Link href="/" className="inline-flex items-center">
+                                <img src="/images/logoNexJobs.png" alt="NexJobs" className="h-12 w-auto brightness-0 invert" />
+                            </Link>
+                            <p className="mt-4 text-sm leading-relaxed max-w-sm">
+                                {t('footer.tagline')}
+                            </p>
+                            {whatsAppLink && (
+                                <div className="mt-6">
+                                    <p className="text-xs text-slate-500 mb-2">{t('footer.whatsappHint')}</p>
+                                    <a
+                                        href={whatsAppLink}
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        className="inline-flex items-center gap-2.5 px-4 py-2.5 rounded-full border border-amber-500/40 text-amber-400 hover:bg-amber-500 hover:border-amber-500 hover:text-slate-950 text-sm font-semibold transition-colors"
+                                    >
+                                        <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+                                            <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.297-.347.446-.52.149-.174.198-.298.297-.497.1-.198.05-.371-.025-.52-.074-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z" />
+                                        </svg>
+                                        {t('footer.whatsappCta')}
+                                    </a>
+                                </div>
+                            )}
                         </div>
-                        <p className="text-xs text-slate-500">{t('footer.siteVisits', { count: siteVisits?.toLocaleString() ?? '0' })}</p>
+
+                        {/* Quick links */}
+                        <div className="lg:col-span-2">
+                            <h3 className="text-slate-200 text-xs font-semibold uppercase tracking-widest mb-4">{t('footer.quickLinks')}</h3>
+                            <ul className="space-y-2.5 text-sm">
+                                <li><Link href="/" className="hover:text-amber-400 transition-colors">{t('nav.feed')}</Link></li>
+                                <li><Link href="/workers" className="hover:text-amber-400 transition-colors">{t('footer.browseWorkers')}</Link></li>
+                                <li><Link href="/jobs" className="hover:text-amber-400 transition-colors">{t('footer.browseJobs')}</Link></li>
+                            </ul>
+                        </div>
+
+                        {/* Trade categories (top live categories from the platform) */}
+                        {footerCategories?.length > 0 && (
+                            <div className="lg:col-span-3">
+                                <h3 className="text-slate-200 text-xs font-semibold uppercase tracking-widest mb-4">{t('footer.tradeCategories')}</h3>
+                                <ul className="space-y-2.5 text-sm">
+                                    {footerCategories.map((category: { id: number; name: string }) => (
+                                        <li key={category.id}>
+                                            <Link href={`/workers?category=${category.id}`} className="hover:text-amber-400 transition-colors">
+                                                {category.name}
+                                            </Link>
+                                        </li>
+                                    ))}
+                                </ul>
+                            </div>
+                        )}
+
+                        {/* Get started */}
+                        <div className="lg:col-span-2">
+                            <h3 className="text-slate-200 text-xs font-semibold uppercase tracking-widest mb-4">{t('footer.getStarted')}</h3>
+                            <ul className="space-y-2.5 text-sm">
+                                <li><Link href="/" className="hover:text-amber-400 transition-colors">{t('footer.postWork')}</Link></li>
+                                {auth?.user ? (
+                                    <>
+                                        {auth.worker_profile_id && (
+                                            <li><Link href={`/workers/${auth.worker_profile_id}`} className="hover:text-amber-400 transition-colors">{t('nav.myProfile')}</Link></li>
+                                        )}
+                                        <li><Link href="/notifications" className="hover:text-amber-400 transition-colors">{t('nav.notifications')}</Link></li>
+                                    </>
+                                ) : (
+                                    <>
+                                        <li><Link href="/register" className="hover:text-amber-400 transition-colors">{t('footer.createProfile')}</Link></li>
+                                        <li><Link href="/login" className="hover:text-amber-400 transition-colors">{t('nav.logIn')}</Link></li>
+                                    </>
+                                )}
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                {/* Bottom bar */}
+                <div className="border-t border-slate-800/70">
+                    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-5 flex flex-col sm:flex-row items-center justify-between gap-2.5">
                         <p className="text-xs text-slate-500">{t('common.copyright', { year: new Date().getFullYear() })}</p>
+                        <p className="text-xs text-slate-600">{t('footer.madeIn')}</p>
+                        <p className="text-xs text-slate-500">{t('footer.siteVisits', { count: siteVisits?.toLocaleString() ?? '0' })}</p>
                     </div>
                 </div>
             </footer>
