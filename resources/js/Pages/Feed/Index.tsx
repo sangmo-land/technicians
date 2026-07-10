@@ -63,6 +63,7 @@ interface FeaturedWorker {
     availability?: string | null;
     user: FeedUser;
     job_categories?: { id: number; name: string }[];
+    portfolio_photos?: { id: number; path: string; caption?: string | null }[];
 }
 
 interface SearchResult {
@@ -1088,7 +1089,7 @@ function PostRow({
     );
 }
 
-/* ── Signature: technician card as a site access badge ────── */
+/* ── Portfolio-led technician card ─────────────────────────── */
 function WorkerBadgeCard({
     worker,
     index,
@@ -1105,6 +1106,10 @@ function WorkerBadgeCard({
     const rate = worker.daily_rate && Number(worker.daily_rate) > 0
         ? `${Number(worker.daily_rate).toLocaleString()} FCFA${t('siteHome.perDay')}`
         : null;
+    const coverPhoto = worker.portfolio_photos?.[0];
+    const availability = worker.availability === 'busy'
+        ? { label: t('availability.busy'), dot: 'bg-amber-500', badge: 'text-amber-800' }
+        : { label: t('siteHome.available'), dot: 'bg-emerald-500', badge: 'text-emerald-800' };
 
     return (
         <motion.div
@@ -1115,42 +1120,62 @@ function WorkerBadgeCard({
         >
             <Link
                 href={`/workers/${worker.id}`}
-                className="group relative flex h-full flex-col overflow-hidden rounded-[1.75rem] border border-slate-200/80 bg-white p-6 shadow-sm transition-all hover:-translate-y-1 hover:border-slate-300 hover:shadow-xl hover:shadow-slate-200/70"
+                className="group relative flex h-full flex-col overflow-hidden rounded-[1.75rem] border border-slate-200/80 bg-white shadow-sm transition-all duration-300 hover:-translate-y-1 hover:border-slate-300 hover:shadow-xl hover:shadow-slate-200/70"
             >
-                <div className="flex items-center justify-between gap-3">
-                    <span className="inline-flex items-center gap-2 rounded-full bg-emerald-50 px-3 py-1.5 text-[11px] font-bold text-emerald-700 ring-1 ring-inset ring-emerald-200/70">
-                        <span className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse" />
-                        {t('siteHome.available')}
+                <div className="relative h-52 flex-shrink-0 bg-slate-900">
+                    <div className="absolute inset-0 overflow-hidden">
+                        {coverPhoto ? (
+                            <img
+                                src={`/storage/${coverPhoto.path}`}
+                                alt={coverPhoto.caption || `${worker.user.name} portfolio project`}
+                                className="h-full w-full object-cover transition-transform duration-700 ease-out group-hover:scale-105"
+                                loading="lazy"
+                            />
+                        ) : (
+                            <img
+                                src="/images/worker-card-wall.jpg"
+                                alt="Construction wall project"
+                                className="h-full w-full object-cover transition-transform duration-700 ease-out group-hover:scale-105"
+                                loading="lazy"
+                            />
+                        )}
+                        <div className="absolute inset-0 bg-gradient-to-t from-slate-950/55 via-transparent to-black/10" />
+                    </div>
+
+                    <span className={`absolute left-4 top-4 inline-flex items-center gap-2 rounded-full bg-white/95 px-3 py-1.5 text-[11px] font-bold shadow-sm backdrop-blur ${availability.badge}`}>
+                        <span className={`h-2 w-2 rounded-full ${availability.dot} ${worker.availability === 'available' ? 'animate-pulse' : ''}`} />
+                        {availability.label}
                     </span>
-                    <span className="flex h-9 w-9 items-center justify-center rounded-full bg-slate-50 text-slate-500 transition-all group-hover:bg-amber-500 group-hover:text-slate-950">
+                    <span className="absolute right-4 top-4 flex h-10 w-10 items-center justify-center rounded-full border border-white/20 bg-slate-950/35 text-white shadow-sm backdrop-blur-md transition-all group-hover:bg-amber-500 group-hover:text-slate-950">
                         <svg className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth={2.2} viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M5 12h14m-6-6 6 6-6 6" /></svg>
                     </span>
-                </div>
 
-                <div className="mt-8 flex items-center gap-4">
-                    <div className="rounded-full ring-4 ring-slate-100 transition-colors group-hover:ring-amber-100">
+                    <div className="absolute -bottom-px left-6 translate-y-1/2 rounded-full bg-white p-1 shadow-lg">
                         <Avatar user={worker.user} size="w-16 h-16" />
                     </div>
-                    <div className="min-w-0 flex-1">
-                        <p className="truncate text-lg font-bold tracking-tight text-gray-900">{worker.user.name}</p>
-                        {trade && <p className="mt-1 truncate text-sm text-gray-500">{trade}</p>}
-                    </div>
                 </div>
 
-                {worker.job_categories?.[0] && (
-                    <span className={`mt-6 inline-flex w-fit rounded-lg px-3 py-1.5 text-[11px] font-bold ring-1 ring-inset ${getCategoryColor(worker.job_categories[0].name)}`}>
-                        {translateCategory(worker.job_categories[0].name)}
-                    </span>
-                )}
+                <div className="flex flex-1 flex-col px-6 pb-6 pt-12">
+                    <div className="min-w-0">
+                        <p className="truncate text-lg font-bold tracking-tight text-gray-900 transition-colors group-hover:text-blue-700">{worker.user.name}</p>
+                        {trade && <p className="mt-1 truncate text-sm font-medium text-gray-500">{trade}</p>}
+                    </div>
 
-                <div className="mt-auto flex items-end justify-between gap-4 border-t border-slate-100 pt-5">
-                    {location ? (
-                        <p className="inline-flex min-w-0 items-center gap-1.5 truncate text-xs text-gray-500">
-                            <svg className="h-3.5 w-3.5 flex-shrink-0" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M15 10.5a3 3 0 11-6 0 3 3 0 016 0z" /><path strokeLinecap="round" strokeLinejoin="round" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1115 0z" /></svg>
-                            {location}
-                        </p>
-                    ) : <span />}
-                    {rate && <span className="flex-shrink-0 text-xs font-bold text-slate-700">{rate}</span>}
+                    {worker.job_categories?.[0] && (
+                        <span className={`mt-4 inline-flex w-fit rounded-lg px-3 py-1.5 text-[11px] font-bold ring-1 ring-inset ${getCategoryColor(worker.job_categories[0].name)}`}>
+                            {translateCategory(worker.job_categories[0].name)}
+                        </span>
+                    )}
+
+                    <div className="mt-5 flex items-end justify-between gap-4 border-t border-slate-100 pt-5">
+                        {location ? (
+                            <p className="inline-flex min-w-0 items-center gap-1.5 truncate text-xs text-gray-500">
+                                <svg className="h-3.5 w-3.5 flex-shrink-0" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M15 10.5a3 3 0 11-6 0 3 3 0 016 0z" /><path strokeLinecap="round" strokeLinejoin="round" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1115 0z" /></svg>
+                                {location}
+                            </p>
+                        ) : <span />}
+                        {rate && <span className="flex-shrink-0 text-xs font-bold text-slate-800">{rate}</span>}
+                    </div>
                 </div>
             </Link>
         </motion.div>
