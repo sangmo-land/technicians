@@ -67,7 +67,7 @@ export default function WorkersIndex({ workers, categories, filters }: Props) {
                     </div>
                 </div>
                 {activeFilterCount > 0 && (
-                    <span className="inline-flex items-center justify-center w-6 h-6 rounded-full bg-blue-600 text-white text-xs font-bold">
+                    <span className="inline-flex items-center justify-center w-6 h-6 rounded-full bg-amber-500 text-slate-900 text-xs font-bold">
                         {activeFilterCount}
                     </span>
                 )}
@@ -103,7 +103,7 @@ export default function WorkersIndex({ workers, categories, filters }: Props) {
                             value={search}
                             onChange={(e) => setSearch(e.target.value)}
                             placeholder={t('workersIndex.searchPlaceholder')}
-                            className="w-full rounded-xl border-gray-200 bg-gray-50 pl-4 pr-10 py-2.5 text-sm focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 focus:bg-white transition-all placeholder-slate-400"
+                            className="w-full rounded-xl border-gray-200 bg-gray-50 pl-4 pr-10 py-2.5 text-sm focus:ring-2 focus:ring-amber-500/25 focus:border-amber-500 focus:bg-white transition-all placeholder-slate-400"
                         />
                         {search && (
                             <button type="button" onClick={() => { setSearch(''); applyFilters('search', ''); }}
@@ -131,7 +131,7 @@ export default function WorkersIndex({ workers, categories, filters }: Props) {
                         onChange={(e) => setLocation(e.target.value)}
                         onKeyDown={(e) => e.key === 'Enter' && handleSearch(e)}
                         placeholder={t('workersIndex.locationPlaceholder')}
-                        className="w-full rounded-xl border-gray-200 bg-gray-50 pl-4 pr-10 py-2.5 text-sm focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 focus:bg-white transition-all placeholder-slate-400"
+                        className="w-full rounded-xl border-gray-200 bg-gray-50 pl-4 pr-10 py-2.5 text-sm focus:ring-2 focus:ring-amber-500/25 focus:border-amber-500 focus:bg-white transition-all placeholder-slate-400"
                     />
                     {location && (
                         <button type="button" onClick={() => { setLocation(''); applyFilters('location', ''); }}
@@ -144,7 +144,7 @@ export default function WorkersIndex({ workers, categories, filters }: Props) {
                 {(search !== (filters.search || '') || location !== (filters.location || '')) && (
                     <button
                         onClick={(e) => handleSearch(e as any)}
-                        className="mt-2 w-full bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-xl text-sm font-medium transition-colors"
+                        className="mt-2 w-full bg-amber-500 hover:bg-amber-400 text-slate-900 px-4 py-2 rounded-xl text-sm font-bold transition-colors"
                     >
                         {t('workersIndex.applySearch')}
                     </button>
@@ -167,12 +167,12 @@ export default function WorkersIndex({ workers, categories, filters }: Props) {
                         onClick={() => applyFilters('category', '')}
                         className={`w-full text-left flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm transition-all ${
                             !filters.category
-                                ? 'bg-blue-50 text-blue-700 font-semibold border border-blue-100'
+                                ? 'bg-amber-50 text-amber-800 font-semibold border border-amber-200'
                                 : 'text-slate-600 hover:bg-gray-50 hover:text-slate-800'
                         }`}
                     >
                         <div className={`w-7 h-7 rounded-lg flex items-center justify-center flex-shrink-0 ${
-                            !filters.category ? 'bg-blue-600 text-white' : 'bg-gray-100 text-gray-400'
+                            !filters.category ? 'bg-slate-900 text-amber-400' : 'bg-gray-100 text-gray-400'
                         }`}>
                             <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
@@ -180,7 +180,7 @@ export default function WorkersIndex({ workers, categories, filters }: Props) {
                         </div>
                         <span className="flex-1">{t('workersIndex.allCategories')}</span>
                         {!filters.category && (
-                            <svg className="w-4 h-4 text-blue-600" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" /></svg>
+                            <svg className="w-4 h-4 text-amber-600" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" /></svg>
                         )}
                     </button>
                     {categories.map((cat) => (
@@ -194,13 +194,13 @@ export default function WorkersIndex({ workers, categories, filters }: Props) {
                             }`}
                         >
                             <div className={`w-7 h-7 rounded-lg flex items-center justify-center flex-shrink-0 text-xs font-bold ${
-                                filters.category === String(cat.id) ? 'bg-blue-600 text-white' : 'bg-gray-100 text-gray-500'
+                                filters.category === String(cat.id) ? 'bg-slate-900 text-amber-400' : 'bg-gray-100 text-gray-500'
                             }`}>
                                 {(cat.worker_profiles_count || 0)}
                             </div>
                             <span className="flex-1 truncate">{translateCategory(cat.name)}</span>
                             {filters.category === String(cat.id) && (
-                                <svg className="w-4 h-4 text-blue-600 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" /></svg>
+                                <svg className="w-4 h-4 text-amber-600 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" /></svg>
                             )}
                         </button>
                     ))}
@@ -223,7 +223,7 @@ export default function WorkersIndex({ workers, categories, filters }: Props) {
                         const colors: Record<string, { active: string; dot: string }> = {
                             entry:        { active: 'bg-slate-50 text-slate-700 border-slate-200',   dot: 'bg-slate-400' },
                             intermediate: { active: 'bg-emerald-50 text-emerald-700 border-emerald-200', dot: 'bg-emerald-500' },
-                            experienced:  { active: 'bg-blue-50 text-blue-700 border-blue-200',     dot: 'bg-blue-500' },
+                            experienced:  { active: 'bg-violet-50 text-violet-700 border-violet-200', dot: 'bg-violet-500' },
                             expert:       { active: 'bg-amber-50 text-amber-700 border-amber-200',  dot: 'bg-amber-500' },
                         };
                         const c = colors[level] || colors.entry;
@@ -342,20 +342,18 @@ export default function WorkersIndex({ workers, categories, filters }: Props) {
                 })}</script>
             </Head>
 
-            {/* Hero Section */}
-            <section className="relative bg-gradient-to-br from-slate-900 via-slate-800 to-blue-950 overflow-hidden">
-                <div className="absolute inset-0">
-                    <div className="absolute top-0 right-1/4 w-96 h-96 bg-amber-500/[0.06] rounded-full blur-3xl" />
-                    <div className="absolute bottom-0 left-1/3 w-80 h-80 bg-blue-500/[0.06] rounded-full blur-3xl" />
-                    <div className="absolute inset-0 opacity-[0.02]" style={{
-                        backgroundImage: 'linear-gradient(rgba(255,255,255,.15) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.15) 1px, transparent 1px)',
-                        backgroundSize: '60px 60px'
-                    }} />
+            {/* Command bar */}
+            <section className="relative bg-slate-900 overflow-hidden">
+                <div className="pointer-events-none absolute inset-0" aria-hidden="true">
+                    <div className="absolute -top-20 right-[-10%] w-[420px] h-[420px] rounded-full bg-amber-500/[0.07] blur-[90px]" />
+                    <svg className="hidden lg:block absolute -right-16 -bottom-24 h-[380px] w-auto text-white/[0.045]" fill="none" stroke="currentColor" strokeWidth={1.2} viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M2 18a1 1 0 001 1h18a1 1 0 001-1v-2a1 1 0 00-1-1H3a1 1 0 00-1 1v2zM10 10V5a1 1 0 011-1h2a1 1 0 011 1v5M4 15v-3a6 6 0 016-6M14 6a6 6 0 016 6v3" />
+                    </svg>
                 </div>
 
-                <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-10 pb-12">
+                <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-8 pb-10">
                     {/* Breadcrumb */}
-                    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="flex items-center gap-2 text-sm text-slate-400 mb-6">
+                    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="flex items-center gap-2 text-sm text-slate-400 mb-5">
                         <Link href="/" className="hover:text-white transition-colors">{t('workersIndex.home')}</Link>
                         <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" /></svg>
                         <span className="text-slate-200">{t('workersIndex.workers')}</span>
@@ -363,20 +361,21 @@ export default function WorkersIndex({ workers, categories, filters }: Props) {
 
                     <div className="flex flex-col gap-6">
                         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
-                            <div className="inline-flex items-center gap-2 px-3 py-1 bg-amber-500/10 border border-amber-500/20 rounded-full text-xs font-semibold text-amber-400 mb-3">
+                            <div className="inline-flex items-center gap-2 px-3 py-1 bg-amber-500/10 border border-amber-500/20 rounded-full text-xs font-semibold text-amber-400 mb-4">
                                 <span className="w-1.5 h-1.5 bg-amber-400 rounded-full animate-pulse" />
                                 {t('workersIndex.workerCount', { count: workers.total })}
                             </div>
-                            <h1 className="text-3xl sm:text-4xl font-extrabold text-white mb-2 tracking-tight">
+                            <h1 className="font-display uppercase text-3xl sm:text-4xl tracking-wide text-white leading-none">
                                 {t('workersIndex.heading')}
                             </h1>
-                            <p className="text-slate-400 text-base lg:text-lg max-w-xl leading-relaxed">
+                            <span className="block mt-3 h-2 w-24 bg-amber-500 -skew-x-12" aria-hidden="true" />
+                            <p className="mt-4 text-slate-400 text-base max-w-xl leading-relaxed">
                                 {t('workersIndex.subheading')}
                             </p>
                             {auth?.user && (auth.user.can_add_users || auth.user.role === 'admin') && (
                                 <Link
                                     href="/users/add"
-                                    className="inline-flex items-center gap-2 mt-4 px-4 py-2 bg-amber-500 hover:bg-amber-400 text-white text-sm font-semibold rounded-lg transition-colors"
+                                    className="inline-flex items-center gap-2 mt-4 px-4 py-2 bg-amber-500 hover:bg-amber-400 text-slate-900 text-sm font-bold rounded-lg transition-colors"
                                 >
                                     <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-6 0a4 4 0 100-8 4 4 0 000 8zm-7 9a7 7 0 0114 0H5z" /></svg>
                                     {t('addUser.addNewWorker')}
@@ -403,7 +402,7 @@ export default function WorkersIndex({ workers, categories, filters }: Props) {
                                 </svg>
                                 {t('workersIndex.filtersAndSearch')}
                                 {activeFilterCount > 0 && (
-                                    <span className="bg-blue-600 text-white px-2 py-0.5 rounded-full text-xs font-bold">{activeFilterCount}</span>
+                                    <span className="bg-amber-500 text-slate-900 px-2 py-0.5 rounded-full text-xs font-bold">{activeFilterCount}</span>
                                 )}
                             </button>
                         </div>
@@ -467,35 +466,35 @@ export default function WorkersIndex({ workers, categories, filters }: Props) {
                                     className="flex flex-wrap gap-2 mb-5"
                                 >
                                     {filters.search && (
-                                        <span className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-blue-50 text-blue-700 text-xs font-medium rounded-lg border border-blue-100">
-                                            <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
+                                        <span className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-slate-900 text-white text-xs font-medium rounded-lg">
+                                            <svg className="w-3 h-3 text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
                                             &ldquo;{filters.search}&rdquo;
-                                            <button onClick={() => { setSearch(''); applyFilters('search', ''); }} className="hover:text-blue-900 ml-0.5">&times;</button>
+                                            <button onClick={() => { setSearch(''); applyFilters('search', ''); }} className="text-slate-400 hover:text-amber-400 ml-0.5">&times;</button>
                                         </span>
                                     )}
                                     {filters.location && (
-                                        <span className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-emerald-50 text-emerald-700 text-xs font-medium rounded-lg border border-emerald-100">
-                                            <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" /></svg>
+                                        <span className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-slate-900 text-white text-xs font-medium rounded-lg">
+                                            <svg className="w-3 h-3 text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" /></svg>
                                             {filters.location}
-                                            <button onClick={() => { setLocation(''); applyFilters('location', ''); }} className="hover:text-emerald-900 ml-0.5">&times;</button>
+                                            <button onClick={() => { setLocation(''); applyFilters('location', ''); }} className="text-slate-400 hover:text-amber-400 ml-0.5">&times;</button>
                                         </span>
                                     )}
                                     {filters.category && (
-                                        <span className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-amber-50 text-amber-700 text-xs font-medium rounded-lg border border-amber-100">
+                                        <span className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-slate-900 text-white text-xs font-medium rounded-lg">
                                             {translateCategory(categories.find(c => String(c.id) === filters.category)?.name || filters.category)}
-                                            <button onClick={() => applyFilters('category', '')} className="hover:text-amber-900 ml-0.5">&times;</button>
+                                            <button onClick={() => applyFilters('category', '')} className="text-slate-400 hover:text-amber-400 ml-0.5">&times;</button>
                                         </span>
                                     )}
                                     {filters.experience && (
-                                        <span className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-purple-50 text-purple-700 text-xs font-medium rounded-lg border border-purple-100">
+                                        <span className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-slate-900 text-white text-xs font-medium rounded-lg">
                                             {t(`levels.${filters.experience}`)}
-                                            <button onClick={() => applyFilters('experience', '')} className="hover:text-purple-900 ml-0.5">&times;</button>
+                                            <button onClick={() => applyFilters('experience', '')} className="text-slate-400 hover:text-amber-400 ml-0.5">&times;</button>
                                         </span>
                                     )}
                                     {filters.availability && (
-                                        <span className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-green-50 text-green-700 text-xs font-medium rounded-lg border border-green-100">
+                                        <span className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-slate-900 text-white text-xs font-medium rounded-lg">
                                             {filters.availability === 'available' ? t('availability.availableForWork') : t('availability.currentlyBusy')}
-                                            <button onClick={() => applyFilters('availability', '')} className="hover:text-green-900 ml-0.5">&times;</button>
+                                            <button onClick={() => applyFilters('availability', '')} className="text-slate-400 hover:text-amber-400 ml-0.5">&times;</button>
                                         </span>
                                     )}
                                 </motion.div>
@@ -543,7 +542,7 @@ export default function WorkersIndex({ workers, categories, filters }: Props) {
                                             >
                                                 <Link
                                                     href={`/workers/${worker.id}`}
-                                                    className="block bg-white rounded-2xl border border-gray-100 shadow-sm hover:shadow-xl hover:border-gray-200 transition-all duration-300 overflow-hidden h-full group"
+                                                    className="block bg-white rounded-2xl border border-slate-200/70 shadow-md shadow-slate-300/20 hover:shadow-xl hover:shadow-slate-400/20 hover:border-amber-300/70 hover:-translate-y-1 transition-all duration-300 overflow-hidden h-full group"
                                                 >
                                                     {/* Cover Photo */}
                                                     <div className="relative h-44 overflow-hidden">
@@ -551,11 +550,12 @@ export default function WorkersIndex({ workers, categories, filters }: Props) {
                                                             <img src={`/storage/${coverPhoto.path}`} alt={coverPhoto.caption || ''}
                                                                 className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out" loading="lazy" />
                                                         ) : (
-                                                            <div className="w-full h-full bg-gradient-to-br from-slate-700 via-blue-800 to-indigo-900">
+                                                            <div className="w-full h-full bg-gradient-to-br from-slate-800 via-slate-900 to-slate-950">
                                                                 <div className="absolute inset-0 opacity-10" style={{
                                                                     backgroundImage: 'radial-gradient(circle at 25% 25%, white 1px, transparent 1px)',
                                                                     backgroundSize: '20px 20px'
                                                                 }} />
+                                                                <div className="absolute bottom-0 inset-x-0 h-1.5 bg-amber-500" />
                                                             </div>
                                                         )}
                                                         <div className="absolute inset-0 bg-gradient-to-t from-black/25 via-transparent to-transparent" />
@@ -594,7 +594,7 @@ export default function WorkersIndex({ workers, categories, filters }: Props) {
                                                                 )}
                                                             </div>
                                                             <div className="min-w-0 pt-6">
-                                                                <h3 className="font-bold text-gray-900 text-[15px] leading-tight truncate group-hover:text-blue-600 transition-colors">{worker.user?.name}</h3>
+                                                                <h3 className="font-bold text-gray-900 text-[15px] leading-tight truncate group-hover:text-amber-600 transition-colors">{worker.user?.name}</h3>
                                                                 <p className="text-[13px] text-gray-500 truncate mt-0.5">{worker.title || worker.professional_title || t('workerCard.civilWorker')}</p>
                                                             </div>
                                                         </div>
