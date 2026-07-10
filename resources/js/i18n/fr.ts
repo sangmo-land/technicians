@@ -50,6 +50,7 @@ const fr = {
         feed: 'Fil des travaux',
         notifications: 'Notifications',
         backToTop: 'Retour en haut',
+        menu: 'Menu',
     },
 
     // ─── Notifications ───────────────────────────────────

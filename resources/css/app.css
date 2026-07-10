@@ -14,6 +14,46 @@
 }
 
 /*
+ * ─── Floating nav ring light ──────────────────────────────────────────────
+ * An amber light arc that continuously sweeps around the floating pill's
+ * border. The wrapper has 2px padding; its background shows through as the
+ * ring: a faint white base ring plus an animated conic-gradient arc driven
+ * by the registered --ring-angle custom property. Browsers without
+ * @property support show a static arc; reduced motion disables the sweep.
+ */
+@property --ring-angle {
+    syntax: '<angle>';
+    initial-value: 0deg;
+    inherits: false;
+}
+
+@keyframes floating-nav-ring-spin {
+    to { --ring-angle: 360deg; }
+}
+
+.floating-nav-ring {
+    background-color: rgba(255, 255, 255, 0.12);
+    background-image: conic-gradient(
+        from var(--ring-angle),
+        rgba(245, 158, 11, 0) 0deg,
+        rgba(245, 158, 11, 0) 250deg,
+        rgba(245, 158, 11, 0.45) 300deg,
+        #fbbf24 330deg,
+        #fde68a 345deg,
+        rgba(245, 158, 11, 0) 360deg
+    );
+    box-shadow:
+        0 12px 32px rgba(2, 6, 23, 0.45),
+        0 0 20px rgba(245, 158, 11, 0.22);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+    .floating-nav-ring {
+        animation: floating-nav-ring-spin 3.2s linear infinite;
+    }
+}
+
+/*
  * ─── Dark mode ────────────────────────────────────────────────────────────
  * The app is styled with light-only utilities throughout, so dark mode is
  * applied by remapping those utilities under the `.dark` root class

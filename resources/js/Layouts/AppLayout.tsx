@@ -15,6 +15,7 @@ export default function GuestLayout({ header, children }: Props) {
     const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
     const [showProfileReminder, setShowProfileReminder] = useState(false);
     const [showFloatingNav, setShowFloatingNav] = useState(false);
+    const [floatingMenuOpen, setFloatingMenuOpen] = useState(false);
     const reduceMotion = useReducedMotion();
     const { t } = useTranslation();
 
@@ -24,6 +25,10 @@ export default function GuestLayout({ header, children }: Props) {
         window.addEventListener('scroll', onScroll, { passive: true });
         return () => window.removeEventListener('scroll', onScroll);
     }, []);
+
+    useEffect(() => {
+        if (!showFloatingNav) setFloatingMenuOpen(false);
+    }, [showFloatingNav]);
 
     const scrollToTop = () => window.scrollTo({ top: 0, behavior: reduceMotion ? 'auto' : 'smooth' });
 
@@ -203,67 +208,116 @@ export default function GuestLayout({ header, children }: Props) {
                         transition={{ duration: 0.25, ease: 'easeOut' }}
                         className="fixed top-3 inset-x-0 z-50 flex justify-center px-3 pointer-events-none"
                     >
-                        <nav
-                            aria-label={t('nav.feed')}
-                            className="pointer-events-auto flex items-center gap-0.5 sm:gap-1.5 pl-3 pr-1.5 py-1.5 rounded-full bg-slate-900/90 backdrop-blur-md ring-1 ring-white/10 shadow-xl shadow-slate-950/40"
-                        >
-                            <Link href="/" className="flex items-center mr-1">
-                                <img src="/images/logoNexJobs.png" alt="NexJobs" className="h-7 w-auto brightness-0 invert" />
-                            </Link>
-                            <Link href="/" className="hidden sm:block px-3 py-1.5 text-sm font-medium text-slate-300 hover:text-amber-400 transition-colors">
-                                {t('nav.feed')}
-                            </Link>
-                            {auth?.worker_profile_id && (
-                                <Link
-                                    href={`/workers/${auth.worker_profile_id}`}
-                                    className="hidden md:block px-3 py-1.5 text-sm font-medium text-slate-300 hover:text-amber-400 transition-colors"
-                                >
-                                    {t('nav.myProfile')}
-                                </Link>
-                            )}
-                            <Link
-                                href="/workers"
-                                className="inline-flex items-center gap-2 bg-amber-500 hover:bg-amber-400 text-slate-900 px-3.5 py-1.5 rounded-full text-sm font-bold transition-colors"
+                        <div className="pointer-events-auto relative rounded-full p-[2px] floating-nav-ring">
+                            <nav
+                                aria-label="NexJobs"
+                                className="flex items-center gap-0.5 sm:gap-1 pl-2.5 pr-1.5 py-1.5 rounded-full bg-slate-900/90 backdrop-blur-md"
                             >
-                                <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M15 19.128a9.38 9.38 0 002.625.372 9.337 9.337 0 004.121-.952 4.125 4.125 0 00-7.533-2.493M15 19.128v-.003c0-1.113-.285-2.16-.786-3.07M15 19.128v.106A12.318 12.318 0 018.624 21c-2.331 0-4.512-.645-6.374-1.766l-.001-.109a6.375 6.375 0 0111.964-3.07M12 6.375a3.375 3.375 0 11-6.75 0 3.375 3.375 0 016.75 0zm8.25 2.25a2.625 2.625 0 11-5.25 0 2.625 2.625 0 015.25 0z" /></svg>
-                                <span className="hidden sm:inline">{t('nav.findWorkers')}</span>
-                            </Link>
-                            {auth?.user ? (
+                                {/* Logo mark only (crops the wordmark out of the combined logo) */}
+                                <Link href="/" className="mr-1 block h-8 w-[26px] overflow-hidden" aria-label="NexJobs">
+                                    <img src="/images/logoNexJobs.png" alt="" className="h-8 w-auto max-w-none brightness-0 invert" />
+                                </Link>
                                 <Link
-                                    href="/notifications"
-                                    className="relative p-2 text-slate-300 hover:text-amber-400 transition-colors"
-                                    aria-label={t('nav.notifications')}
-                                    title={t('nav.notifications')}
+                                    href="/workers"
+                                    className="inline-flex items-center gap-2 bg-amber-500 hover:bg-amber-400 text-slate-900 px-3.5 py-1.5 rounded-full text-sm font-bold transition-colors"
+                                >
+                                    <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M15 19.128a9.38 9.38 0 002.625.372 9.337 9.337 0 004.121-.952 4.125 4.125 0 00-7.533-2.493M15 19.128v-.003c0-1.113-.285-2.16-.786-3.07M15 19.128v.106A12.318 12.318 0 018.624 21c-2.331 0-4.512-.645-6.374-1.766l-.001-.109a6.375 6.375 0 0111.964-3.07M12 6.375a3.375 3.375 0 11-6.75 0 3.375 3.375 0 016.75 0zm8.25 2.25a2.625 2.625 0 11-5.25 0 2.625 2.625 0 015.25 0z" /></svg>
+                                    <span className="hidden sm:inline">{t('nav.findWorkers')}</span>
+                                </Link>
+                                {auth?.user && (
+                                    <Link
+                                        href="/notifications"
+                                        className="relative p-2 text-slate-300 hover:text-amber-400 transition-colors"
+                                        aria-label={t('nav.notifications')}
+                                        title={t('nav.notifications')}
+                                    >
+                                        <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
+                                            <path strokeLinecap="round" strokeLinejoin="round" d="M14.857 17.082a23.848 23.848 0 005.454-1.31A8.967 8.967 0 0118 9.75v-.7V9A6 6 0 006 9v.75a8.967 8.967 0 01-2.312 6.022c1.733.64 3.56 1.085 5.455 1.31m5.714 0a24.255 24.255 0 01-5.714 0m5.714 0a3 3 0 11-5.714 0" />
+                                        </svg>
+                                        {unreadNotifications > 0 && (
+                                            <span className="absolute top-0.5 right-0.5 min-w-[16px] h-4 px-1 bg-red-500 text-white text-[10px] font-bold rounded-full flex items-center justify-center">
+                                                {unreadNotifications > 9 ? '9+' : unreadNotifications}
+                                            </span>
+                                        )}
+                                    </Link>
+                                )}
+                                <LanguageSwitcher variant="dark" />
+                                <span className="w-px h-5 bg-white/10 mx-0.5" aria-hidden="true" />
+                                <button
+                                    onClick={scrollToTop}
+                                    aria-label={t('nav.backToTop')}
+                                    title={t('nav.backToTop')}
+                                    className="p-2 text-slate-300 hover:text-amber-400 transition-colors"
                                 >
                                     <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
-                                        <path strokeLinecap="round" strokeLinejoin="round" d="M14.857 17.082a23.848 23.848 0 005.454-1.31A8.967 8.967 0 0118 9.75v-.7V9A6 6 0 006 9v.75a8.967 8.967 0 01-2.312 6.022c1.733.64 3.56 1.085 5.455 1.31m5.714 0a24.255 24.255 0 01-5.714 0m5.714 0a3 3 0 11-5.714 0" />
+                                        <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 15.75l7.5-7.5 7.5 7.5" />
                                     </svg>
-                                    {unreadNotifications > 0 && (
-                                        <span className="absolute top-0.5 right-0.5 min-w-[16px] h-4 px-1 bg-red-500 text-white text-[10px] font-bold rounded-full flex items-center justify-center">
-                                            {unreadNotifications > 9 ? '9+' : unreadNotifications}
-                                        </span>
-                                    )}
-                                </Link>
-                            ) : (
-                                <Link
-                                    href="/register"
-                                    className="hidden sm:block px-3 py-1.5 text-sm font-medium text-slate-300 hover:text-amber-400 transition-colors"
+                                </button>
+                                <button
+                                    onClick={() => setFloatingMenuOpen(!floatingMenuOpen)}
+                                    aria-label={t('nav.menu')}
+                                    title={t('nav.menu')}
+                                    aria-expanded={floatingMenuOpen}
+                                    className={`p-2 rounded-full transition-colors ${floatingMenuOpen ? 'text-amber-400 bg-white/5' : 'text-slate-300 hover:text-amber-400'}`}
                                 >
-                                    {t('nav.signUp')}
-                                </Link>
-                            )}
-                            <span className="w-px h-5 bg-white/10 mx-0.5" aria-hidden="true" />
-                            <button
-                                onClick={scrollToTop}
-                                aria-label={t('nav.backToTop')}
-                                title={t('nav.backToTop')}
-                                className="p-2 text-slate-300 hover:text-amber-400 transition-colors"
-                            >
-                                <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
-                                    <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 15.75l7.5-7.5 7.5 7.5" />
-                                </svg>
-                            </button>
-                        </nav>
+                                    <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
+                                        {floatingMenuOpen ? (
+                                            <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+                                        ) : (
+                                            <path strokeLinecap="round" strokeLinejoin="round" d="M4 6h16M4 12h16M4 18h16" />
+                                        )}
+                                    </svg>
+                                </button>
+                            </nav>
+
+                            {/* Floating menu dropdown */}
+                            <AnimatePresence>
+                                {floatingMenuOpen && (
+                                    <>
+                                        <div className="fixed inset-0 z-[-1]" onClick={() => setFloatingMenuOpen(false)} aria-hidden="true" />
+                                        <motion.div
+                                            initial={reduceMotion ? { opacity: 0 } : { opacity: 0, y: -8, scale: 0.97 }}
+                                            animate={reduceMotion ? { opacity: 1 } : { opacity: 1, y: 0, scale: 1 }}
+                                            exit={reduceMotion ? { opacity: 0 } : { opacity: 0, y: -8, scale: 0.97 }}
+                                            transition={{ duration: 0.18, ease: 'easeOut' }}
+                                            className="absolute right-0 top-full mt-2 w-56 p-1.5 rounded-2xl bg-slate-900/95 backdrop-blur-md ring-1 ring-white/10 shadow-xl shadow-slate-950/40"
+                                        >
+                                            <Link href="/" onClick={() => setFloatingMenuOpen(false)} className="block px-3 py-2 rounded-xl text-sm font-medium text-slate-300 hover:text-white hover:bg-white/5 transition-colors">
+                                                {t('nav.feed')}
+                                            </Link>
+                                            <Link href="/workers" onClick={() => setFloatingMenuOpen(false)} className="block px-3 py-2 rounded-xl text-sm font-medium text-slate-300 hover:text-white hover:bg-white/5 transition-colors">
+                                                {t('nav.findWorkers')}
+                                            </Link>
+                                            {auth?.worker_profile_id && (
+                                                <Link href={`/workers/${auth.worker_profile_id}`} onClick={() => setFloatingMenuOpen(false)} className="block px-3 py-2 rounded-xl text-sm font-medium text-slate-300 hover:text-white hover:bg-white/5 transition-colors">
+                                                    {t('nav.myProfile')}
+                                                </Link>
+                                            )}
+                                            {auth?.user && (auth.user.can_add_users || auth.user.role === 'admin') && (
+                                                <Link href="/users/add" onClick={() => setFloatingMenuOpen(false)} className="block px-3 py-2 rounded-xl text-sm font-medium text-slate-300 hover:text-white hover:bg-white/5 transition-colors">
+                                                    {t('nav.addUsers')}
+                                                </Link>
+                                            )}
+                                            <div className="my-1.5 h-px bg-white/10" aria-hidden="true" />
+                                            {auth?.user ? (
+                                                <Link href="/logout" method="post" as="button" className="block w-full text-left px-3 py-2 rounded-xl text-sm font-medium text-slate-300 hover:text-white hover:bg-white/5 transition-colors">
+                                                    {t('nav.logOut')}
+                                                </Link>
+                                            ) : (
+                                                <>
+                                                    <Link href="/login" onClick={() => setFloatingMenuOpen(false)} className="block px-3 py-2 rounded-xl text-sm font-medium text-slate-300 hover:text-white hover:bg-white/5 transition-colors">
+                                                        {t('nav.logIn')}
+                                                    </Link>
+                                                    <Link href="/register" onClick={() => setFloatingMenuOpen(false)} className="block px-3 py-2 rounded-xl text-sm font-bold text-amber-400 hover:text-amber-300 hover:bg-white/5 transition-colors">
+                                                        {t('nav.signUp')}
+                                                    </Link>
+                                                </>
+                                            )}
+                                        </motion.div>
+                                    </>
+                                )}
+                            </AnimatePresence>
+                        </div>
                     </motion.div>
                 )}
             </AnimatePresence>

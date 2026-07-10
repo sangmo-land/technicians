@@ -50,6 +50,7 @@ const en = {
         feed: 'Work Feed',
         notifications: 'Notifications',
         backToTop: 'Back to top',
+        menu: 'Menu',
     },
 
     // ─── Notifications ───────────────────────────────────
