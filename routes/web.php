@@ -14,7 +14,7 @@ use Inertia\Inertia;
 
 // Sitemap
 Route::get('/sitemap.xml', function () {
-    $workers = WorkerProfile::with('user')->whereNotNull('title')->latest()->take(10)->get();
+    $workers = WorkerProfile::workersOnly()->with('user')->whereNotNull('title')->latest()->take(10)->get();
     $categories = JobCategory::where('is_active', true)->take(10)->get();
     $jobs = JobListing::active()->latest()->take(10)->get();
 
@@ -40,9 +40,14 @@ Route::get('/workers/{worker}', [WorkerProfileController::class, 'show'])->name(
 Route::get('/jobs', [JobListingController::class, 'index'])->name('jobs.index');
 Route::get('/jobs/{job}', [JobListingController::class, 'show'])->name('jobs.show');
 
-// Dashboard — redirect to own worker profile
+// Dashboard — technicians land on their worker profile, employers on the feed
 Route::get('/dashboard', function () {
     $user = auth()->user();
+
+    if ($user->isEmployer()) {
+        return redirect()->route('home');
+    }
+
     $profile = $user->workerProfile;
 
     if ($profile) {

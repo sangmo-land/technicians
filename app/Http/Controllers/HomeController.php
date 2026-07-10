@@ -17,17 +17,18 @@ class HomeController extends Controller
             return redirect()->route('feed');
         }
 
-        $categories = JobCategory::withCount(['workerProfiles'])
+        $categories = JobCategory::withCount(['workerProfiles' => fn ($q) => $q->workersOnly()])
             ->where('is_active', true)
             ->get();
 
         $stats = [
-            'total_workers' => WorkerProfile::count(),
+            'total_workers' => WorkerProfile::workersOnly()->count(),
             'total_categories' => JobCategory::where('is_active', true)->count(),
         ];
 
         // Paginated technicians (available workers)
-        $techniciansQuery = WorkerProfile::with(['user', 'skills', 'jobCategories', 'portfolioPhotos' => fn ($q) => $q->orderBy('sort_order')->limit(1)])
+        $techniciansQuery = WorkerProfile::workersOnly()
+            ->with(['user', 'skills', 'jobCategories', 'portfolioPhotos' => fn ($q) => $q->orderBy('sort_order')->limit(1)])
             ->where('availability', '!=', 'not_available');
 
         if ($request->filled('tech_category')) {

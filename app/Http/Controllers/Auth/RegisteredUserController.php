@@ -35,13 +35,14 @@ class RegisteredUserController extends Controller
             'email' => 'required|string|lowercase|email|max:255|unique:'.User::class,
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
             'phone' => 'nullable|string|max:20',
+            'role' => 'required|in:worker,employer',
         ]);
 
         $user = User::create([
             'name' => $request->name,
             'email' => $request->email,
             'password' => Hash::make($request->password),
-            'role' => 'worker',
+            'role' => $request->role,
             'phone' => $request->phone,
         ]);
 
@@ -49,6 +50,12 @@ class RegisteredUserController extends Controller
 
         Auth::login($user);
 
-        return redirect(route('worker.profile.edit', absolute: false));
+        // Technicians build their public profile first; employers land on
+        // the feed where they can post work.
+        if ($user->isWorker()) {
+            return redirect(route('worker.profile.edit', absolute: false));
+        }
+
+        return redirect(route('home', absolute: false));
     }
 }

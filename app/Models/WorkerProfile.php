@@ -53,6 +53,15 @@ class WorkerProfile extends Model
         return $this->belongsTo(User::class);
     }
 
+    /**
+     * Only profiles belonging to worker (technician) accounts —
+     * employers and admins never appear in public worker listings.
+     */
+    public function scopeWorkersOnly($query)
+    {
+        return $query->whereHas('user', fn ($q) => $q->where('role', 'worker'));
+    }
+
     public function skills()
     {
         return $this->belongsToMany(Skill::class, 'worker_profile_skill')

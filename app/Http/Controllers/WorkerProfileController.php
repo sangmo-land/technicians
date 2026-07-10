@@ -23,7 +23,8 @@ class WorkerProfileController extends Controller
             return response()->json([]);
         }
 
-        $workers = WorkerProfile::with('user:id,name,avatar')
+        $workers = WorkerProfile::workersOnly()
+            ->with('user:id,name,avatar')
             ->where(fn ($query) => $query
                 ->where('title', 'like', "%{$q}%")
                 ->orWhere('city', 'like', "%{$q}%")
@@ -46,7 +47,8 @@ class WorkerProfileController extends Controller
 
     public function index(Request $request)
     {
-        $query = WorkerProfile::with(['user.reviewsReceived', 'skills', 'jobCategories', 'portfolioPhotos']);
+        $query = WorkerProfile::workersOnly()
+            ->with(['user.reviewsReceived', 'skills', 'jobCategories', 'portfolioPhotos']);
 
         if ($request->filled('search')) {
             $search = $request->search;
@@ -83,7 +85,9 @@ class WorkerProfileController extends Controller
             ->paginate(12)
             ->withQueryString();
 
-        $categories = JobCategory::withCount('workerProfiles')->where('is_active', true)->get();
+        $categories = JobCategory::withCount(['workerProfiles' => fn ($q) => $q->workersOnly()])
+            ->where('is_active', true)
+            ->get();
 
         return Inertia::render('Workers/Index', [
             'workers' => $workers,
@@ -120,11 +124,19 @@ class WorkerProfileController extends Controller
 
     public function edit()
     {
-        $profile = auth()->user()->workerProfile;
+        $user = auth()->user();
+
+        // Employers don't have a public worker profile — their account
+        // settings live on the standard profile page instead.
+        if ($user->isEmployer()) {
+            return redirect()->route('profile.edit');
+        }
+
+        $profile = $user->workerProfile;
 
         if (!$profile) {
             $profile = WorkerProfile::create([
-                'user_id' => auth()->id(),
+                'user_id' => $user->id,
             ]);
         }
 
@@ -142,6 +154,10 @@ class WorkerProfileController extends Controller
 
     public function update(Request $request)
     {
+        if (auth()->user()->isEmployer()) {
+            return redirect()->route('profile.edit');
+        }
+
         // Convert comma-separated strings to arrays if needed
         if (is_string($request->certifications)) {
             $request->merge([

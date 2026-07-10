@@ -6,6 +6,7 @@ import { useTranslation } from '@/hooks/useTranslation';
 
 export default function Register() {
     const { data, setData, post, processing, errors, reset } = useForm({
+        role: '',
         name: '',
         email: '',
         phone: '',
@@ -26,7 +27,30 @@ export default function Register() {
     };
 
     const isValidEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(data.email.trim());
-    const canProceedStep1 = data.name.trim().length > 0 && isValidEmail;
+    const canProceedStep1 = data.role !== '' && data.name.trim().length > 0 && isValidEmail;
+
+    const roleOptions = [
+        {
+            value: 'worker',
+            title: t('register.roleWorker'),
+            desc: t('register.roleWorkerDesc'),
+            icon: (
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M11.42 15.17L17.25 21A2.652 2.652 0 0021 17.25l-5.877-5.877M11.42 15.17l2.496-3.03c.317-.384.74-.626 1.208-.766M11.42 15.17l-4.655 5.653a2.548 2.548 0 11-3.586-3.586l6.837-5.63m5.108-.233c.55-.164 1.163-.188 1.743-.14a4.5 4.5 0 004.486-6.336l-3.276 3.277a3.004 3.004 0 01-2.25-2.25l3.276-3.276a4.5 4.5 0 00-6.336 4.486c.091 1.076-.071 2.264-.904 2.95l-.102.085m-1.745 1.437L5.909 7.5H4.5L2.25 3.75l1.5-1.5L7.5 4.5v1.409l4.26 4.26m-1.745 1.437l1.745-1.437m6.615 8.206L15.75 15.75M4.867 19.125h.008v.008h-.008v-.008z" />
+                </svg>
+            ),
+        },
+        {
+            value: 'employer',
+            title: t('register.roleClient'),
+            desc: t('register.roleClientDesc'),
+            icon: (
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M20.25 14.15v4.25c0 1.094-.787 2.036-1.872 2.18-2.087.277-4.216.42-6.378.42s-4.291-.143-6.378-.42c-1.085-.144-1.872-1.086-1.872-2.18v-4.25m16.5 0a2.18 2.18 0 00.75-1.661V8.706c0-1.081-.768-2.015-1.837-2.175a48.114 48.114 0 00-3.413-.387m4.5 8.006c-.194.165-.42.295-.673.38A23.978 23.978 0 0112 15.75c-2.648 0-5.195-.429-7.577-1.22a2.016 2.016 0 01-.673-.38m15.75-8.006a48.667 48.667 0 00-7.5-.578c-2.53 0-5.022.196-7.5.578m15 0v-.113c0-1.081-.768-2.015-1.837-2.175a48.114 48.114 0 00-3.413-.387m-7.5 2.675v-.113c0-1.081.768-2.015 1.837-2.175a48.114 48.114 0 013.413-.387m0 0V3.375c0-.621.504-1.125 1.125-1.125h1.5c.621 0 1.125.504 1.125 1.125v1.5" />
+                </svg>
+            ),
+        },
+    ];
 
     return (
         <>
@@ -191,6 +215,46 @@ export default function Register() {
                                         transition={{ duration: 0.3 }}
                                         className="space-y-5"
                                     >
+                                        {/* Account type */}
+                                        <div>
+                                            <label className="block text-sm font-semibold text-slate-700 mb-1.5">{t('register.joinAs')}</label>
+                                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3" role="radiogroup" aria-label={t('register.joinAs')}>
+                                                {roleOptions.map((option) => {
+                                                    const selected = data.role === option.value;
+                                                    return (
+                                                        <button
+                                                            key={option.value}
+                                                            type="button"
+                                                            role="radio"
+                                                            aria-checked={selected}
+                                                            onClick={() => setData('role', option.value)}
+                                                            className={`relative text-left p-4 rounded-xl border transition-all focus:outline-none focus:ring-2 focus:ring-amber-500/20 ${
+                                                                selected
+                                                                    ? 'border-amber-500 bg-amber-50/60 shadow-sm'
+                                                                    : 'border-slate-200 bg-white hover:border-slate-300'
+                                                            }`}
+                                                        >
+                                                            {selected && (
+                                                                <span className="absolute top-3 right-3 w-5 h-5 rounded-full bg-amber-500 flex items-center justify-center">
+                                                                    <svg className="w-3 h-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={3}>
+                                                                        <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                                                                    </svg>
+                                                                </span>
+                                                            )}
+                                                            <div className={`w-9 h-9 rounded-lg flex items-center justify-center mb-2.5 transition-colors ${
+                                                                selected ? 'bg-amber-500 text-white' : 'bg-slate-100 text-slate-500'
+                                                            }`}>
+                                                                {option.icon}
+                                                            </div>
+                                                            <p className="text-sm font-semibold text-slate-800">{option.title}</p>
+                                                            <p className="text-xs text-slate-500 mt-0.5 leading-relaxed">{option.desc}</p>
+                                                        </button>
+                                                    );
+                                                })}
+                                            </div>
+                                            <InputError message={errors.role} className="mt-1.5" />
+                                        </div>
+
                                         {/* Full Name */}
                                         <div>
                                             <label htmlFor="name" className="block text-sm font-semibold text-slate-700 mb-1.5">{t('register.fullName')}</label>
@@ -303,6 +367,11 @@ export default function Register() {
                                                 <p className="text-sm font-semibold text-slate-800 truncate">{data.name}</p>
                                                 <p className="text-xs text-slate-400 truncate">{data.email}</p>
                                             </div>
+                                            {data.role && (
+                                                <span className="hidden sm:inline-flex px-2.5 py-1 rounded-full bg-amber-100 text-amber-700 text-xs font-semibold whitespace-nowrap">
+                                                    {data.role === 'worker' ? t('register.roleWorker') : t('register.roleClient')}
+                                                </span>
+                                            )}
                                             <button
                                                 type="button"
                                                 onClick={() => setStep(1)}
